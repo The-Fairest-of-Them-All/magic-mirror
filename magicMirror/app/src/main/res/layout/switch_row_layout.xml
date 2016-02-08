@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/prefSwitch"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="10dp"
         android:showText="true"
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/switch_name"
