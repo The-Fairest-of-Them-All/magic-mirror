@@ -123,6 +123,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -131,6 +132,15 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
+        <Switch
+            android:id="@+id/TwitterSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Enable Twitter"
+            android:layout_below="@+id/textView9"
+            android:layout_alignLeft="@+id/textView8"
+            android:layout_alignStart="@+id/textView8"
+            android:checked="true" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -181,14 +191,16 @@
             android:layout_toEndOf="@+id/checkBox8"
             android:checked="false" />
 
-        <CheckBox
+
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Enable Twitter"
-            android:id="@+id/checkBox5"
-            android:checked="false"
+            android:id="@+id/textView9"
             android:layout_below="@+id/textView7"
-            android:layout_alignLeft="@+id/textView8"
-            android:layout_alignStart="@+id/textView8" />
+            android:layout_toLeftOf="@+id/switch1"
+            android:layout_toStartOf="@+id/switch1" />
+
     </RelativeLayout>
 </LinearLayout>
