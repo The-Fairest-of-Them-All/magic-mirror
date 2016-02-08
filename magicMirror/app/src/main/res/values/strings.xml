@@ -1,9 +1,21 @@
 <resources>
     <string name="app_name">MagicMirror</string>
 
-    <string name="hello_world">Hello world!</string>
+    <string name="hello_world">Press Button to Connect</string>
+    <string name="hello_swipe">Or Swipe to change Preferences...</string>
+    <string name="connect_button">Connect</string>
+    <string name="sleep_button">Sleep</string>
+    <string name="wake_button">Wake Up</string>
     <string name="action_settings">Settings</string>
+    <string name="Twitter">Twitter</string>
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="drawer_open" />
+    <string name="drawer_close" />
+    <string-array name="settings">
+        <item>Twitter</item>
+        <item>Email</item>
+        <item>Weather</item>
+    </string-array>
 </resources>
