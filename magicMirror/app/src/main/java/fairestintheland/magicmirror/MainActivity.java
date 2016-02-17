@@ -1,6 +1,8 @@
 package fairestintheland.magicmirror;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
@@ -15,11 +17,16 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+    //UI objects
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private CharSequence mDrawerTitle;
@@ -28,12 +35,20 @@ public class MainActivity extends AppCompatActivity {
     private MenuAdapter<Switch> adapter;
     private ListView navList;
     private Button sleepButton;
+    private Button syncButton;
     private boolean sleeping;
+
+    //connection variables
+    private Socket client;
+    private PrintWriter writer;
+    Context context;
+    ConnectivityManager cm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        context = this;
         sleeping = false;
         theSwitches = new ArrayList<>();
         initSwitches();
@@ -75,7 +90,49 @@ public class MainActivity extends AppCompatActivity {
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
         };
+        syncButton = (Button)findViewById(R.id.connect_button);
+        syncButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(hasValidConnection()) {
+                    Thread t = new Thread()
+                    {
+                        public void run()
+                        {
+                            String message = "Hello from Android device";
+                            try {
+                                client = new Socket("10.0.0.58", 6685);
+                                writer = new PrintWriter(client.getOutputStream(), true);
+                                writer.write(message);
+                                writer.flush();
+                                writer.close();
+                                client.close();
+                            } catch (IOException e) {
+                                Toast.makeText(context, "Unable to connect to server", Toast.LENGTH_SHORT).show();
+                            }
 
+                        }
+                    };
+                    t.start();
+
+                }
+                else
+                {
+                    Toast.makeText(context, "Please Connect to Internet network", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+    }
+
+    private boolean hasValidConnection() {
+        cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if(cm != null)
+        {
+            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+            return (activeNetwork!= null) && (activeNetwork.isConnectedOrConnecting());
+        }
+        return false;
     }
 
     private void initSwitches()
