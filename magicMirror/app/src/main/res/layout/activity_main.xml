@@ -26,6 +26,15 @@
             android:id="@+id/textView"
             android:layout_below="@+id/welcome"
             android:layout_centerHorizontal="true" />
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ipenter"
+            android:layout_below="@+id/textView"
+            android:layout_alignRight="@+id/connect_button"
+            android:layout_alignEnd="@+id/connect_button"
+            android:layout_alignLeft="@+id/welcome"
+            android:layout_alignStart="@+id/welcome" />
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

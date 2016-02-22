@@ -14,10 +14,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -36,11 +40,14 @@ public class MainActivity extends AppCompatActivity {
     private ListView navList;
     private Button sleepButton;
     private Button syncButton;
-    private boolean sleeping;
+    private boolean sleeping, getWeather, getTwitter, getCalendar, getEmail;
+    EditText ipBar;
 
     //connection variables
     private Socket client;
     private PrintWriter writer;
+    String ipAddress;
+    JSONObject parcel;
     Context context;
     ConnectivityManager cm;
 
@@ -50,7 +57,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         context = this;
         sleeping = false;
+        parcel = new JSONObject();
         theSwitches = new ArrayList<>();
+        ipBar = (EditText)findViewById(R.id.ipenter);
         initSwitches();
         navList = (ListView) findViewById(R.id.left_drawer);
         adapter = new MenuAdapter<>(this, android.R.layout.simple_list_item_1, theSwitches);
@@ -60,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 sleeping = !sleeping;
-
                 if(sleeping)
                 {
                     sleepButton.setText(R.string.wake_button);
@@ -95,13 +103,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(hasValidConnection()) {
+
+                    ipAddress = ipBar.getText().toString();
                     Thread t = new Thread()
                     {
                         public void run()
                         {
                             String message = "Hello from Android device";
                             try {
-                                client = new Socket("10.0.0.58", 6685);
+                                client = new Socket(ipAddress, 6685);
                                 writer = new PrintWriter(client.getOutputStream(), true);
                                 writer.write(message);
                                 writer.flush();
@@ -139,13 +149,45 @@ public class MainActivity extends AppCompatActivity {
     {
         String[] switchNames = getResources().getStringArray(R.array.settings);
 
-        for(String name : switchNames)
+        for(final String name : switchNames)
         {
-            Switch s = new Switch(this);
+            final Switch s = new Switch(this);
             s.setText(name);
             theSwitches.add(s);
         }
-
+        for(int i = 0; i < theSwitches.size(); i++)
+        {
+            switch(i) {
+                case 0:
+                    theSwitches.get(i).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    }
+                });
+                    break;
+                case 1:
+                    theSwitches.get(i).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        }
+                    });
+                    break;
+                case 2:
+                    theSwitches.get(i).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        }
+                    });
+                    break;
+                case 3:
+                    theSwitches.get(i).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        }
+                    });
+                    break;
+            }
+        }
     }
 
     @Override
