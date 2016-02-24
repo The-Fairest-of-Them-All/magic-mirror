@@ -28,6 +28,9 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */ 
+ 
+ //This is acting as the Raspberry Pi App so it waits for a connection and then 
+ //requests info from the Android app.
 
 import java.net.*;
 import java.io.*;

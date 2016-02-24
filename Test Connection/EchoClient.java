@@ -28,6 +28,9 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */ 
+ 
+ //This is acting as the Android app in that it requests the connection and then 
+ //provides the information.
 
 import java.io.*;
 import java.net.*;
