@@ -55,6 +55,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        CalendarEvent cEvent = new CalendarEvent();
+        for(int i =0;i<10;i++){
+            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        }
+        System.out.println("!!You got an event!!!" + cEvent.readCalendarEvent(this) );
+
+        TwitterMessage tMess = new TwitterMessage();
+         tMess.getTweet();
+
+
         context = this;
         sleeping = false;
         parcel = new JSONObject();
