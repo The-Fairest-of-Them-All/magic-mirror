@@ -167,44 +167,7 @@ public class MainActivity extends AppCompatActivity {
             s.setText(name);
             theSwitches.add(s);
         }
-        for(int i = 0; i < theSwitches.size(); i++)
-        {
-            switch(i) {
-                case 0:
-                    theSwitches.get(i).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        Log.v("Switch State=", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + isChecked);
-                    }
-                });
-                    break;
-                case 1:
-                    theSwitches.get(i).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                            Log.v("Switch State=", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"+isChecked);
-                        }
 
-                    });
-                    break;
-                case 2:
-                    theSwitches.get(i).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                            Log.v("Switch State=", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + isChecked);
-                        }
-                    });
-                    break;
-                case 3:
-                    theSwitches.get(i).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                            Log.v("Switch State=", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"+isChecked);
-                        }
-                    });
-                    break;
-            }
-        }
     }
 
     @Override
@@ -272,13 +235,42 @@ public class MainActivity extends AppCompatActivity {
 
             // Now we can fill the layout with the right values
             text.setText(list.get(position).getText());
+            switch(position) {
+                case 0:
+                    toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                            Log.v("Switch State=", "!!!!!!!!!!!!!Twitter!!!!!!!!!!!!!!!!" + isChecked);
+                        }
+                    });
+                    break;
+                case 1:
+                    toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                            Log.v("Switch State=", "!!!!!!!!!!!Email!!!!!!!!!!!!!!!!!!"+isChecked);
+                        }
 
-            toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    Log.v("Switch State=", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + isChecked);
-                }
-            });
+                    });
+                    break;
+                case 2:
+                    toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                            Log.v("Switch State=", "!!!!!!!!!!Weather!!!!!!!!!!!!!!!" + isChecked);
+                        }
+                    });
+                    break;
+                case 3:
+                    toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                            Log.v("Switch State=", "!!!!!!!!!!!!Calendar!!!!!!!!!!!!!!!!!!!!!!"+isChecked);
+                        }
+                    });
+                    break;
+            }
+
 
             return v;
 
