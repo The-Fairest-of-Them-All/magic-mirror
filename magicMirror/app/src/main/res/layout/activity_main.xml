@@ -4,6 +4,7 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <RelativeLayout
         android:id="@+id/main_content"
         android:layout_width="match_parent"
@@ -26,6 +27,15 @@
             android:id="@+id/textView"
             android:layout_below="@+id/welcome"
             android:layout_centerHorizontal="true" />
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ipenter"
+            android:layout_below="@+id/textView"
+            android:layout_alignRight="@+id/connect_button"
+            android:layout_alignEnd="@+id/connect_button"
+            android:layout_alignLeft="@+id/welcome"
+            android:layout_alignStart="@+id/welcome" />
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -53,7 +63,8 @@
         android:choiceMode="singleChoice"
         android:divider="@android:color/transparent"
         android:dividerHeight="0dp"
-        android:background="#ffffff">
+        android:background="#ffffff"
+     >
     </ListView>
 
 
