@@ -14,6 +14,5 @@
         android:layout_marginBottom="10dp"
         android:showText="true"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/switch_name"
-        android:layout_toEndOf="@+id/switch_name" />
+        />
 </LinearLayout>

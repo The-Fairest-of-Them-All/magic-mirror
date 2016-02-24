@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -60,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         for(int i =0;i<10;i++){
             System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         }
-        System.out.println("!!You got an event!!!" + cEvent.readCalendarEvent(this) );
+        System.out.println("!!You got an event!!!" + cEvent.readCalendarEvent(this));
 
         TwitterMessage tMess = new TwitterMessage();
          tMess.getTweet();
@@ -69,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         context = this;
         sleeping = false;
         parcel = new JSONObject();
-        theSwitches = new ArrayList<>();
+        theSwitches = new ArrayList<Switch>();
         ipBar = (EditText)findViewById(R.id.ipenter);
         initSwitches();
         navList = (ListView) findViewById(R.id.left_drawer);
@@ -173,6 +174,7 @@ public class MainActivity extends AppCompatActivity {
                     theSwitches.get(i).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        Log.v("Switch State=", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + isChecked);
                     }
                 });
                     break;
@@ -180,13 +182,16 @@ public class MainActivity extends AppCompatActivity {
                     theSwitches.get(i).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                         @Override
                         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                            Log.v("Switch State=", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"+isChecked);
                         }
+
                     });
                     break;
                 case 2:
                     theSwitches.get(i).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                         @Override
                         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                            Log.v("Switch State=", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + isChecked);
                         }
                     });
                     break;
@@ -194,6 +199,7 @@ public class MainActivity extends AppCompatActivity {
                     theSwitches.get(i).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                         @Override
                         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                            Log.v("Switch State=", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"+isChecked);
                         }
                     });
                     break;
@@ -223,11 +229,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public static class ViewHolder
-    {
-        public TextView text;
-        public Switch toggle;
-    }
+
 
     class MenuAdapter<T> extends ArrayAdapter<Switch>
     {
@@ -260,25 +262,23 @@ public class MainActivity extends AppCompatActivity {
         {
             View v = convertView;
 
-            ViewHolder holder;
             // First let's verify the convertView is not null
             if (convertView == null) {
                 // This a new view we inflate the new layout
                 LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                v = inflater.inflate(R.layout.switch_row_layout, null);
-                holder = new ViewHolder();
-                holder.text =(TextView) v.findViewById(R.id.switch_name);
-                holder.toggle = (Switch) v.findViewById(R.id.prefSwitch);
-                v.setTag(holder);
-            }
+                v = inflater.inflate(R.layout.switch_row_layout, null);}
+            TextView   text =(TextView) v.findViewById(R.id.switch_name);
+            Switch  toggle = (Switch) v.findViewById(R.id.prefSwitch);
 
-            else
-            {
-                holder = (ViewHolder)v.getTag();
-            }
             // Now we can fill the layout with the right values
-            holder.text.setText(list.get(position).getText());
-            holder.toggle = list.get(position);
+            text.setText(list.get(position).getText());
+
+            toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    Log.v("Switch State=", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + isChecked);
+                }
+            });
 
             return v;
 
