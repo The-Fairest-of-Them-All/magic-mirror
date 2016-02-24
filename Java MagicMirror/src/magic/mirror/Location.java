@@ -10,6 +10,7 @@ public class Location {
                    latitude;
     private double testLong = 39.9500, //This is the location of Philadelphia, PA
                    testLati = 75.1667; //This is used for test purposes
+    private Gson data;
     
     public Location(){
         //-----TEST CODE--------------------------------------------------------
@@ -18,7 +19,8 @@ public class Location {
         //-----END TEST CODE----------------------------------------------------
     }
     
-    public Location(Gson obj){
+    public Location(Gson data){
+        this.data = data;
         setLongitude();
         setLatitude();
     }
