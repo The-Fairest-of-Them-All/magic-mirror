@@ -27,8 +27,8 @@ public class RpiUI extends JFrame {
             + "anim id est laborum.";
     static String quote = "I'm ready - Spongebob Squarepants";
     
-    public static void framer(){
-        JFrame frame = new JFrame();
+    private static void framer(){
+        JFrame frame = new JFrame("Raspberry Pi App");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
         frame.setUndecorated(true);
@@ -50,8 +50,8 @@ public class RpiUI extends JFrame {
         twitc.gridx = 2;
         twitc.gridheight = 2;
         
-        JLabel blank = new JLabel("test");
-        blank.setForeground(Color.red);
+        JLabel blank = new JLabel("testing 1 2 3");
+        blank.setForeground(Color.blue);
         JLabel blank2 = new JLabel("test");
         blank2.setForeground(Color.red);
         GridBagConstraints topmiddlec = new GridBagConstraints();
@@ -97,7 +97,12 @@ public class RpiUI extends JFrame {
     }
     public static void main(String[] args) {
         // TODO code application logic here
-        framer();
+        
+        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                framer();
+            }
+        });
     }
     
 }
