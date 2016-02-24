@@ -51,7 +51,11 @@ public class EchoServer {
             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 			BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in))
         ) {
-			System.out.println("Connected.");
+			   System.out.println("Raspberry Pi is connected.");
+            System.out.println("Sending preferences to Anrdroid.");
+            String preferences = "Twitter";
+            out.println(preferences); //send preferences STRING to android
+            
             String userInput;
             while ((userInput = stdIn.readLine()) != null) {
                 out.println(userInput);

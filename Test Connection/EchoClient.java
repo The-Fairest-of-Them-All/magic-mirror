@@ -51,11 +51,17 @@ public class EchoClient {
             BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
             BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in))
         ) {
-            System.out.println("Connected");
-			String inputLine;
+            System.out.println("Android is connected.");
+			   String inputLine;
             while ((inputLine = in.readLine()) != null) {
-                out.println(inputLine);
-				System.out.println(inputLine);
+                if(inputLine.equals("Twitter")) {
+                     out.println("OK I'll send you Twitter");
+				         System.out.println("OK I'll send you Twitter");
+                }
+                else {
+                     out.println(inputLine);
+				         System.out.println(inputLine);
+                }
             }
         } catch (UnknownHostException e) {
             System.err.println("Don't know about host " + hostName);
