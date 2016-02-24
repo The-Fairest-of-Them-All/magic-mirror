@@ -167,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
             s.setText(name);
             theSwitches.add(s);
         }
-
+//test
     }
 
     @Override
