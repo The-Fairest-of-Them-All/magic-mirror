@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="C:\Users\Owner\Documents\magic-mirror\Test_Connection\androidCS\building\ClientAndroid\app\build\intermediates\exploded-aar\com.android.support\animated-vector-drawable\23.2.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="8c108c22c99e794eff255bb34d2a461200c4cbb0">
+        <dex dex="C:\Users\Owner\Documents\magic-mirror\Test_Connection\androidCS\building\ClientAndroid\app\build\intermediates\pre-dexed\debug\com.android.support-animated-vector-drawable-23.2.0_cb5ded608d74b4502bc9ffc713745450b9ae3ba0.jar" />
+    </item>
+    <item
+        jar="C:\Users\Owner\Documents\magic-mirror\Test_Connection\androidCS\building\ClientAndroid\app\build\intermediates\exploded-aar\com.android.support\support-vector-drawable\23.2.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="292a9fa091757208efa65e77eef63088247e51f3">
+        <dex dex="C:\Users\Owner\Documents\magic-mirror\Test_Connection\androidCS\building\ClientAndroid\app\build\intermediates\pre-dexed\debug\com.android.support-support-vector-drawable-23.2.0_89cddf451a87feb27dff709a336abb92b9a90c40.jar" />
+    </item>
+    <item
+        jar="C:\Users\Owner\Documents\magic-mirror\Test_Connection\androidCS\building\ClientAndroid\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.2.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="6e3578f92f7462d1a935a1d36173e3bdd1234976">
+        <dex dex="C:\Users\Owner\Documents\magic-mirror\Test_Connection\androidCS\building\ClientAndroid\app\build\intermediates\pre-dexed\debug\com.android.support-appcompat-v7-23.2.0_10551babd09f27f06a5a059ed31e890da7442ff6.jar" />
+    </item>
+    <item
+        jar="C:\Users\Owner\Documents\magic-mirror\Test_Connection\androidCS\building\ClientAndroid\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.2.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="e5f32fa48a3eb2de0c987025c11b6e3864b634d9">
+        <dex dex="C:\Users\Owner\Documents\magic-mirror\Test_Connection\androidCS\building\ClientAndroid\app\build\intermediates\pre-dexed\debug\com.android.support-support-v4-23.2.0_f365d7f04d53873a050b442f7f5b07fa4d7be92b.jar" />
+    </item>
+    <item
+        jar="C:\Users\Owner\Documents\magic-mirror\Test_Connection\androidCS\building\ClientAndroid\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.2.0\jars\libs\internal_impl-23.2.0.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="6e239441500605809818997dd63b62a947195f8c">
+        <dex dex="C:\Users\Owner\Documents\magic-mirror\Test_Connection\androidCS\building\ClientAndroid\app\build\intermediates\pre-dexed\debug\internal_impl-23.2.0_937d20e336ef074af3f401978fd9ea7fe84732bd.jar" />
+    </item>
+    <item
+        jar="C:\Users\Owner\Documents\magic-mirror\Test_Connection\androidCS\building\ClientAndroid\app\build\intermediates\exploded-aar\com.android.support\design\23.2.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="1aa5b025efe97f5006f5be16d6ca67c6c3c0c0d8">
+        <dex dex="C:\Users\Owner\Documents\magic-mirror\Test_Connection\androidCS\building\ClientAndroid\app\build\intermediates\pre-dexed\debug\com.android.support-design-23.2.0_23a1a5c42cad4ebf7ae6287155aef4354cdf7f9b.jar" />
+    </item>
+    <item
+        jar="C:\Users\Owner\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\23.2.0\support-annotations-23.2.0.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="c5bf571bb10462bd90e5419ade67793f71acbc87">
+        <dex dex="C:\Users\Owner\Documents\magic-mirror\Test_Connection\androidCS\building\ClientAndroid\app\build\intermediates\pre-dexed\debug\support-annotations-23.2.0_773e064e893d76550aa36c5eb96973d0176cfd13.jar" />
+    </item>
+    <item
+        jar="C:\Users\Owner\Documents\magic-mirror\Test_Connection\androidCS\building\ClientAndroid\app\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\23.2.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="d4c936aa8c7d2522c82e3f1829c791d9e367f009">
+        <dex dex="C:\Users\Owner\Documents\magic-mirror\Test_Connection\androidCS\building\ClientAndroid\app\build\intermediates\pre-dexed\debug\com.android.support-recyclerview-v7-23.2.0_fa77d23bf864ba284aa3149ff5080c0fa3eb05a5.jar" />
+    </item>
+
+</items>
