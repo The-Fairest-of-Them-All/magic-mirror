@@ -25,9 +25,16 @@ public class RpiUI extends JFrame {
             + "anim id est laborum.";
     static String quote = "I'm ready - Spongebob Squarepants";
     
+<<<<<<< HEAD
     public static void framer(){
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
+=======
+    private static void framer(){
+        JFrame frame = new JFrame("Raspberry Pi App");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
+>>>>>>> 65fa736e0cbe17570f67a6c58337e746b903b768
         frame.setUndecorated(true);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setPreferredSize(screenSize);
@@ -57,6 +64,7 @@ public class RpiUI extends JFrame {
         twitc.fill = GridBagConstraints.VERTICAL;
         twitc.anchor = GridBagConstraints.FIRST_LINE_END;
         
+<<<<<<< HEAD
         JLabel blank = new JLabel();
    //     blank.setForeground(Color.red);
        JLabel blank2 = new JLabel();
@@ -69,6 +77,12 @@ public class RpiUI extends JFrame {
       //  blank5.setForeground(Color.red);
         JLabel blank6 = new JLabel();
   //      blank6.setForeground(Color.red);
+=======
+        JLabel blank = new JLabel("testing 1 2 3");
+        blank.setForeground(Color.blue);
+        JLabel blank2 = new JLabel("test");
+        blank2.setForeground(Color.red);
+>>>>>>> 65fa736e0cbe17570f67a6c58337e746b903b768
         GridBagConstraints topmiddlec = new GridBagConstraints();
         topmiddlec.gridy = 0;
         topmiddlec.gridx = 1;
@@ -162,7 +176,12 @@ public class RpiUI extends JFrame {
     }
     public static void main(String[] args) {
         // TODO code application logic here
-        framer();
+        
+        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                framer();
+            }
+        });
     }
     
 }
