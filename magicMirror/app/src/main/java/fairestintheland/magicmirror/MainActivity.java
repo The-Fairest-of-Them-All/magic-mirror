@@ -22,7 +22,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONObject;
+import org.json.JSONArray;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -41,14 +41,15 @@ public class MainActivity extends AppCompatActivity {
     private ListView navList;
     private Button sleepButton;
     private Button syncButton;
-    private boolean sleeping, getWeather, getTwitter, getCalendar, getEmail;
+    private boolean sleeping;
+    private boolean[] switchStates;
     EditText ipBar;
 
     //connection variables
     private Socket client;
     private PrintWriter writer;
     String ipAddress;
-    JSONObject parcel;
+    JSONArray parcel;
     Context context;
     ConnectivityManager cm;
 
@@ -65,13 +66,11 @@ public class MainActivity extends AppCompatActivity {
 
         TwitterMessage tMess = new TwitterMessage();
          tMess.getTweet();
-
-
+        switchStates = new boolean[]{false, false, false, false}; //Twitter,Email,Weather,Calendar
         context = this;
         sleeping = false;
-        parcel = new JSONObject();
+        ipAddress = "10.0.0.58";
         theSwitches = new ArrayList<Switch>();
-        ipBar = (EditText)findViewById(R.id.ipenter);
         initSwitches();
         navList = (ListView) findViewById(R.id.left_drawer);
         adapter = new MenuAdapter<>(this, android.R.layout.simple_list_item_1, theSwitches);
@@ -115,24 +114,26 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(hasValidConnection()) {
-
-                    ipAddress = ipBar.getText().toString();
                     Thread t = new Thread()
                     {
                         public void run()
                         {
-                            String message = "Hello from Android device";
                             try {
+                                parcel = new JSONArray();
+                                for(boolean b : switchStates)
+                                {
+                                    parcel.put(b);
+                                }
                                 client = new Socket(ipAddress, 6685);
                                 writer = new PrintWriter(client.getOutputStream(), true);
-                                writer.write(message);
+                                writer.write(parcel.toString());
                                 writer.flush();
                                 writer.close();
                                 client.close();
+
                             } catch (IOException e) {
                                 Toast.makeText(context, "Unable to connect to server", Toast.LENGTH_SHORT).show();
                             }
-
                         }
                     };
                     t.start();
@@ -167,7 +168,6 @@ public class MainActivity extends AppCompatActivity {
             s.setText(name);
             theSwitches.add(s);
         }
-//test
     }
 
     @Override
@@ -191,7 +191,6 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
 
 
     class MenuAdapter<T> extends ArrayAdapter<Switch>
@@ -221,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
             return position;
         }
         @Override
-        public View getView(int position, View convertView, ViewGroup parent)
+        public View getView(final int position, View convertView, ViewGroup parent)
         {
             View v = convertView;
 
@@ -230,50 +229,22 @@ public class MainActivity extends AppCompatActivity {
                 // This a new view we inflate the new layout
                 LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 v = inflater.inflate(R.layout.switch_row_layout, null);}
-            TextView   text =(TextView) v.findViewById(R.id.switch_name);
-            Switch  toggle = (Switch) v.findViewById(R.id.prefSwitch);
+            TextView text =(TextView) v.findViewById(R.id.switch_name);
+            Switch toggle = (Switch) v.findViewById(R.id.prefSwitch);
 
             // Now we can fill the layout with the right values
             text.setText(list.get(position).getText());
-            switch(position) {
-                case 0:
-                    toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                            Log.v("Switch State=", "!!!!!!!!!!!!!Twitter!!!!!!!!!!!!!!!!" + isChecked);
-                        }
-                    });
-                    break;
-                case 1:
-                    toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                            Log.v("Switch State=", "!!!!!!!!!!!Email!!!!!!!!!!!!!!!!!!"+isChecked);
-                        }
 
-                    });
-                    break;
-                case 2:
-                    toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                            Log.v("Switch State=", "!!!!!!!!!!Weather!!!!!!!!!!!!!!!" + isChecked);
-                        }
-                    });
-                    break;
-                case 3:
-                    toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                            Log.v("Switch State=", "!!!!!!!!!!!!Calendar!!!!!!!!!!!!!!!!!!!!!!"+isChecked);
-                        }
-                    });
-                    break;
-            }
-
+            toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+                {
+                    switchStates[position] = isChecked;
+                    Log.v("Switch State = ", list.get(position).getText()+ " " + switchStates[position]);
+                }
+            });
 
             return v;
-
         }
     }
 }
