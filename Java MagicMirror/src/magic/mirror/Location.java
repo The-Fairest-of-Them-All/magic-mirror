@@ -6,10 +6,10 @@ import com.google.gson.*;
  * @author chris
  */
 public class Location {
-    public double longitude,
+    public String longitude,
                    latitude;
-    private double testLong = 39.9500, //This is the location of Philadelphia, PA
-                   testLati = 75.1667; //This is used for test purposes
+    private String testLong = "39.9500", //This is the location of Philadelphia, PA
+                   testLati = "75.1667"; //This is used for test purposes
     private Gson data;
     
     public Location(){
@@ -33,11 +33,15 @@ public class Location {
         //TODO Parse GSON OBJ
     }
     
-    public double getLongitude(){
+    public String getLongitude(){
         return longitude;
     }
     
-    public double getLattitude(){
+    public String getLattitude(){
         return latitude;
+    }
+    
+    private void doubleToString(){
+        
     }
 }
