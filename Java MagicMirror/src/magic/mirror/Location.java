@@ -8,14 +8,14 @@ import com.google.gson.*;
 public class Location {
     public String longitude,
                    latitude;
-    private String testLong = "39.9500", //This is the location of Philadelphia, PA
-                   testLati = "75.1667"; //This is used for test purposes
+    private double testLong = 39.9500, //This is the location of Philadelphia, PA
+                   testLati = 75.1667; //This is used for test purposes
     private Gson data;
     
     public Location(){
         //-----TEST CODE--------------------------------------------------------
-        longitude = testLong;
-        latitude = testLati;
+        longitude = Double.toString(testLong);
+        latitude = Double.toString(testLati);
         //-----END TEST CODE----------------------------------------------------
     }
     
@@ -39,9 +39,5 @@ public class Location {
     
     public String getLattitude(){
         return latitude;
-    }
-    
-    private void doubleToString(){
-        
     }
 }
