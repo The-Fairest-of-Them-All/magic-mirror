@@ -183,6 +183,7 @@ public class RpiUI extends JFrame {
             }
         });
         
+        
         System.out.println("Starting raspberry pi program.");
         ipAddress = getIpAddress();
         System.out.println("My IP address is: " + ipAddress);
