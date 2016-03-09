@@ -23,6 +23,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -70,16 +72,19 @@ public class MainActivity extends AppCompatActivity {
         context = this;
         sleeping = false;
         ipAddress = "10.0.0.58";
+        ipAddress = "192.168.43.69";
         theSwitches = new ArrayList<Switch>();
         initSwitches();
         navList = (ListView) findViewById(R.id.left_drawer);
         adapter = new MenuAdapter<>(this, android.R.layout.simple_list_item_1, theSwitches);
         navList.setAdapter(adapter);
+        syncWithPi();
         sleepButton = (Button)findViewById(R.id.sleepButton);
         sleepButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 sleeping = !sleeping;
+                setSleepMode();
                 if(sleeping)
                 {
                     sleepButton.setText(R.string.wake_button);
@@ -113,10 +118,22 @@ public class MainActivity extends AppCompatActivity {
         syncButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(hasValidConnection()) {
-                    Thread t = new Thread()
-                    {
-                        public void run()
+               syncWithPi();
+            }
+        });
+
+    }
+
+    private void syncWithPi()
+    {
+        if(hasValidConnection()) {
+            Thread t = new Thread()
+            {
+                public void run()
+                {
+                    try {
+                        parcel = new JSONArray();
+                        for(boolean b : switchStates)
                         {
                             try {
                                 parcel = new JSONArray();
@@ -124,7 +141,9 @@ public class MainActivity extends AppCompatActivity {
                                 {
                                     parcel.put(b);
                                 }
-                                client = new Socket(ipAddress, 6685);
+                                client = new Socket(ipAddress, 55555);
+                                System.out.println("Connected");
+
                                 writer = new PrintWriter(client.getOutputStream(), true);
                                 writer.write(parcel.toString());
                                 writer.flush();
@@ -134,18 +153,59 @@ public class MainActivity extends AppCompatActivity {
                             } catch (IOException e) {
                                 Toast.makeText(context, "Unable to connect to server", Toast.LENGTH_SHORT).show();
                             }
+
                         }
-                    };
-                    t.start();
+                        client = new Socket(ipAddress, 6685);
+                        writer = new PrintWriter(client.getOutputStream(), true);
+                        writer.write(parcel.toString());
+                        writer.flush();
+                        writer.close();
+                        client.close();
 
+                    } catch (IOException e) {
+                        Toast.makeText(context, "Unable to connect to server", Toast.LENGTH_SHORT).show();
+                    }
                 }
-                else
+            };
+            t.start();
+
+        }
+        else
+        {
+            Toast.makeText(context, "Please Connect to Internet network", Toast.LENGTH_LONG).show();
+        }
+    }
+    private void setSleepMode()
+    {
+        if(hasValidConnection()) {
+            Thread t = new Thread()
+            {
+                public void run()
                 {
-                    Toast.makeText(context, "Please Connect to Internet network", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
+                    try {
+                        JSONObject sleep = new JSONObject();
+                        sleep.put("sleep_mode", sleeping);
+                        client = new Socket(ipAddress, 6685);
+                        writer = new PrintWriter(client.getOutputStream(), true);
+                        writer.write(sleep.toString());
+                        writer.flush();
+                        writer.close();
+                        client.close();
 
+                    } catch (IOException e) {
+                        Toast.makeText(context, "Unable to connect to server", Toast.LENGTH_SHORT).show();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            t.start();
+
+        }
+        else
+        {
+            Toast.makeText(context, "Please Connect to Internet network", Toast.LENGTH_LONG).show();
+        }
     }
 
     private boolean hasValidConnection() {
