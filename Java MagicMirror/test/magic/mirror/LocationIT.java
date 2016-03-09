@@ -45,8 +45,8 @@ public class LocationIT {
         System.out.println("getLongitude");
         Location instance = new Location();
         int expResult = 0;
-        int result = instance.getLongitude();
-        assertEquals(expResult, result);
+        //int result = instance.getLongitude();
+        //assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
@@ -59,8 +59,8 @@ public class LocationIT {
         System.out.println("getLattitude");
         Location instance = new Location();
         int expResult = 0;
-        int result = instance.getLattitude();
-        assertEquals(expResult, result);
+        //int result = instance.getLattitude();
+        //assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
