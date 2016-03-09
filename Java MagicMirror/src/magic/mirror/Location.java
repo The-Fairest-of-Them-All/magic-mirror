@@ -8,7 +8,7 @@ import com.google.gson.*;
 public class Location {
     public String longitude,
                    latitude;
-    private double testLong = 39.9500, //This is the location of Philadelphia, PA
+    private double testLong = 39.9501, //This is the location of Philadelphia, PA
                    testLati = 75.1667; //This is used for test purposes
     private Gson data;
     
