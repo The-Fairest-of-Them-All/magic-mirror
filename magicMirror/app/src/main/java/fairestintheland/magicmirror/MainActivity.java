@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
         context = this;
         sleeping = false;
         ipAddress = "10.0.0.58";
+        ipAddress = "192.168.43.69";
         theSwitches = new ArrayList<Switch>();
         initSwitches();
         navList = (ListView) findViewById(R.id.left_drawer);
@@ -124,7 +125,9 @@ public class MainActivity extends AppCompatActivity {
                                 {
                                     parcel.put(b);
                                 }
-                                client = new Socket(ipAddress, 6685);
+                                client = new Socket(ipAddress, 55555);
+                                System.out.println("Connected");
+
                                 writer = new PrintWriter(client.getOutputStream(), true);
                                 writer.write(parcel.toString());
                                 writer.flush();

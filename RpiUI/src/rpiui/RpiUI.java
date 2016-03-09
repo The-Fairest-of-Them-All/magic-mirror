@@ -206,6 +206,7 @@ public class RpiUI extends JFrame {
                 System.out.println("I'm waiting here: " + serverSocket.getLocalPort());
                 while (true) {
                     socket = serverSocket.accept();
+                    System.out.println("Connected.");
                     dataInputStream = new DataInputStream(
                             socket.getInputStream());
                     dataOutputStream = new DataOutputStream(
