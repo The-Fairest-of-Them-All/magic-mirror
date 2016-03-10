@@ -71,14 +71,14 @@ public class MainActivity extends AppCompatActivity {
         switchStates = new boolean[]{false, false, false, false}; //Twitter,Email,Weather,Calendar
         context = this;
         sleeping = false;
-        ipAddress = "10.0.0.58";
-        ipAddress = "192.168.1.152";
+        //ipAddress = "10.0.0.58";
+        //ipAddress = "192.168.1.152";
         theSwitches = new ArrayList<Switch>();
         initSwitches();
         navList = (ListView) findViewById(R.id.left_drawer);
         adapter = new MenuAdapter<>(this, android.R.layout.simple_list_item_1, theSwitches);
         navList.setAdapter(adapter);
-        syncWithPi();
+        //syncWithPi(); TODO commented this out for testing with different computers
         sleepButton = (Button) findViewById(R.id.sleepButton);
         sleepButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,6 +126,8 @@ public class MainActivity extends AppCompatActivity {
             Thread t = new Thread() {
                 public void run() {
                     try {
+                        EditText ipView = (EditText) findViewById(R.id.ipAddressTextInput);
+                        ipAddress = ipView.getText().toString();
                         parcel = new JSONArray();
                         for (boolean b : switchStates) {
                             {
