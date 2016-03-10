@@ -135,9 +135,7 @@ public class MainActivity extends AppCompatActivity {
                         parcel = new JSONArray();
                         for(boolean b : switchStates)
                         {
-                            try {
-                                parcel = new JSONArray();
-                                for(boolean b : switchStates)
+                            
                                 {
                                     parcel.put(b);
                                 }
@@ -150,17 +148,8 @@ public class MainActivity extends AppCompatActivity {
                                 writer.close();
                                 client.close();
 
-                            } catch (IOException e) {
-                                Toast.makeText(context, "Unable to connect to server", Toast.LENGTH_SHORT).show();
-                            }
-
                         }
-                        client = new Socket(ipAddress, 6685);
-                        writer = new PrintWriter(client.getOutputStream(), true);
-                        writer.write(parcel.toString());
-                        writer.flush();
-                        writer.close();
-                        client.close();
+
 
                     } catch (IOException e) {
                         Toast.makeText(context, "Unable to connect to server", Toast.LENGTH_SHORT).show();
