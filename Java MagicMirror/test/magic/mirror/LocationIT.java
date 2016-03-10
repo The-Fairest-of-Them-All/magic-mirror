@@ -17,6 +17,7 @@ import static org.junit.Assert.*;
  * @author chris
  */
 public class LocationIT {
+    Location loc;
     
     public LocationIT() {
     }
@@ -31,6 +32,7 @@ public class LocationIT {
     
     @Before
     public void setUp() {
+        loc = new Location();
     }
     
     @After
@@ -43,12 +45,7 @@ public class LocationIT {
     @Test
     public void testGetLongitude() {
         System.out.println("getLongitude");
-        Location instance = new Location();
-        int expResult = 0;
-        //int result = instance.getLongitude();
-        //assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertEquals("getLongitude Works", "39.9501", loc.longitude);
     }
 
     /**
@@ -57,12 +54,7 @@ public class LocationIT {
     @Test
     public void testGetLattitude() {
         System.out.println("getLattitude");
-        Location instance = new Location();
-        int expResult = 0;
-        //int result = instance.getLattitude();
-        //assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertEquals("getLattitude Works","75.1667", loc.latitude);
     }
     
 }
