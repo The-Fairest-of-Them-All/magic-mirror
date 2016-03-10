@@ -61,36 +61,33 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         CalendarEvent cEvent = new CalendarEvent();
-        for(int i =0;i<10;i++){
+        for (int i = 0; i < 10; i++) {
             System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         }
         System.out.println("!!You got an event!!!" + cEvent.readCalendarEvent(this));
 
         TwitterMessage tMess = new TwitterMessage();
-         tMess.getTweet();
+        tMess.getTweet();
         switchStates = new boolean[]{false, false, false, false}; //Twitter,Email,Weather,Calendar
         context = this;
         sleeping = false;
         ipAddress = "10.0.0.58";
-        ipAddress = "192.168.43.69";
+        ipAddress = "192.168.1.152";
         theSwitches = new ArrayList<Switch>();
         initSwitches();
         navList = (ListView) findViewById(R.id.left_drawer);
         adapter = new MenuAdapter<>(this, android.R.layout.simple_list_item_1, theSwitches);
         navList.setAdapter(adapter);
         syncWithPi();
-        sleepButton = (Button)findViewById(R.id.sleepButton);
+        sleepButton = (Button) findViewById(R.id.sleepButton);
         sleepButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 sleeping = !sleeping;
                 setSleepMode();
-                if(sleeping)
-                {
+                if (sleeping) {
                     sleepButton.setText(R.string.wake_button);
-                }
-                else
-                {
+                } else {
                     sleepButton.setText(R.string.sleep_button);
                 }
             }
@@ -114,43 +111,35 @@ public class MainActivity extends AppCompatActivity {
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
         };
-        syncButton = (Button)findViewById(R.id.connect_button);
+        syncButton = (Button) findViewById(R.id.connect_button);
         syncButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               syncWithPi();
+                syncWithPi();
             }
         });
 
     }
 
-    private void syncWithPi()
-    {
-        if(hasValidConnection()) {
-            Thread t = new Thread()
-            {
-                public void run()
-                {
+    private void syncWithPi() {
+        if (hasValidConnection()) {
+            Thread t = new Thread() {
+                public void run() {
                     try {
                         parcel = new JSONArray();
-                        for(boolean b : switchStates)
-                        {
-                            
-                                {
-                                    parcel.put(b);
-                                }
-                                client = new Socket(ipAddress, 55555);
-                                System.out.println("Connected");
+                        for (boolean b : switchStates) {
+                            {
+                                parcel.put(b);
+                            }
+                            client = new Socket(ipAddress, 55555);
+                            System.out.println("Connected to raspberry pi.");
 
-                                writer = new PrintWriter(client.getOutputStream(), true);
-                                writer.write(parcel.toString());
-                                writer.flush();
-                                writer.close();
-                                client.close();
-
+                            writer = new PrintWriter(client.getOutputStream(), true);
+                            writer.write(parcel.toString());
+                            writer.flush();
+                            writer.close();
+                            client.close();
                         }
-
-
                     } catch (IOException e) {
                         Toast.makeText(context, "Unable to connect to server", Toast.LENGTH_SHORT).show();
                     }
@@ -158,19 +147,15 @@ public class MainActivity extends AppCompatActivity {
             };
             t.start();
 
-        }
-        else
-        {
+        } else {
             Toast.makeText(context, "Please Connect to Internet network", Toast.LENGTH_LONG).show();
         }
     }
-    private void setSleepMode()
-    {
-        if(hasValidConnection()) {
-            Thread t = new Thread()
-            {
-                public void run()
-                {
+
+    private void setSleepMode() {
+        if (hasValidConnection()) {
+            Thread t = new Thread() {
+                public void run() {
                     try {
                         JSONObject sleep = new JSONObject();
                         sleep.put("sleep_mode", sleeping);
@@ -190,29 +175,24 @@ public class MainActivity extends AppCompatActivity {
             };
             t.start();
 
-        }
-        else
-        {
+        } else {
             Toast.makeText(context, "Please Connect to Internet network", Toast.LENGTH_LONG).show();
         }
     }
 
     private boolean hasValidConnection() {
-        cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if(cm != null)
-        {
+        cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm != null) {
             NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-            return (activeNetwork!= null) && (activeNetwork.isConnectedOrConnecting());
+            return (activeNetwork != null) && (activeNetwork.isConnectedOrConnecting());
         }
         return false;
     }
 
-    private void initSwitches()
-    {
+    private void initSwitches() {
         String[] switchNames = getResources().getStringArray(R.array.settings);
 
-        for(final String name : switchNames)
-        {
+        for (final String name : switchNames) {
             final Switch s = new Switch(this);
             s.setText(name);
             theSwitches.add(s);
@@ -242,8 +222,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    class MenuAdapter<T> extends ArrayAdapter<Switch>
-    {
+    class MenuAdapter<T> extends ArrayAdapter<Switch> {
         List<Switch> list;
         Context context;
 
@@ -254,31 +233,31 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public int getCount()
-        {
+        public int getCount() {
             return list.size();
         }
+
         @Override
-        public Switch getItem(int position)
-        {
+        public Switch getItem(int position) {
             return list.get(position);
         }
+
         @Override
-        public long getItemId(int position)
-        {
+        public long getItemId(int position) {
             return position;
         }
+
         @Override
-        public View getView(final int position, View convertView, ViewGroup parent)
-        {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             View v = convertView;
 
             // First let's verify the convertView is not null
             if (convertView == null) {
                 // This a new view we inflate the new layout
                 LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                v = inflater.inflate(R.layout.switch_row_layout, null);}
-            TextView text =(TextView) v.findViewById(R.id.switch_name);
+                v = inflater.inflate(R.layout.switch_row_layout, null);
+            }
+            TextView text = (TextView) v.findViewById(R.id.switch_name);
             Switch toggle = (Switch) v.findViewById(R.id.prefSwitch);
 
             // Now we can fill the layout with the right values
@@ -286,10 +265,9 @@ public class MainActivity extends AppCompatActivity {
 
             toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-                {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     switchStates[position] = isChecked;
-                    Log.v("Switch State = ", list.get(position).getText()+ " " + switchStates[position]);
+                    Log.v("Switch State = ", list.get(position).getText() + " " + switchStates[position]);
                 }
             });
 
