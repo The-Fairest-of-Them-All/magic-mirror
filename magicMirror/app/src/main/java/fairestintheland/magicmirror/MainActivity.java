@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         navList = (ListView) findViewById(R.id.left_drawer);
         adapter = new MenuAdapter<>(this, android.R.layout.simple_list_item_1, theSwitches);
         navList.setAdapter(adapter);
-        //syncWithPi(); TODO commented this out for testing with different computers
+        //syncWithPi(); //TODO commented this out for testing with different computers
         sleepButton = (Button) findViewById(R.id.sleepButton);
         sleepButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,20 +128,25 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         EditText ipView = (EditText) findViewById(R.id.ipAddressTextInput);
                         ipAddress = ipView.getText().toString();
+                        Log.d("Sync", "Past getting IP. It is " + ipAddress);
                         parcel = new JSONArray();
                         for (boolean b : switchStates) {
-                            {
-                                parcel.put(b);
-                            }
-                            client = new Socket(ipAddress, 55555);
-                            System.out.println("Connected to raspberry pi.");
-
-                            writer = new PrintWriter(client.getOutputStream(), true);
-                            writer.write(parcel.toString());
-                            writer.flush();
-                            writer.close();
-                            client.close();
+                            //{
+                            parcel.put(b);
                         }
+                        Log.d("Sync", "Parcel created" + parcel.toString());
+                        client = new Socket(ipAddress, 55555);
+                        Log.d("Sync", "Connected to raspberry pi");
+                        System.out.println("Connected to raspberry pi.");
+
+                        writer = new PrintWriter(client.getOutputStream(), true);
+                        Log.d("Sync", "About to write to the socket.");
+                        writer.write(parcel.toString());
+                        Log.d("Sync", "Wrote to socket");
+                        writer.flush();
+                        writer.close();
+                        client.close();
+                        //}
                     } catch (IOException e) {
                         Toast.makeText(context, "Unable to connect to server", Toast.LENGTH_SHORT).show();
                     }
