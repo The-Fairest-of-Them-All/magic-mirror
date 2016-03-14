@@ -17,7 +17,7 @@ import java.util.Enumeration;
 public class RpiUI extends JFrame {
     
     static final int BITMAP_SIZE = 8;
-    static final int SocketServerPORT = 55555;
+    static final int SocketServerPORT = 60_000;
     
     static ServerSocket serverSocket;
     static String ipAddress;
