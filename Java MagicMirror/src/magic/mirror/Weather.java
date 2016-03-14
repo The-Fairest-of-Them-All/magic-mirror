@@ -4,7 +4,7 @@ import com.github.dvdme.ForecastIOLib.FIOCurrently;
 import com.github.dvdme.ForecastIOLib.ForecastIO;
 import com.github.dvdme.ForecastIOLib.FIODaily;
 import com.google.gson.*;
-        
+import com.eclipsesource.json.*;
 /*
  * @author chris
  */
@@ -43,5 +43,13 @@ public class Weather {
         fio.getForecast(location.latitude, location.longitude);
         current = new FIOCurrently(fio);
         daily = new FIODaily(fio);
+    }
+    
+    public void printCurrently(){
+        //Print currently data
+        System.out.println("\nCurrently\n");
+        String [] f  = current.get().getFieldsArray();
+        for(int i = 0; i<f.length;i++)
+        System.out.println(f[i]+": "+current.get().getByKey(f[i]));
     }
 }
