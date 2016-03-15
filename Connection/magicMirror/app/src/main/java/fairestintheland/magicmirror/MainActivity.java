@@ -129,10 +129,10 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //syncWithPi(); //TODO this was the original call, add everything else in this method
 
-                //get user entered IP Address, separate the individual values
+                //get user entered IP Address
                 ipAddress = ipView.getText().toString();
 
-                new MyClientTask(ipAddress).execute();
+                new MyClientTask().execute();
             }
         });
     }
@@ -143,20 +143,18 @@ public class MainActivity extends AppCompatActivity {
      * This was made to replace SyncWithPi. It uses a statically assigned IP address and port number currently
      */
     public class MyClientTask extends AsyncTask<Void, Void, Void> {
-        String ipAddress;
-        MyClientTask(String ipAddress) {
-            this.ipAddress = ipAddress;
-        }
+        MyClientTask() {}
 
         @Override
         protected Void doInBackground(Void... arg0) {
-
             DataOutputStream dataOutputStream = null;
             DataInputStream dataInputStream = null;
 
+            //separate user input string at . characters into String[] then copy the values into a byte[]
+            //to be used as input for getting iNetAddress
             String[] ipWithSpaces;
             ipWithSpaces = ipAddress.split("\\.", 4);
-            byte[] ipAddr = new byte[4];
+            byte[] ipAddr = new byte[4]; //this is the byte[] used to get iNetAddress
             for (int i = 0; i<4; i++) {
                 if (Integer.parseInt(ipWithSpaces[i]) > Byte.MAX_VALUE) {
                     Integer temp = (Integer.parseInt(ipWithSpaces[i]) - 256);
@@ -165,11 +163,7 @@ public class MainActivity extends AppCompatActivity {
                 ipAddr[i] = Byte.decode(ipWithSpaces[i]).byteValue();
             }
 
-            /*byte[] ipAddr = new byte[]{-64, -88, 43, 69};
-            ipAddr = new byte[]{-64, -88, 43, -93};
-            ipAddr = new byte[]{-64, -88, 1, -104}; //192.168.1.152 for Keith laptop
-            ipAddr = new byte[]{-64, -88, 1, -93}; //192.168.1.163 for Keith android*/
-
+            //get InetAddress
             try {
                 addr = InetAddress.getByAddress(ipAddr);
             } catch (UnknownHostException e) {
@@ -179,7 +173,6 @@ public class MainActivity extends AppCompatActivity {
             try {
                 parcel = new JSONArray();
                 for (boolean b : switchStates) {
-                    //{
                     parcel.put(b);
                 }
                 Log.d("Sync", "Parcel created" + parcel.toString());
@@ -192,9 +185,11 @@ public class MainActivity extends AppCompatActivity {
                 writer.write(parcel.toString());
                 Log.d("Sync", "Wrote to socket");
                 writer.flush();
+
+                //send all parcels with true set as selection
+
                 writer.close();
                 client.close();
-
             } catch (UnknownHostException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -239,7 +234,6 @@ public class MainActivity extends AppCompatActivity {
             //textResponse.setText(response);
             super.onPostExecute(result);
         }
-
     }
 //---------------------------------------------------------------
 
