@@ -5,6 +5,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -61,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
     Context context;
     ConnectivityManager cm;
     int PORT = 55555;
+    MainActivity mainActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
 
 
 
