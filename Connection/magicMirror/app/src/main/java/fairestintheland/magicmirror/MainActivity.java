@@ -61,8 +61,10 @@ public class MainActivity extends AppCompatActivity {
     JSONArray parcel;
     Context context;
     ConnectivityManager cm;
-    int PORT = 55555;
+    int PORT = 55555; //TODO add this var
     MainActivity mainActivity;
+    EditText ipView; //TODO add this var
+    InetAddress addr = null; //TODO add this var
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
         navList = (ListView) findViewById(R.id.left_drawer);
         adapter = new MenuAdapter<>(this, android.R.layout.simple_list_item_1, theSwitches);
         navList.setAdapter(adapter);
+        ipView = (EditText) findViewById(R.id.ipAddressTextInput);
         //syncWithPi(); //TODO commented this out for testing with different computers
         sleepButton = (Button) findViewById(R.id.sleepButton);
         sleepButton.setOnClickListener(new View.OnClickListener() {
@@ -124,45 +127,48 @@ public class MainActivity extends AppCompatActivity {
         syncButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //syncWithPi();
-                //callSync();
-                new MyClientTask().execute();
+                //syncWithPi(); //TODO this was the original call, add everything else in this method
+
+                //get user entered IP Address, separate the individual values
+                ipAddress = ipView.getText().toString();
+
+                new MyClientTask(ipAddress).execute();
             }
         });
-
     }
 
-
-
-
+    //TODO add everything between the lines
     //___________________________________________________________
-
     /**
      * This was made to replace SyncWithPi. It uses a statically assigned IP address and port number currently
      */
     public class MyClientTask extends AsyncTask<Void, Void, Void> {
-
-        MyClientTask() {
-
+        String ipAddress;
+        MyClientTask(String ipAddress) {
+            this.ipAddress = ipAddress;
         }
 
         @Override
         protected Void doInBackground(Void... arg0) {
 
-            EditText ipView = (EditText) findViewById(R.id.ipAddressTextInput);
-            //ipAddress = ipView.getText().toString();
-
             DataOutputStream dataOutputStream = null;
             DataInputStream dataInputStream = null;
 
-            //byte a = unsignedToBytes((byte)-64);
-            //byte b = (byte)-64 & 0xFF;
+            String[] ipWithSpaces;
+            ipWithSpaces = ipAddress.split("\\.", 4);
+            byte[] ipAddr = new byte[4];
+            for (int i = 0; i<4; i++) {
+                if (Integer.parseInt(ipWithSpaces[i]) > Byte.MAX_VALUE) {
+                    Integer temp = (Integer.parseInt(ipWithSpaces[i]) - 256);
+                    ipWithSpaces[i] = temp.toString();
+                }
+                ipAddr[i] = Byte.decode(ipWithSpaces[i]).byteValue();
+            }
 
-            InetAddress addr = null;
-            byte[] ipAddr = new byte[]{-64, -88, 43, 69};
+            /*byte[] ipAddr = new byte[]{-64, -88, 43, 69};
             ipAddr = new byte[]{-64, -88, 43, -93};
             ipAddr = new byte[]{-64, -88, 1, -104}; //192.168.1.152 for Keith laptop
-            ipAddr = new byte[]{-64, -88, 1, -93}; //192.168.1.163 for Keith android
+            ipAddr = new byte[]{-64, -88, 1, -93}; //192.168.1.163 for Keith android*/
 
             try {
                 addr = InetAddress.getByAddress(ipAddr);
