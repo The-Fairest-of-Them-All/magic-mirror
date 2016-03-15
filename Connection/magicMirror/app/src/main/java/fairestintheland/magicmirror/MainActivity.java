@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
     MainActivity mainActivity;
     EditText ipView; //TODO add this var
     InetAddress addr = null; //TODO add this var
+    TwitterMessage tMess;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         }
         System.out.println("!!You got an event!!!" + cEvent.readCalendarEvent(this));
 
-        TwitterMessage tMess = new TwitterMessage();
+        tMess = new TwitterMessage();
         tMess.getTweet();
         switchStates = new boolean[]{false, false, false, false}; //Twitter,Email,Weather,Calendar
         context = this;
@@ -131,7 +132,6 @@ public class MainActivity extends AppCompatActivity {
 
                 //get user entered IP Address
                 ipAddress = ipView.getText().toString();
-
                 new MyClientTask().execute();
             }
         });
@@ -187,9 +187,34 @@ public class MainActivity extends AppCompatActivity {
                 writer.flush();
 
                 //send all parcels with true set as selection
+                //Send twitter if desired
+                if(switchStates[0]) {
+                    //send Twitter
+                    String tweet;
+                    tMess.getTweet();
+                    tweet = tMess.returnTweet();
+                    System.out.println("This tweet will be sent to server " + tweet);
+                    Log.d("Sync", "This tweet will be sent to server " + tweet);
+                    writer.write("Tweet");
+                    writer.flush();
+                    writer.write(tweet);
+                    writer.flush();
+                }
+                //Send email if desired
+                if(switchStates[1]) {
+                    //send Email
+                }
+                //Send weather if desired
+                if(switchStates[2]) {
+                    //send Weather
+                }
+                //Send calendar if desired
+                if(switchStates[3]) {
+                    //send Calendar
+                }
 
-                writer.close();
-                client.close();
+                //writer.close();
+                //client.close();
             } catch (UnknownHostException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();

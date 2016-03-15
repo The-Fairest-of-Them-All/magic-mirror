@@ -132,6 +132,18 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
 
+                    //Twitter,Email,Weather,Calendar
+                    if(messageFromClient.equals("Tweet")) {
+                        final String tweet;
+                        tweet = buff.readLine();
+                        MainActivity.this.runOnUiThread(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                msg.setText(tweet);
+                            }
+                        });
+                    }
                 }
             } catch (IOException e) {
                 // TODO Auto-generated catch block

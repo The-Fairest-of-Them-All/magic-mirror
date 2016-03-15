@@ -19,6 +19,7 @@ public class TwitterMessage {
 
     final static String UserName = "cnn";
     private List<String> list;
+    private String tweet;
 
     Handler handler = new Handler() {
         @Override
@@ -28,11 +29,13 @@ public class TwitterMessage {
             for(int i =0;i<10;i++){
                 System.out.println("!!!!!!!twitter message!!!!!!"+string);
             }
-
+            tweet = bundle.getString("myKey");
         }
     };
 
-
+    public String returnTweet() {
+        return tweet;
+    }
 
     public void getTweet(){
         list = new ArrayList<String>();
@@ -66,7 +69,7 @@ public class TwitterMessage {
 
                         bundle.putString("myKey", list.toString());
                         msg.setData(bundle);
-                        handler.sendMessage(msg);
+                        handler.sendMessage(msg); //received by handleMessage
 
                 } catch (TwitterException e) {
                     e.printStackTrace();
