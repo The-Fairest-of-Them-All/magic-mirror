@@ -139,6 +139,10 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+        public int unsignedToBytes(byte b) {
+            return b & 0xFF;
+        }
+
         @Override
         protected Void doInBackground(Void... arg0) {
 
@@ -146,8 +150,24 @@ public class MainActivity extends AppCompatActivity {
             DataOutputStream dataOutputStream = null;
             DataInputStream dataInputStream = null;
 
+            //byte a = unsignedToBytes((byte)-64);
+            //byte b = (byte)-64 & 0xFF;
+
+            InetAddress addr = null;
+            byte[] ipAddr = new byte[]{-64,-88,43,69};
+            ipAddr = new byte[]{-64,-88,43,-93};
+            ipAddr = new byte[]{-64,-88,1,-104}; //1.152
+            ipAddr = new byte[]{-64,-88,1,-93}; //1.163
             try {
-                socket = new Socket("192.168.1.152", 55555);
+                addr = InetAddress.getByAddress(ipAddr);
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                //socket = new Socket("192.168.43.69",60000);
+                //socket = new Socket(addr, 60000);
+                socket = new Socket(addr, 55555);
                 dataOutputStream = new DataOutputStream(
                         socket.getOutputStream());
                 dataInputStream = new DataInputStream(socket.getInputStream());
@@ -273,7 +293,7 @@ public class MainActivity extends AppCompatActivity {
                             parcel.put(b);
                         }
                         Log.d("Sync", "Parcel created" + parcel.toString());
-                        client = new Socket(ipAddress, 55555);
+                        client = new Socket(ipAddress, 60000);
 
                         Log.d("Sync", "Connected to raspberry pi");
                         System.out.println("Connected to raspberry pi.");
