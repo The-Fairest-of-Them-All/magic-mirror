@@ -10,9 +10,11 @@ import com.eclipsesource.json.*;
  */
 public class Weather {
     private Location location;
-    private int hiTemp,
-                loTemp,
-                currentTemp;
+    private String hiTemp = "",
+                   loTemp = "",
+                   currentTemp = "",
+                   conditions = "",
+                   percipitation = "";
     private Gson data;
     ForecastIO fio;
     FIOCurrently current;
@@ -24,6 +26,7 @@ public class Weather {
         setupFIO();
         location = new Location();
         getWeather();
+  //      setWeather();
     }
     
     public Weather(Gson data){
@@ -32,6 +35,7 @@ public class Weather {
         fio = new ForecastIO(apiKey);
         setupFIO();
         getWeather();
+        setWeather();
     }
     
     private void setupFIO(){
@@ -42,14 +46,31 @@ public class Weather {
     private void getWeather(){
         fio.getForecast(location.latitude, location.longitude);
         current = new FIOCurrently(fio);
-        daily = new FIODaily(fio);
+    }
+    
+    private void setWeather(){
+        hiTemp = Double.toString(current.get().temperatureMax());
+        loTemp = current.get().temperatureMin().toString();
+        currentTemp = current.get().temperature().toString();
+        //conditions = current.get().;
+        percipitation = current.get().precipProbability().toString() + "%";
     }
     
     public void printCurrently(){
-        //Print currently data
-        System.out.println("\nCurrently\n");
-        String [] f  = current.get().getFieldsArray();
-        for(int i = 0; i<f.length;i++)
-        System.out.println(f[i]+": "+current.get().getByKey(f[i]));
+//        //Print currently data
+//        System.out.println("\nCurrently\n");
+//        String [] f  = current.get().getFieldsArray();
+//        for(int i = 0; i<f.length;i++)
+//        System.out.println(f[i]+": "+current.get().getByKey(f[i]));
+        System.out.println("Hi: " + hiTemp);
+        System.out.print(current.get().temperature());
+//        System.out.println("Lo: ");
+//        System.out.print(loTemp);
+//        System.out.println("Current: ");
+//        System.out.print(currentTemp);
+//        System.out.println("Conditions: ");
+//        System.out.print(conditions);
+//        System.out.println("Precip: ");
+//        System.out.print(percipitation);
     }
 }

@@ -45,7 +45,7 @@ public class LocationIT {
     @Test
     public void testGetLongitude() {
         System.out.println("getLongitude");
-        assertEquals("getLongitude Works", "39.9501", loc.longitude);
+        assertEquals("getLongitude Works", "39.9819", loc.longitude);
     }
 
     /**
@@ -54,7 +54,7 @@ public class LocationIT {
     @Test
     public void testGetLattitude() {
         System.out.println("getLattitude");
-        assertEquals("getLattitude Works","75.1667", loc.latitude);
+        assertEquals("getLattitude Works","-75.1529", loc.latitude);
     }
     
 }
