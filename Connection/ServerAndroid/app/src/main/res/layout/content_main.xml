@@ -11,7 +11,8 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.owner.serverandroid.MainActivity"
-    tools:showIn="@layout/activity_main">
+    tools:showIn="@layout/activity_main"
+    android:weightSum="1">
 
     <TextView
         android:id="@+id/info"
@@ -25,12 +26,50 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
+        android:layout_height="82dp">
         <TextView
             android:id="@+id/msg"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="51dp"
+            android:layout_weight="0.23" />
     </ScrollView>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="82dp">
+        <TextView
+            android:id="@+id/twitterMsg"
+            android:layout_width="match_parent"
+            android:layout_height="61dp"
+            android:text="No Twitter message yet."/>
+    </ScrollView>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="70dp">
+        <TextView
+            android:id="@+id/emailMsg"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:text="No Email message yet."/>
+    </ScrollView>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="71dp">
+        <TextView
+            android:id="@+id/weatherMsg"
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            android:text="No Weather message yet."/>
+    </ScrollView>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="57dp">
+        <TextView
+            android:id="@+id/calendarMsg"
+            android:layout_width="match_parent"
+            android:layout_height="75dp"
+            android:text="No Calendar message yet."/>
+    </ScrollView>
+
 
 </LinearLayout>

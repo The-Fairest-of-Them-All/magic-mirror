@@ -27,7 +27,7 @@ import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity {
 
-    TextView info, infoip, msg;
+    TextView info, infoip, msg, twit;
     String message = "";
     ServerSocket serverSocket;
 
@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
         info = (TextView) findViewById(R.id.info);
         infoip = (TextView) findViewById(R.id.infoip);
         msg = (TextView) findViewById(R.id.msg);
+        twit = (TextView) findViewById(R.id.twitterMsg);
 
         infoip.setText(getIpAddress());
 
@@ -140,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
 
                             @Override
                             public void run() {
-                                msg.setText(tweet);
+                                twit.setText(messageFromClient);
                             }
                         });
                     }
