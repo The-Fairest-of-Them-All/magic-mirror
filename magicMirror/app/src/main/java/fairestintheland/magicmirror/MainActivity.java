@@ -32,8 +32,32 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**used for create a connection between mobile application and the Raspberry Pi,
+    and create a UI for the Android application*/
 public class MainActivity extends AppCompatActivity {
     //UI objects
+	
+	/**
+	DrawerLayout mDrawerLayout: 	a Layout for the all switch state, and it can hide on the left side of the application
+	ActionBarDrawerToggle mDrawerToggle: Toggle for hide and display the Drawer Layout
+	CharSequence mTitle:	 the title of the drawer layout
+	ArrayList<Switch> theSwitches:	store all switch states
+	MenuAdapter<Switch> adapter:  set up all elements for the switch listview
+	ListView navList: a ListView which is placed in the DrawerLayout and display the switches’ view 
+	Button sleepButton: set the sleeping state  
+	Button syncButton: send all switch states to Raspberry Pi
+	boolean sleeping: state for switch off the mirror screen
+	boolean[] switchState: store all switch states 
+	EditText ipBar: user enter the Raspberry’s IP address
+	Socket client: client socket which used for set up the connection
+	PrintWriter writer: used to send data to other side in socket 
+	String ipAddress: IP address of the Raspberry Pi
+	JSONArray parcel: store all messages which will send to the sever
+	Context context: context of current activity
+	ConnectivityManager cm: ConnectivityManager of current context
+
+	*/
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private CharSequence mDrawerTitle;
@@ -55,6 +79,10 @@ public class MainActivity extends AppCompatActivity {
     Context context;
     ConnectivityManager cm;
 
+	
+	/**
+	set up the UI and event listeners for Android Application
+	*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -121,6 +149,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+	/**:  send message to the Raspberry Pi*/
     private void syncWithPi() {
         if (hasValidConnection()) {
             Thread t = new Thread() {
@@ -154,6 +183,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+	/** set  Raspberry Pi screen sleep*/
     private void setSleepMode() {
         if (hasValidConnection()) {
             Thread t = new Thread() {
@@ -182,6 +212,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+	/**check if the Android OS has network connection*/
     private boolean hasValidConnection() {
         cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (cm != null) {
@@ -191,6 +222,7 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
+	/**initialize the switches*/
     private void initSwitches() {
         String[] switchNames = getResources().getStringArray(R.array.settings);
 
@@ -223,8 +255,14 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
+/**inner class which set up all elements for the switch listview*/
     class MenuAdapter<T> extends ArrayAdapter<Switch> {
+		
+		/**
+		List<Switch> list: store all switch states
+		Context context: context of activity which this class used in
+		*/
+		
         List<Switch> list;
         Context context;
 
@@ -249,6 +287,7 @@ public class MainActivity extends AppCompatActivity {
             return position;
         }
 
+		/** Set up the view for one element which is on specify position(index)*/
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
             View v = convertView;

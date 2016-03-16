@@ -3,9 +3,17 @@ package magic.mirror;
 import com.google.gson.*;
 
 /*
- * @author chris
+ * location object which used for getting the current Location
  */
 public class Location {
+	
+	/**
+	String currentLongitude: 	longitude of the current location
+	String currentLatitude: 	latitude of the current location
+
+	*/
+	
+	
     public String longitude,
                    latitude;
     private double testLong = 39.9501, //This is the location of Philadelphia, PA
@@ -25,18 +33,22 @@ public class Location {
         setLatitude();
     }
     
+	/**update Longitude*/
     private void setLongitude(){
         //TODO Parse GSON OBJ
     }
     
+	/**update latitude*/
     private void setLatitude(){
         //TODO Parse GSON OBJ
     }
     
+	/**return Longitude*/
     public String getLongitude(){
         return longitude;
     }
     
+	/**return latitude*/
     public String getLattitude(){
         return latitude;
     }

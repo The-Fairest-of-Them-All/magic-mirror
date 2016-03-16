@@ -13,9 +13,20 @@ import java.util.Enumeration;
 /**
  *
  * @author KatieHorn
+  create the UI for Raspberry PI and display the information on the screen.
  */
 public class RpiUI extends JFrame {
     
+	
+	/**
+	int SocketServerPORT :	 the port number of the sever 
+	String message: 	received messages which is from client
+	ServerSocket serverSocket: 	used for create a connection as a sever
+	String ipAddress:	 the IP address of the Raspberry Pi
+	Thread socketServerThread: 	Thread which used for handle the network action
+	*/
+	
+	
     static final int BITMAP_SIZE = 8;
     static final int SocketServerPORT = 55555;
     
@@ -36,7 +47,7 @@ public class RpiUI extends JFrame {
             + "anim id est laborum.";
     static String quote = "I'm ready - Spongebob Squarepants";
     
-
+/** set up the java Frame for mirror screen*/
     private static void framer(){
         JFrame frame = new JFrame("Raspberry Pi App");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -186,11 +197,14 @@ public class RpiUI extends JFrame {
         
         System.out.println("Starting raspberry pi program.");
         ipAddress = getIpAddress();
+        
         System.out.println("My IP address is: " + ipAddress);
         socketServerThread = new Thread(new SocketServerThread());
         socketServerThread.start();
     }
     
+	
+	/**used for create a connection as a sever*/
     private static class SocketServerThread extends Thread {
         int count = 0;
 
@@ -269,6 +283,7 @@ public class RpiUI extends JFrame {
 
     }
 
+	/** get IP address of the current device*/
     private static String getIpAddress() {
         String ip = "";
         try {

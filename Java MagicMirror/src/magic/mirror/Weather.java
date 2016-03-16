@@ -7,8 +7,23 @@ import com.google.gson.*;
         
 /*
  * @author chris
+ used for receive and store the weather information.
  */
 public class Weather {
+	
+	/**
+	Location location:	 current location of the device 
+	Int hiTemp: highest temperature of today
+	Int lotemp: lowest temperature of today
+	currentTemp: current temperature of today
+	Gson data: store the data for location
+	ForecaseIO fio: contain Forecast setting
+	FIOCurrently current: current weather information
+	FIODaily daily:  several days’ weather information
+	String apiKey: used for access Forecast 
+	*/
+	
+	
     private Location location;
     private int hiTemp,
                 loTemp,
@@ -34,11 +49,13 @@ public class Weather {
         getWeather();
     }
     
+	/**set up FIO features*/
     private void setupFIO(){
         fio.setLang(ForecastIO.LANG_ENGLISH);
         fio.setUnits(ForecastIO.UNITS_US);
     }
     
+	/**update the weather information*/
     private void getWeather(){
         fio.getForecast(location.latitude, location.longitude);
         current = new FIOCurrently(fio);
