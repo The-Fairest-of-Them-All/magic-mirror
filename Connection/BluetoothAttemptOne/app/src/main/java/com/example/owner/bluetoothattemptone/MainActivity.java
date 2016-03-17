@@ -62,9 +62,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             bluetoothInfo.setText("Bluetooth available and on. Great.");
         }
-
-        //if false, bluetooth off, otherwise start discovery, when results arrive the callback is BroadcastReceiver
-        bluetoothAvailable =  bluetoothAdapter.startDiscovery();
     }
 
     @Override
@@ -125,5 +122,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void startLooking(View view) {
+
+        //if false, bluetooth off, otherwise start discovery, when results arrive the callback is BroadcastReceiver
+        bluetoothAvailable =  bluetoothAdapter.startDiscovery();
     }
 }

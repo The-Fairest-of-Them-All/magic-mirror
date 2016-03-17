@@ -31,4 +31,12 @@
         android:layout_below="@+id/bluetoothInfo">
 
     </ListView>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_below="@+id/bluetoothInfo"
+        android:id="@+id/syncButton"
+        android:text="Sync via bluetooth"
+        android:onClick="startLooking"/>
 </RelativeLayout>

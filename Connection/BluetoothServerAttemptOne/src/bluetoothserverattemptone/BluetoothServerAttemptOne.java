@@ -5,8 +5,10 @@
  */
 package bluetoothserverattemptone;
 
+import javax.microedition.io.*;
 import javax.bluetooth.*;
-import com.intel.bluetooth.BlueCoveImpl;
+import javax.obex.*;
+import com.intel.bluetooth.*;
 
 /**
  *
@@ -17,6 +19,8 @@ public class BluetoothServerAttemptOne {
     private static Object lock = new Object();
     public static String bluetoothAddress;
     public static int discoverableMode;
+    StreamConnectionNotifier notifier;
+    public static boolean discoverable;
 
     /**
      * @param args the command line arguments
@@ -29,26 +33,9 @@ public class BluetoothServerAttemptOne {
             LocalDevice localDevice = LocalDevice.getLocalDevice();
             bluetoothAddress = localDevice.getBluetoothAddress();
             System.out.println("My bluetooth address is " + bluetoothAddress);
-            discoverableMode = localDevice.getDiscoverable();
-            if (discoverableMode == DiscoveryAgent.NOT_DISCOVERABLE) {
-                System.out.println("Discoverable mode is " + discoverableMode + " undiscoverable");
-                try {
-                    boolean available = localDevice.setDiscoverable(DiscoveryAgent.GIAC);
-                    if (available) {
-                        System.out.println("Set to discoverable");
-                    } else {
-                        System.out.println("Could not set device to discoverable mode.");
-                    }
-                }
-                catch (IllegalArgumentException e) {
-                    e.printStackTrace();
-                } catch (BluetoothStateException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                System.out.println("Discoverable mode is " + discoverableMode + " discoverable");
-            }
 
+            discoverable = getOrSetDiscoverableMode(localDevice);
+            
             //The DiscoveryAgent class provides methods to perform device and service discovery (From API)
             DiscoveryAgent agent = localDevice.getDiscoveryAgent();
 
@@ -66,10 +53,36 @@ public class BluetoothServerAttemptOne {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
-        while(true) {
+
+        while (true) {
             System.out.println("Still going");
         }
+    }
+
+    //returns false for an undiscoverable device or if setDiscoverable() could not be completed, true for  
+    private static boolean getOrSetDiscoverableMode(LocalDevice localDevice) {
+        boolean available = false;
+
+        discoverableMode = localDevice.getDiscoverable();
+        if (discoverableMode == DiscoveryAgent.NOT_DISCOVERABLE) {
+            System.out.println("Discoverable mode is " + discoverableMode + " undiscoverable");
+            try {
+                available = localDevice.setDiscoverable(DiscoveryAgent.GIAC);
+                if (available) {
+                    System.out.println("Now set to discoverable");
+                } else {
+                    System.out.println("Could not set device to discoverable mode.");
+                }
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            } catch (BluetoothStateException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Discoverable mode is " + discoverableMode + " discoverable");
+            available = true;
+        }
+        return available;
     }
 
 }
