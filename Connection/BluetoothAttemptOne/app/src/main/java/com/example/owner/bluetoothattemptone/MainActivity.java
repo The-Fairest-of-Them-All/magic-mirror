@@ -1,7 +1,10 @@
 package com.example.owner.bluetoothattemptone;
 
 import android.annotation.TargetApi;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -12,6 +15,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.bluetooth.*;
+import android.widget.ListView;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
@@ -19,7 +23,9 @@ public class MainActivity extends AppCompatActivity {
     BluetoothManager bluetoothManager;
     BluetoothAdapter bluetoothAdapter;
     TextView bluetoothInfo;
+    ListView discoverableList;
     boolean bluetoothAvailable;
+    IntentFilter filter;
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Override
@@ -38,6 +44,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        discoverableList = (ListView) findViewById(R.id.discoverableList);
+
+        // Register the BroadcastReceiver
+        filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        registerReceiver(mReceiver, filter); // Don't forget to unregister during onDestroy
+
         bluetoothInfo = (TextView) findViewById(R.id.bluetoothInfo);
         bluetoothManager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
         bluetoothAdapter = bluetoothManager.getAdapter();
@@ -50,9 +62,17 @@ public class MainActivity extends AppCompatActivity {
         } else {
             bluetoothInfo.setText("Bluetooth available and on. Great.");
         }
-        bluetoothAvailable =  bluetoothAdapter.startDiscovery(); //if false, bluetooth off
+
+        //if false, bluetooth off, otherwise start discovery, when results arrive the callback is BroadcastReceiver
+        bluetoothAvailable =  bluetoothAdapter.startDiscovery();
     }
 
+    @Override
+    protected void onDestroy() {
+
+        unregisterReceiver(mReceiver);
+        super.onDestroy();
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -67,6 +87,23 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+    // Create a BroadcastReceiver for ACTION_FOUND
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            // When discovery finds a device
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                // Get the BluetoothDevice object from the Intent
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                // Add the name and address to an array adapter to show in a ListView
+                System.out.println(device.getName() + "\n" + device.getAddress());
+                //discoverableList.add(device.getName() + "\n" + device.getAddress());
+
+            }
+        }
+    };
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
