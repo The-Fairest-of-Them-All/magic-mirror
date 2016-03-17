@@ -27,3 +27,4 @@ nbactions.xml
 .DS_Store
 /build
 .idea/vcs.xml
+/Connection/BluetoothServerAttemptOne/nbproject/private/
