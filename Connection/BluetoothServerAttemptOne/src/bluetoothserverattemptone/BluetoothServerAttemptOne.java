@@ -66,6 +66,10 @@ public class BluetoothServerAttemptOne {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        
+        while(true) {
+            System.out.println("Still going");
+        }
     }
 
 }
