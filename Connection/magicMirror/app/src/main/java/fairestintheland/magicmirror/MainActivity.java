@@ -3,6 +3,8 @@ package fairestintheland.magicmirror;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Looper;
@@ -65,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
     MainActivity mainActivity;
     EditText ipView; //TODO add this var
     InetAddress addr = null; //TODO add this var
+    String ssidName; //TODO add this var
+    EditText showSsidName; //TODO add this var
     TwitterMessage tMess;
 
     @Override
@@ -135,6 +139,8 @@ public class MainActivity extends AppCompatActivity {
                 new MyClientTask().execute();
             }
         });
+
+        getCurrentSSID();
     }
 
     //TODO add everything between the lines
@@ -259,6 +265,15 @@ public class MainActivity extends AppCompatActivity {
             //textResponse.setText(response);
             super.onPostExecute(result);
         }
+    }
+
+
+    public void getCurrentSSID() {
+        WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        WifiInfo info = wifi.getConnectionInfo();
+        ssidName = info.getSSID();
+        showSsidName = (EditText) findViewById(R.id.current_ssid);
+        showSsidName.setText("SSID is: " + ssidName);
     }
 //---------------------------------------------------------------
 
