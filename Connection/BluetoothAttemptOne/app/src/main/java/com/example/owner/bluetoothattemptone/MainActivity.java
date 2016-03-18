@@ -20,6 +20,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -34,7 +36,9 @@ public class MainActivity extends AppCompatActivity {
     BluetoothDevice device;
     ArrayList<Parcelable> devices = new ArrayList<>();
     BluetoothSocket clientSocket = null;
-    String record;
+    UUID uuid;
+    InputStream clientSocketInputStream;
+    OutputStream clientSocketOutputStream;
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Override
@@ -73,42 +77,10 @@ public class MainActivity extends AppCompatActivity {
             bluetoothInfo.setText("Bluetooth available and on. Great.");
         }
 
-        System.out.println("Trying to connect to Lenovo - hard coded version.");
-        //____________________________________________________________________________________________________
-        //device = bluetoothAdapter.getRemoteDevice(MAC ADDRESS GOES HERE);
         //UUID is how the android app finds the raspberry app
-        UUID uuid = UUID.fromString("a96d5795-f8c3-4b7a-9bad-1eefa9e11a94");
-
-        try {
-            clientSocket = device.createRfcommSocketToServiceRecord(uuid);
-            clientSocket.connect();
-            System.out.println("Connected to raspberry pi.");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        uuid = UUID.fromString("a96d5795-f8c3-4b7a-9bad-1eefa9e11a94");
     }
 
-    @Override
-    protected void onDestroy() {
-
-        unregisterReceiver(mReceiver);
-        super.onDestroy();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        //super.onActivityResult(requestCode, resultCode, data);
-
-        //responds to the user's response to the bluetooth enable prompt if it was presented
-        if (requestCode == REQUEST_ENABLE_BT) {
-            if (resultCode == RESULT_OK) {
-                bluetoothInfo.setText("You enabled bluetooth. Thanks.");
-            } else {
-                bluetoothInfo.setText("Bluetooth disabled.");
-            }
-        }
-    }
 
     // Create a BroadcastReceiver for ACTION_FOUND
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -123,9 +95,63 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println("Found " + device.getName() + " at " + device.getAddress());
                 //discoverableList.add(device.getName() + "\n" + device.getAddress());
                 System.out.println(devices);
+
+                //try a connection based on device name
+                if (device.getName().equals("LENOVO-PC")) {
+                    tryToConnect();
+                }
             }
         }
     };
+
+    private void tryToConnect() {
+        BluetoothDevice btDevice = device;
+        System.out.println("Trying to connect to Keith's Lenovo.");
+
+        btDevice = bluetoothAdapter.getRemoteDevice(btDevice.getAddress());
+
+        try {
+            clientSocket = btDevice.createRfcommSocketToServiceRecord(uuid);
+            clientSocket.connect();
+            System.out.println("Connected to raspberry pi.");
+            clientSocketInputStream = clientSocket.getInputStream();
+            clientSocketOutputStream = clientSocket.getOutputStream();
+            for (int i = 0; i < 10; i++) {
+                
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //responds to button press, starts discovery of remote bluetooth devices that are set to discoverable
+    public void startLooking(View view) {
+        //if false, bluetooth off, otherwise start discovery, when results arrive the callback is BroadcastReceiver
+        bluetoothAvailable =  bluetoothAdapter.startDiscovery();
+    }
+
+    //respond to a user's interacting with an activity
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //responds to the user's response to the bluetooth enable prompt if it was presented
+        if (requestCode == REQUEST_ENABLE_BT) {
+            if (resultCode == RESULT_OK) {
+                bluetoothInfo.setText("You enabled bluetooth. Thanks.");
+            } else {
+                bluetoothInfo.setText("Bluetooth disabled.");
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        //have to unregister BroadcastReceiver before the app closes
+        unregisterReceiver(mReceiver);
+        super.onDestroy();
+    }
+
+
+
 
 
     @Override
@@ -148,10 +174,5 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public void startLooking(View view) {
-        //if false, bluetooth off, otherwise start discovery, when results arrive the callback is BroadcastReceiver
-        bluetoothAvailable =  bluetoothAdapter.startDiscovery();
     }
 }
