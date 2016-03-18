@@ -5,11 +5,14 @@
  */
 package bluetoothserverattemptone;
 
+import java.io.IOException;
+import java.io.InputStream;
 import javax.bluetooth.BluetoothStateException;
 import javax.bluetooth.DiscoveryAgent;
 import javax.bluetooth.LocalDevice;
 import javax.bluetooth.UUID;
 import javax.microedition.io.Connector;
+import javax.microedition.io.StreamConnection;
 import javax.microedition.io.StreamConnectionNotifier;
 
 /**
@@ -25,9 +28,11 @@ public class bluetoothListenerThread implements Runnable {
     public static boolean discoverable;
     public static UUID uuid;
     public static String url;
+    public static StreamConnection connection;
 
-    public bluetoothListenerThread() {}
-    
+    public bluetoothListenerThread () {
+    }
+
     @Override
     public void run() {
         listen();
@@ -49,29 +54,31 @@ public class bluetoothListenerThread implements Runnable {
                 //The DiscoveryAgent class provides methods to perform device and service discovery (From API)
                 DiscoveryAgent agent = localDevice.getDiscoveryAgent();
 
-                uuid = new UUID(80087355); // "04c6093b-0000-1000-8000-00805f9b34fb"
-                url = "btspp://localhost:" + uuid.toString() + ";name=RemoteBluetooth";
+                //UUID is how the android app finds the raspberry app
+                //String uuidString = "a96d5795-f8c3-4b7a-9bad-1eefa9e11a94";
+                String uuidString = "a96d5795f8c34b7a9bad1eefa9e11a94";
+                uuid = new UUID(uuidString, false);
+                //btspp is the URL scheme for an RFCOMM StreamConnection
+                //url required format is btspp: //hostname: [ CN | UUID ]; parameters for StreamConnectionNotifier
+                url = "btspp://localhost:" + uuid.toString() + ";name=RaspberryServer";
                 notifier = (StreamConnectionNotifier) Connector.open(url);
 
             }
-
-            // 3
-            /*agent.startInquiry(DiscoveryAgent.GIAC, new MyDiscoveryListener());
-
-            try {
-                synchronized (lock) {
-                    lock.wait();
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            System.out.println("Device Inquiry Completed. ");*/
         } catch (Exception e) {
             e.printStackTrace();
+            return;
         }
 
         while (true) {
-            System.out.println("Still going");
+            System.out.println("Waiting for connection from Android app...");
+            try {
+                //listen for client to connect to the url defined by url
+                connection = notifier.acceptAndOpen();
+                System.out.println("Connection to Android accepted.");
+                processConnection(connection);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -83,7 +90,7 @@ public class bluetoothListenerThread implements Runnable {
         if (discoverableMode == DiscoveryAgent.NOT_DISCOVERABLE) {
             System.out.println("Discoverable mode is " + discoverableMode + " undiscoverable");
             try {
-                available = localDevice.setDiscoverable(DiscoveryAgent.GIAC);
+                available = localDevice.setDiscoverable(DiscoveryAgent.LIAC);
                 if (available) {
                     System.out.println("Now set to discoverable");
                 } else {
@@ -99,5 +106,23 @@ public class bluetoothListenerThread implements Runnable {
             available = true;
         }
         return available;
+    }
+    
+    private static void processConnection(StreamConnection connection) {
+        try {
+            // prepare to receive data
+            InputStream inputStream = connection.openInputStream();
+
+            System.out.println("waiting for input");
+
+            while (true) {
+                int command = inputStream.read();
+
+                System.out.println(command);
+                
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
