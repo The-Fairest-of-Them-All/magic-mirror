@@ -104,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    //attempt a bluetooth connection to a device whose name is known
     private void tryToConnect() {
         BluetoothDevice btDevice = device;
         System.out.println("Trying to connect to Keith's Lenovo.");
@@ -120,7 +121,6 @@ public class MainActivity extends AppCompatActivity {
             clientSocketInputStream = clientSocket.getInputStream();
             clientSocketOutputStream = clientSocket.getOutputStream();
             for (int i = 0; i < 10; i++) {
-
                 clientSocketOutputStream.write(i);
             }
         } catch (IOException e) {
