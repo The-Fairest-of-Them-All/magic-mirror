@@ -31,6 +31,7 @@ public class bluetoothListenerThread implements Runnable {
     public static String url;
     public static StreamConnection connection;
     public static LocalDevice localDevice; //The LocalDevice class defines the basic functions of the Bluetooth manager
+   
 
     public bluetoothListenerThread() {
     }

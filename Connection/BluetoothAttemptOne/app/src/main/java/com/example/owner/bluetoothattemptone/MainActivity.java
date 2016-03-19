@@ -28,7 +28,7 @@ import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_ENABLE_BT = 100;
-    private final String RASPBERRY_PI_NAME = "LENOVO-PC";
+    private final String RASPBERRY_PI_NAME = "Charlotte's iPhone";
     private final String UUIDSTRING = "a96d5795-f8c3-4b7a-9bad-1eefa9e11a94";
     BluetoothManager bluetoothManager;
     BluetoothAdapter bluetoothAdapter;
@@ -37,11 +37,12 @@ public class MainActivity extends AppCompatActivity {
     boolean bluetoothAvailable;
     IntentFilter filter;
     BluetoothDevice device;
-    ArrayList<Parcelable> devices = new ArrayList<>();
+    ArrayList<Parcelable> devices = new ArrayList<>(); //hostname and MAC address of every device that is discoverable
     BluetoothSocket clientSocket = null;
     UUID uuid;
     InputStream clientSocketInputStream;
     OutputStream clientSocketOutputStream;
+    boolean[] switchStates = new boolean[]{false, false, false, false};
 
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -100,6 +101,9 @@ public class MainActivity extends AppCompatActivity {
 
                 //try a connection based on device name
                 if (device.getName().equals(RASPBERRY_PI_NAME)) {
+                    tryToConnect();
+                    return;
+                } else if (device.getName().equals(RASPBERRY_PI_NAME.toUpperCase())) {
                     tryToConnect();
                     return;
                 }

@@ -5,11 +5,10 @@
  */
 package bluetoothserverattemptone;
 
-import javax.microedition.io.*;
-import javax.bluetooth.*;
-import javax.obex.*;
-import com.intel.bluetooth.*;
-import bluetoothserverattemptone.bluetoothListenerThread;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -17,11 +16,23 @@ import bluetoothserverattemptone.bluetoothListenerThread;
  */
 public class BluetoothServerAttemptOne {
 
+    private static InetAddress addr;
+    static String hostname;
+
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         Thread bluetoothListenerThread = new Thread(new bluetoothListenerThread());
         bluetoothListenerThread.start();
-    }    
+
+        try {
+            addr = InetAddress.getLocalHost();
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(BluetoothServerAttemptOne.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        hostname = addr.getHostName();
+        System.out.println("My IP address is " + addr);
+        System.out.println("My hostname is " + hostname);
+    }
 }
