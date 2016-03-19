@@ -28,6 +28,8 @@ import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_ENABLE_BT = 100;
+    private final String RASPBERRY_PI_NAME = "LENOVO-PC";
+    private final String UUIDSTRING = "a96d5795-f8c3-4b7a-9bad-1eefa9e11a94";
     BluetoothManager bluetoothManager;
     BluetoothAdapter bluetoothAdapter;
     TextView bluetoothInfo;
@@ -40,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     UUID uuid;
     InputStream clientSocketInputStream;
     OutputStream clientSocketOutputStream;
-    public final String RASPBERRY_PI_NAME = "LENOVO-PC";
+
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Override
@@ -128,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             //UUID is how the android app finds the raspberry app, this is also defined on the raspberry side
-            uuid = UUID.fromString("a96d5795-f8c3-4b7a-9bad-1eefa9e11a94");
+            uuid = UUID.fromString(UUIDSTRING);
         }
     }
 

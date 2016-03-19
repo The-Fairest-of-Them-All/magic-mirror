@@ -17,19 +17,20 @@ import javax.microedition.io.StreamConnectionNotifier;
 
 /**
  *
- * @author Owner
+ * @author Keith Rasweiler
  */
 public class bluetoothListenerThread implements Runnable {
+    //this is the UUID that is used to create a socket between android and raspberry via bluetooth
+    private final String UUIDSTRING = "a96d5795f8c34b7a9bad1eefa9e11a94";
 
-    //private static Object lock = new Object();
-    public static String bluetoothAddress;
-    public static int discoverableMode;
+    public static String bluetoothAddress; //MAC address of the bluetooth adapter on raspberry pi
+    public static int discoverableMode; //values described in getOrSetDiscoverableMode()
     public static StreamConnectionNotifier notifier;
     public static boolean discoverable;
     public static UUID uuid;
     public static String url;
     public static StreamConnection connection;
-    public static LocalDevice localDevice;
+    public static LocalDevice localDevice; //The LocalDevice class defines the basic functions of the Bluetooth manager
 
     public bluetoothListenerThread() {
     }
@@ -61,10 +62,8 @@ public class bluetoothListenerThread implements Runnable {
                     //The DiscoveryAgent class provides methods to perform device and service discovery (From API)
                     DiscoveryAgent agent = localDevice.getDiscoveryAgent();
 
-                    //UUID is how the android app finds the raspberry app
-                    //String uuidString = "a96d5795-f8c3-4b7a-9bad-1eefa9e11a94";
-                    String uuidString = "a96d5795f8c34b7a9bad1eefa9e11a94";
-                    uuid = new UUID(uuidString, false);
+                    //UUID is how the android app finds the raspberry app                 
+                    uuid = new UUID(UUIDSTRING, false);
                     //btspp is the URL scheme for an RFCOMM StreamConnection
                     //url required format is btspp: //hostname: [ CN | UUID ]; parameters for StreamConnectionNotifier
                     url = "btspp://localhost:" + uuid.toString() + ";name=RaspberryServer";
@@ -96,6 +95,9 @@ public class bluetoothListenerThread implements Runnable {
     private static boolean getOrSetDiscoverableMode(LocalDevice localDevice) {
         boolean available = false;
 
+        //Retrieves the local device's discoverable mode. The return value will be DiscoveryAgent.GIAC - 0x9E8B33 (10390323), 
+        //DiscoveryAgent. -  0x9E8B00 (10390272), DiscoveryAgent.NOT_DISCOVERABLE - 0x00 (0), or a value in the 
+        //range 0x9E8B00 to 0x9E8B3F.
         discoverableMode = localDevice.getDiscoverable();
         if (discoverableMode == DiscoveryAgent.NOT_DISCOVERABLE) {
             System.out.println("Discoverable mode is " + discoverableMode + " undiscoverable");
