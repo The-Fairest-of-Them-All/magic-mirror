@@ -127,9 +127,13 @@ public class bluetoothListenerThread implements Runnable {
             System.out.println("waiting for input");
 
             while (true) {
-                int command = inputStream.read();
+                /*int command = inputStream.read();
 
-                System.out.println(command);
+                System.out.println(command);*/
+                byte[] inputBuffer = new byte[1024];
+                int result = inputStream.read(inputBuffer);
+                String input = new String(inputBuffer);
+                System.out.println(input);
 
             }
         } catch (Exception e) {

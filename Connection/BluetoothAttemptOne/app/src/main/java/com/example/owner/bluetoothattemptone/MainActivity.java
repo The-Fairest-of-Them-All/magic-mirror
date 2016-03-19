@@ -20,6 +20,7 @@ import android.bluetooth.*;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -28,7 +29,7 @@ import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_ENABLE_BT = 100;
-    private final String RASPBERRY_PI_NAME = "Charlotte's iPhone";
+    private final String RASPBERRY_PI_NAME = "Lenovo-PC";
     private final String UUIDSTRING = "a96d5795-f8c3-4b7a-9bad-1eefa9e11a94";
     BluetoothManager bluetoothManager;
     BluetoothAdapter bluetoothAdapter;
@@ -42,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
     UUID uuid;
     InputStream clientSocketInputStream;
     OutputStream clientSocketOutputStream;
+    ByteArrayOutputStream out;
+
     boolean[] switchStates = new boolean[]{false, false, false, false};
 
 
@@ -152,11 +155,11 @@ public class MainActivity extends AppCompatActivity {
 
             byte[] buffer = new byte[1024];  // buffer store for the stream
             int bytes; // bytes to send to write()
+            buffer = RASPBERRY_PI_NAME.getBytes();
             clientSocketInputStream = clientSocket.getInputStream();
             clientSocketOutputStream = clientSocket.getOutputStream();
-            for (int i = 0; i < 10; i++) {
-                clientSocketOutputStream.write(i);
-            }
+            clientSocketOutputStream.write(buffer);
+            
         } catch (IOException e) {
             e.printStackTrace();
         }
