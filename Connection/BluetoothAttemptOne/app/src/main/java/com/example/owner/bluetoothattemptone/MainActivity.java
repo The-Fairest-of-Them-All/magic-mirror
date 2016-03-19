@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     UUID uuid;
     InputStream clientSocketInputStream;
     OutputStream clientSocketOutputStream;
+    public final String RASPBERRY_PI_NAME = "LENOVO-PC";
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Override
@@ -58,31 +60,29 @@ public class MainActivity extends AppCompatActivity {
         });
 
         discoverableList = (ListView) findViewById(R.id.discoverableList);
-
-        // Register the BroadcastReceiver
-        filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        registerReceiver(mReceiver, filter); // Don't forget to unregister during onDestroy
-
         bluetoothInfo = (TextView) findViewById(R.id.bluetoothInfo);
-        bluetoothManager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
-        bluetoothAdapter = bluetoothManager.getAdapter();
-        if (bluetoothAdapter == null) { //bluetooth not supported
-            bluetoothInfo.setText("Bluetooth unavailable on this device. Sorry.");
-        }
-        if (!bluetoothAdapter.isEnabled()) {
-            //presents activity to ask user to turn on bluetooth, response processed by onActivityResult
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-        } else {
-            bluetoothInfo.setText("Bluetooth available and on. Great.");
-        }
 
-        //UUID is how the android app finds the raspberry app
-        uuid = UUID.fromString("a96d5795-f8c3-4b7a-9bad-1eefa9e11a94");
+        new BluetoothAsync().execute();
     }
 
+    public class BluetoothAsync extends AsyncTask<Void, Void, Void> {
+        BluetoothAsync() {}
 
-    // Create a BroadcastReceiver for ACTION_FOUND
+        @Override
+        protected Void doInBackground(Void... arg0) {
+            setupBluetooth();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            //textResponse.setText(response);
+            super.onPostExecute(result);
+        }
+    }
+
+    // Create a BroadcastReceiver for ACTION_FOUND, this is called every time a new device is found
+    //during device discovery, if a name matching the string defined by RASPBERRY_PI_NAME is found
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -97,17 +97,45 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println(devices);
 
                 //try a connection based on device name
-                if (device.getName().equals("LENOVO-PC")) {
+                if (device.getName().equals(RASPBERRY_PI_NAME)) {
                     tryToConnect();
+                    return;
                 }
             }
         }
     };
 
-    //attempt a bluetooth connection to a device whose name is known
+    //checks to see if bluetooth is available and enabled on the phone, if it is not enabled,
+    //user will be presented with an activity to turn on bluetooth ,the response will be handled
+    //by onActivityResult
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
+    public void setupBluetooth() {
+        // Register the BroadcastReceiver
+        filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        registerReceiver(mReceiver, filter); // Don't forget to unregister during onDestroy
+
+        bluetoothManager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
+        bluetoothAdapter = bluetoothManager.getAdapter();
+        if (bluetoothAdapter == null) { //bluetooth not supported
+            bluetoothInfo.setText("Bluetooth unavailable on this device. Sorry.");
+        } else {
+            if (!bluetoothAdapter.isEnabled()) {
+                //presents activity to ask user to turn on bluetooth, response processed by onActivityResult()
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+            } else {
+                bluetoothInfo.setText("Bluetooth available and on. Great.");
+            }
+
+            //UUID is how the android app finds the raspberry app, this is also defined on the raspberry side
+            uuid = UUID.fromString("a96d5795-f8c3-4b7a-9bad-1eefa9e11a94");
+        }
+    }
+
+    //attempt a bluetooth connection to a device whose name is known from the device discovery process
     private void tryToConnect() {
         BluetoothDevice btDevice = device;
-        System.out.println("Trying to connect to Keith's Lenovo.");
+        System.out.println("Trying to connect to " + RASPBERRY_PI_NAME);
 
         btDevice = bluetoothAdapter.getRemoteDevice(btDevice.getAddress());
 
@@ -134,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
         bluetoothAvailable =  bluetoothAdapter.startDiscovery();
     }
 
-    //respond to a user's interacting with an activity
+    //respond to a user's interacting with an activity presented to turn on bluetooth capabilities
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //responds to the user's response to the bluetooth enable prompt if it was presented
@@ -153,6 +181,7 @@ public class MainActivity extends AppCompatActivity {
         unregisterReceiver(mReceiver);
         super.onDestroy();
     }
+
 
 
 

@@ -106,9 +106,7 @@ public class bluetoothListenerThread implements Runnable {
                 } else {
                     System.out.println("Could not set device to discoverable mode.");
                 }
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            } catch (BluetoothStateException e) {
+            } catch (IllegalArgumentException | BluetoothStateException e) {
                 e.printStackTrace();
             }
         } else {
