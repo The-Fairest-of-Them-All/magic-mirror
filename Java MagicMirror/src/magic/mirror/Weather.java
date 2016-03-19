@@ -5,7 +5,7 @@ import com.github.dvdme.ForecastIOLib.ForecastIO;
 import com.github.dvdme.ForecastIOLib.FIODaily;
 import com.google.gson.*;
 import com.eclipsesource.json.*;
-/*
+/**
  * @author chris
  */
 public class Weather {
@@ -14,7 +14,7 @@ public class Weather {
                    loTemp = "",
                    currentTemp = "",
                    conditions = "",
-                   percipitation = "";
+                   precipitation = "";
     private Gson data;
     ForecastIO fio;
     FIOCurrently current;
@@ -26,7 +26,7 @@ public class Weather {
         setupFIO();
         location = new Location();
         getWeather();
-  //      setWeather();
+        setWeather();
     }
     
     public Weather(Gson data){
@@ -46,31 +46,90 @@ public class Weather {
     private void getWeather(){
         fio.getForecast(location.latitude, location.longitude);
         current = new FIOCurrently(fio);
+        daily = new FIODaily(fio);
     }
-    
+    /**
+      * Keys in Current:
+      * summary
+      * percipProbability
+      * visibility
+      * percipIntensity
+      * percipIntesityError
+      * icon
+      * cloudCover
+      * windBearing
+      * apparentTemperature
+      * pressure
+      * dewPoint
+      * ozone
+      * nearestStormDistance
+      * percipType
+      * temperature
+      * humidity
+      * time
+      * windSpeed
+      */
     private void setWeather(){
-        hiTemp = Double.toString(current.get().temperatureMax());
-        loTemp = current.get().temperatureMin().toString();
-        currentTemp = current.get().temperature().toString();
-        //conditions = current.get().;
-        percipitation = current.get().precipProbability().toString() + "%";
+        currentTemp = current.get().temperature().toString();   //This works
+        conditions = daily.getDay(0).getByKey("summary");       //This works
+        hiTemp = daily.getDay(0).getByKey("temperatureMax");
+        loTemp = daily.getDay(0).getByKey("temperatureMin");
+        precipitation = Double.toString(daily.getDay(0).precipProbability() * 100) + "%";
+    }
+    /**
+     * Keys in Daily:
+     * apparentTemperatureMinTime
+     * apparentTemperatureMin
+     * apparentTemperatureMaxTime
+     * apparentTemperatureMax
+     * cloudCover
+     * dewPoint
+     * humidity
+     * icon
+     * moonPhase
+     * ozone
+     * precipIntensityMaxTime
+     * precipIntensityMax
+     * precipIntensity
+     * precipType
+     * pressure
+     * temeratureMinTime
+     * temperatureMin
+     * temperatureMaxTime
+     * temperatureMax
+     * summary
+     * sunriseTime
+     * sunsetTime
+     * time
+     * visibility
+     * windBearing
+     * windSpeed
+     */
+    public void printCurrently(){
+        System.out.print("Current Conditions: " + conditions);
+        System.out.print("\nCurrent Temp: " + currentTemp);
+        System.out.print("\nHi temp: " + hiTemp);
+        System.out.print("\nLo Temp: " + loTemp);
+        System.out.print("\nPrecipitation: " + precipitation);
     }
     
-    public void printCurrently(){
-//        //Print currently data
-//        System.out.println("\nCurrently\n");
-//        String [] f  = current.get().getFieldsArray();
-//        for(int i = 0; i<f.length;i++)
-//        System.out.println(f[i]+": "+current.get().getByKey(f[i]));
-        System.out.println("Hi: " + hiTemp);
-        System.out.print(current.get().temperature());
-//        System.out.println("Lo: ");
-//        System.out.print(loTemp);
-//        System.out.println("Current: ");
-//        System.out.print(currentTemp);
-//        System.out.println("Conditions: ");
-//        System.out.print(conditions);
-//        System.out.println("Precip: ");
-//        System.out.print(percipitation);
+    public String getHiTemp(){
+        return hiTemp;
+    }
+    
+    public String getLoTemp(){
+        return loTemp;
+    }
+    
+    public String getCurrentTemp(){
+        return currentTemp;
+    }
+    
+    public String getConditions(){
+        return conditions;
+    }
+    
+    public String precipitation(){
+        return precipitation;
     }
 }
