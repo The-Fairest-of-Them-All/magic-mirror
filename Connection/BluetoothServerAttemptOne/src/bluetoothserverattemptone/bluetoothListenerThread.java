@@ -31,6 +31,7 @@ public class bluetoothListenerThread implements Runnable {
     public static String url;
     public static StreamConnection connection;
     public static LocalDevice localDevice; //The LocalDevice class defines the basic functions of the Bluetooth manager
+    public static String bluetoothFriendlyName;
    
 
     public bluetoothListenerThread() {
@@ -54,6 +55,8 @@ public class bluetoothListenerThread implements Runnable {
             try {
                 bluetoothAddress = localDevice.getBluetoothAddress();
                 System.out.println("My bluetooth address is " + bluetoothAddress);
+                bluetoothFriendlyName = localDevice.getFriendlyName();
+                System.out.println("Bluetooth friendly name is " + bluetoothFriendlyName + ". This is what you should connect to.");
 
                 //check whether device is discoverable, if not set it, if it cannot be set to discoverable, 
                 //discoverable is false
@@ -126,15 +129,12 @@ public class bluetoothListenerThread implements Runnable {
 
             System.out.println("waiting for input");
 
+            //receive input from android app
             while (true) {
-                /*int command = inputStream.read();
-
-                System.out.println(command);*/
                 byte[] inputBuffer = new byte[1024];
                 int result = inputStream.read(inputBuffer);
                 String input = new String(inputBuffer);
                 System.out.println(input);
-
             }
         } catch (Exception e) {
             e.printStackTrace();
