@@ -114,10 +114,14 @@ public class MainActivity extends AppCompatActivity {
             clientSocket = btDevice.createRfcommSocketToServiceRecord(uuid);
             clientSocket.connect();
             System.out.println("Connected to raspberry pi.");
+
+            byte[] buffer = new byte[1024];  // buffer store for the stream
+            int bytes; // bytes to send to write()
             clientSocketInputStream = clientSocket.getInputStream();
             clientSocketOutputStream = clientSocket.getOutputStream();
             for (int i = 0; i < 10; i++) {
-                
+
+                clientSocketOutputStream.write(i);
             }
         } catch (IOException e) {
             e.printStackTrace();
