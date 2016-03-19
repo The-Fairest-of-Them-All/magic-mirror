@@ -24,13 +24,13 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/regular"/>
 
-    <ListView
+    <!--<ListView
         android:id="@+id/discoverableList"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_below="@+id/bluetoothInfo">
 
-    </ListView>
+    </ListView>-->
 
     <Button
         android:layout_width="match_parent"
@@ -39,4 +39,12 @@
         android:id="@+id/syncButton"
         android:text="Sync via bluetooth"
         android:onClick="startLooking"/>
+
+    <EditText
+        android:id="@+id/raspberryName"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_below="@+id/syncButton"
+        android:text="Enter raspberry computer name here"
+        android:layout_centerVertical="true" />
 </RelativeLayout>

@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.bluetooth.*;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -29,7 +30,8 @@ import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_ENABLE_BT = 100;
-    private final String RASPBERRY_PI_NAME = "Lenovo-PC";
+    //private final String RASPBERRY_PI_NAME = "Lenovo-PC";
+    private String raspberryPiName;
     private final String UUIDSTRING = "a96d5795-f8c3-4b7a-9bad-1eefa9e11a94";
     BluetoothManager bluetoothManager;
     BluetoothAdapter bluetoothAdapter;
@@ -43,9 +45,7 @@ public class MainActivity extends AppCompatActivity {
     UUID uuid;
     InputStream clientSocketInputStream;
     OutputStream clientSocketOutputStream;
-    ByteArrayOutputStream out;
-
-    boolean[] switchStates = new boolean[]{false, false, false, false};
+    EditText raspberryNameEditText;
 
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -65,8 +65,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        discoverableList = (ListView) findViewById(R.id.discoverableList);
+        //discoverableList = (ListView) findViewById(R.id.discoverableList);
         bluetoothInfo = (TextView) findViewById(R.id.bluetoothInfo);
+        raspberryNameEditText = (EditText) findViewById(R.id.raspberryName);
 
         new BluetoothAsync().execute();
     }
@@ -103,10 +104,10 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println(devices);
 
                 //try a connection based on device name
-                if (device.getName().equals(RASPBERRY_PI_NAME)) {
+                if (device.getName().equals(raspberryPiName)) {
                     tryToConnect();
                     return;
-                } else if (device.getName().equals(RASPBERRY_PI_NAME.toUpperCase())) {
+                } else if (device.getName().equals(raspberryPiName.toUpperCase())) {
                     tryToConnect();
                     return;
                 }
@@ -144,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
     //attempt a bluetooth connection to a device whose name is known from the device discovery process
     private void tryToConnect() {
         BluetoothDevice btDevice = device;
-        System.out.println("Trying to connect to " + RASPBERRY_PI_NAME);
+        System.out.println("Trying to connect to " + raspberryPiName);
 
         btDevice = bluetoothAdapter.getRemoteDevice(btDevice.getAddress());
 
@@ -155,11 +156,11 @@ public class MainActivity extends AppCompatActivity {
 
             byte[] buffer = new byte[1024];  // buffer store for the stream
             int bytes; // bytes to send to write()
-            buffer = RASPBERRY_PI_NAME.getBytes();
+            buffer = raspberryPiName.getBytes();
             clientSocketInputStream = clientSocket.getInputStream();
             clientSocketOutputStream = clientSocket.getOutputStream();
             clientSocketOutputStream.write(buffer);
-            
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -167,8 +168,18 @@ public class MainActivity extends AppCompatActivity {
 
     //responds to button press, starts discovery of remote bluetooth devices that are set to discoverable
     public void startLooking(View view) {
-        //if false, bluetooth off, otherwise start discovery, when results arrive the callback is BroadcastReceiver
-        bluetoothAvailable =  bluetoothAdapter.startDiscovery();
+        raspberryPiName = raspberryNameEditText.getText().toString().trim();
+
+        //only start discovery if user has entered a remote hostname
+        if (!raspberryPiName.equals("Enter raspberry computer name here")) {
+            //if false, bluetooth off, otherwise start discovery, when results arrive the callback is BroadcastReceiver
+            bluetoothAvailable = bluetoothAdapter.startDiscovery();
+        } else
+
+
+        {
+            raspberryNameEditText.setText("Please reenter raspberry pi bluetooth name");
+        }
     }
 
     //respond to a user's interacting with an activity presented to turn on bluetooth capabilities
