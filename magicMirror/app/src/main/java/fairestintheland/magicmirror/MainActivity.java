@@ -96,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
     OutputStream clientSocketOutputStream;
     EditText raspberryNameEditText;
 
+    TwitterMessage tMess;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
         }
         System.out.println("!!You got an event!!!" + cEvent.readCalendarEvent(this));
 
-        TwitterMessage tMess = new TwitterMessage();
+        tMess = new TwitterMessage();
         tMess.getTweet();
         switchStates = new boolean[]{false, false, false, false}; //Twitter,Email,Weather,Calendar
         context = this;
@@ -163,26 +164,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        /*//create BluetoothSocketConnection object to start services and manage connection
-        //do preliminary setup that must happen in a class with an activity
-        bluetoothSocketConnection = new BluetoothSocketConnection(context);
-        // Register the BroadcastReceiver
-        bluetoothSocketConnection.filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        registerReceiver(bluetoothSocketConnection.getmReceiver(), bluetoothSocketConnection.filter);
-        // Don't forget to unregister during onDestroy
-        bluetoothSocketConnection.bluetoothManager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);*/
-        //above was trying to put bluetooth code in a separate class
-
-        //discoverableList = (ListView) findViewById(R.id.discoverableList);
+        //start bluetooth services
         bluetoothInfo = (TextView) findViewById(R.id.bluetoothInfo);
         raspberryNameEditText = (EditText) findViewById(R.id.raspberryName);
 
         new BluetoothAsync().execute();
 
-    }
-
-    public void startBluetoothActivity() {
-        //startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
     }
 
     //----------BLUETOOTH SECTION-------------------------------------------------------------------------
@@ -299,15 +286,26 @@ public class MainActivity extends AppCompatActivity {
      * @param clientSocket an open BluetoothSocket object
      */
     public void writeContentToSocket(BluetoothSocket clientSocket) {
-        byte[] buffer = new byte[1024];  // buffer store for the stream
-        int bytes; // bytes to send to write()
+
 
         try {
+            byte[] buffer = new byte[1024];  // buffer store for the stream
             buffer = raspberryPiName.getBytes();
             clientSocketInputStream = clientSocket.getInputStream();
             clientSocketOutputStream = clientSocket.getOutputStream();
-            clientSocketOutputStream.write(buffer);
-            System.out.println("Wrote " + new String(buffer) + " to raspberry.");
+            //clientSocketOutputStream.write(buffer);
+            //System.out.println("Wrote " + new String(buffer) + " to raspberry.");
+
+            //send Twitter if true
+            if (switchStates[0]) {
+                String tweet = tMess.returnTweet();
+                buffer = new byte[1024];  // buffer store for the stream
+                buffer = tweet.getBytes();
+                clientSocketOutputStream.write(buffer);
+                System.out.println("Wrote " + new String(buffer) + " to raspberry.");
+            }
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -373,7 +371,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    //___________________________________________________________
+    //-----------------IP SECTION----------------------------------------------------------------------------
     public class MyClientTask extends AsyncTask<Void, Void, Void> {
 
 
@@ -467,10 +465,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-
-
-
     public void callSync() {
         new Sync().execute();
     }
@@ -517,7 +511,7 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(aVoid);
         }
     }
-//---------------------------------------------------------------
+//--------------------END IP SECTION------------------------------------------------------------------------------
 
 
 
