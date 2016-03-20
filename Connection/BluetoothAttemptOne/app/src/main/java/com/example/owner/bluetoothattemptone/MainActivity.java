@@ -21,7 +21,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -30,7 +29,6 @@ import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_ENABLE_BT = 100;
-    //private final String RASPBERRY_PI_NAME = "Lenovo-PC";
     private String raspberryPiName;
     private final String UUIDSTRING = "a96d5795-f8c3-4b7a-9bad-1eefa9e11a94";
     BluetoothManager bluetoothManager;
@@ -72,6 +70,13 @@ public class MainActivity extends AppCompatActivity {
         new BluetoothAsync().execute();
     }
 
+    /**
+     * Performed asynchronously to set up bluetooth services in the background. This overrides the
+     * doInBackground and onPostExecute methods. It checks to see if bluetooth is supported on the
+     * android device first. If so, it checks to see whether bluetooth is enabled. If bluetooth is
+     * not enabled, it prompts to=he user with an activity so they can turn on bluetooth if desired.
+     * It also provides output to Sys.out for the programmer through the process.
+     */
     public class BluetoothAsync extends AsyncTask<Void, Void, Void> {
         BluetoothAsync() {}
 
@@ -84,12 +89,18 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void result) {
             //textResponse.setText(response);
+            System.out.println("BluetoothAsync complete.");
             super.onPostExecute(result);
         }
     }
 
-    // Create a BroadcastReceiver for ACTION_FOUND, this is called every time a new device is found
-    //during device discovery, if a name matching the string defined by RASPBERRY_PI_NAME is found
+    /**
+     * Create a BroadcastReceiver for ACTION_FOUND, this is called every time a new device is found
+     * during device discovery. If a name matching the string defined by raspberryPiName, which the
+     * user can enter via am EditText object, tryToConnect() is called to create a BluetoothSocket
+     * and attempt to connect to a listening ServerBluetoothSocket. If the uesr does not enter the
+     * remote hostname correctly, tryToConnect() will not successfully connect.
+     */
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -107,17 +118,16 @@ public class MainActivity extends AppCompatActivity {
                 if (device.getName().equals(raspberryPiName)) {
                     tryToConnect();
                     return;
-                } else if (device.getName().equals(raspberryPiName.toUpperCase())) {
-                    tryToConnect();
-                    return;
                 }
             }
         }
     };
 
-    //checks to see if bluetooth is available and enabled on the phone, if it is not enabled,
-    //user will be presented with an activity to turn on bluetooth ,the response will be handled
-    //by onActivityResult
+    /**
+     * Checks to see if bluetooth is available and enabled on the phone, if it is not enabled,
+     * user will be presented with an activity to turn on bluetooth ,the response will be handled
+     * by onActivityResult
+     */
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     public void setupBluetooth() {
         // Register the BroadcastReceiver
@@ -142,7 +152,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //attempt a bluetooth connection to a device whose name is known from the device discovery process
+    /**
+     * Attempt a bluetooth connection to a device whose name is known from the device discovery process.
+     * The device hostname is input by the user and this method is only called if that user input String
+     * matches a device hostname found in the discovery process. This method establishes a BluetoothSocket
+     * using createRfcommSocketToServiceRecord() and tries to connect to a listening BluetoothServerSocket
+     * that uses the same UUID.
+     */
     private void tryToConnect() {
         BluetoothDevice btDevice = device;
         System.out.println("Trying to connect to " + raspberryPiName);
@@ -153,36 +169,64 @@ public class MainActivity extends AppCompatActivity {
             clientSocket = btDevice.createRfcommSocketToServiceRecord(uuid);
             clientSocket.connect();
             System.out.println("Connected to raspberry pi.");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
 
-            byte[] buffer = new byte[1024];  // buffer store for the stream
-            int bytes; // bytes to send to write()
+        //write content to the socket if the socket was opened successfully
+        writeContentToSocket(clientSocket);
+    }
+
+    /**
+     *
+     * @param clientSocket - an open BluetoothSocket object
+     */
+    public void writeContentToSocket(BluetoothSocket clientSocket) {
+        byte[] buffer = new byte[1024];  // buffer store for the stream
+        int bytes; // bytes to send to write()
+
+        try {
             buffer = raspberryPiName.getBytes();
             clientSocketInputStream = clientSocket.getInputStream();
             clientSocketOutputStream = clientSocket.getOutputStream();
             clientSocketOutputStream.write(buffer);
-
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    //responds to button press, starts discovery of remote bluetooth devices that are set to discoverable
+    /**
+     * Responds to sync button press, starts discovery of remote bluetooth devices that are set to
+     * discoverable. If the default string was not changed, the user is prompted to input a valid
+     * hostname.
+     *
+     * @param view
+     */
     public void startLooking(View view) {
         raspberryPiName = raspberryNameEditText.getText().toString().trim();
 
         //only start discovery if user has entered a remote hostname
         if (!raspberryPiName.equals("Enter raspberry computer name here")) {
-            //if false, bluetooth off, otherwise start discovery, when results arrive the callback is BroadcastReceiver
-            bluetoothAvailable = bluetoothAdapter.startDiscovery();
-        } else
-
-
-        {
+            if (!raspberryPiName.equals("Please reenter raspberry pi bluetooth name")) {
+                if (!raspberryPiName.isEmpty()) {
+                    //if false, bluetooth off, otherwise start discovery, when results arrive the callback is BroadcastReceiver
+                    bluetoothAvailable = bluetoothAdapter.startDiscovery();
+                }
+            }
+        } else {
             raspberryNameEditText.setText("Please reenter raspberry pi bluetooth name");
         }
     }
 
-    //respond to a user's interacting with an activity presented to turn on bluetooth capabilities
+    /**
+     * Respond to a user's interacting with an activity presented to turn on bluetooth capabilities.
+     *
+     * @param requestCode - Defined in the calling code, allows response to multiple events,
+     *                    REQUEST_ENABLE_BT represents a bluetooth activity request
+     * @param resultCode - Results of user's interaction with the activity
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //responds to the user's response to the bluetooth enable prompt if it was presented
@@ -195,6 +239,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Overridden to unregister the BroadcastReceiver.
+     */
     @Override
     protected void onDestroy() {
         //have to unregister BroadcastReceiver before the app closes
