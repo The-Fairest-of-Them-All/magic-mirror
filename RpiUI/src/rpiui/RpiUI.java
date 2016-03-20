@@ -10,6 +10,7 @@ import java.awt.GraphicsDevice.*;
 import java.net.*;
 import java.io.*;
 import java.util.Enumeration;
+import bluetooth.bluetoothListenerThread;
 /**
  *
  * @author KatieHorn
@@ -185,10 +186,13 @@ public class RpiUI extends JFrame {
         
         
         System.out.println("Starting raspberry pi program.");
-        ipAddress = getIpAddress();
+        /*ipAddress = getIpAddress();
         System.out.println("My IP address is: " + ipAddress);
         socketServerThread = new Thread(new SocketServerThread());
-        socketServerThread.start();
+        socketServerThread.start();*/
+        
+        Thread bluetoothListenerThread = new Thread(new bluetoothListenerThread());
+        bluetoothListenerThread.start();
     }
     
     private static class SocketServerThread extends Thread {
