@@ -24,6 +24,9 @@ public class RpiUI extends JFrame {
     static String ipAddress;
     static String message = "";
     static Thread socketServerThread;
+    
+    static JTextArea quoteArea;
+    static RpiUI uiThread;
 
     /**
      * @param args the command line arguments
@@ -38,7 +41,7 @@ public class RpiUI extends JFrame {
     static String quote = "I'm ready - Spongebob Squarepants";
     
 
-    private static void framer(){
+    private void framer(){
         JFrame frame = new JFrame("Raspberry Pi App");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
@@ -140,7 +143,7 @@ public class RpiUI extends JFrame {
         row3r.gridy = 2;
         
         
-        JTextArea  quoteArea = new JTextArea(
+        quoteArea = new JTextArea(
                 quote, 6, 20);
         quoteArea.setFont(new Font("Roman", Font.BOLD, 20));
         quoteArea.setLineWrap(true);
@@ -175,12 +178,19 @@ public class RpiUI extends JFrame {
         frame.setVisible(true);
         
     }
+    
+    public void setQuote(String quote) {
+        quoteArea.append(quote);
+    }
+    
     public static void main(String[] args) throws IOException{
         // TODO code application logic here
         
+        uiThread = new RpiUI();
+        
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                framer();
+                uiThread.framer();
             }
         });
         
@@ -191,7 +201,7 @@ public class RpiUI extends JFrame {
         socketServerThread = new Thread(new SocketServerThread());
         socketServerThread.start();*/
         
-        Thread bluetoothListenerThread = new Thread(new bluetoothListenerThread());
+        Thread bluetoothListenerThread = new Thread(new bluetoothListenerThread(uiThread));
         bluetoothListenerThread.start();
     }
     

@@ -15,6 +15,8 @@ import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnection;
 import javax.microedition.io.StreamConnectionNotifier;
 
+import rpiui.RpiUI;
+
 /**
  * A thread used to asynchronously query the device about its bluetooth capabilities and if the capabilities
  * are sufficient, i.e. there is a bluetooth device, it is turned on, and it can be set to discoverable mode,
@@ -36,9 +38,11 @@ public class bluetoothListenerThread implements Runnable {
     public static StreamConnection connection;
     public static LocalDevice localDevice; //The LocalDevice class defines the basic functions of the Bluetooth manager
     public static String bluetoothFriendlyName;
+    public static RpiUI mainThread;
    
 
-    public bluetoothListenerThread() {
+    public bluetoothListenerThread(RpiUI mainThread) {
+        this.mainThread = mainThread;
     }
 
     @Override
@@ -161,6 +165,7 @@ public class bluetoothListenerThread implements Runnable {
                 int result = inputStream.read(inputBuffer);
                 String input = new String(inputBuffer);
                 System.out.println(input);
+                mainThread.setQuote(input);
             }
         } catch (Exception e) {
             e.printStackTrace();
