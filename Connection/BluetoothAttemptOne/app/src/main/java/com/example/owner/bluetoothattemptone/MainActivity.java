@@ -28,8 +28,10 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
+    //int used to determine what activity was presented in the onActivityResult() method
     private static final int REQUEST_ENABLE_BT = 100;
     private String raspberryPiName;
+    //string defined on android and raspberry sides to establish connection
     private final String UUIDSTRING = "a96d5795-f8c3-4b7a-9bad-1eefa9e11a94";
     BluetoothManager bluetoothManager;
     BluetoothAdapter bluetoothAdapter;
@@ -180,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      *
-     * @param clientSocket - an open BluetoothSocket object
+     * @param clientSocket an open BluetoothSocket object
      */
     public void writeContentToSocket(BluetoothSocket clientSocket) {
         byte[] buffer = new byte[1024];  // buffer store for the stream
@@ -191,6 +193,7 @@ public class MainActivity extends AppCompatActivity {
             clientSocketInputStream = clientSocket.getInputStream();
             clientSocketOutputStream = clientSocket.getOutputStream();
             clientSocketOutputStream.write(buffer);
+            System.out.println("Wrote " + new String(buffer) + " to raspberry.");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -212,7 +215,11 @@ public class MainActivity extends AppCompatActivity {
                 if (!raspberryPiName.isEmpty()) {
                     //if false, bluetooth off, otherwise start discovery, when results arrive the callback is BroadcastReceiver
                     bluetoothAvailable = bluetoothAdapter.startDiscovery();
+                } else {
+                    raspberryNameEditText.setText("Please reenter raspberry pi bluetooth name");
                 }
+            } else {
+                raspberryNameEditText.setText("Please reenter raspberry pi bluetooth name");
             }
         } else {
             raspberryNameEditText.setText("Please reenter raspberry pi bluetooth name");
@@ -222,9 +229,9 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Respond to a user's interacting with an activity presented to turn on bluetooth capabilities.
      *
-     * @param requestCode - Defined in the calling code, allows response to multiple events,
+     * @param requestCode Defined in the calling code, allows response to multiple events,
      *                    REQUEST_ENABLE_BT represents a bluetooth activity request
-     * @param resultCode - Results of user's interaction with the activity
+     * @param resultCode Results of user's interaction with the activity
      * @param data
      */
     @Override

@@ -16,7 +16,11 @@ import javax.microedition.io.StreamConnection;
 import javax.microedition.io.StreamConnectionNotifier;
 
 /**
- *
+ * A thread used to asynchronously query the device about its bluetooth capabilities and if the capabilities
+ * are sufficient, i.e. there is a bluetooth device, it is turned on, and it can be set to discoverable mode,
+ * creates a server side socket and listens for a connection request from android app. Finally, if the connection
+ * is established, this thread reads in the data passed by the android app.
+ * 
  * @author Keith Rasweiler
  */
 public class bluetoothListenerThread implements Runnable {
@@ -27,7 +31,7 @@ public class bluetoothListenerThread implements Runnable {
     public static int discoverableMode; //values described in getOrSetDiscoverableMode()
     public static StreamConnectionNotifier notifier;
     public static boolean discoverable;
-    public static UUID uuid;
+    public static UUID uuid; //UUID that is know on both client and server side used to create BluetoothSockets
     public static String url;
     public static StreamConnection connection;
     public static LocalDevice localDevice; //The LocalDevice class defines the basic functions of the Bluetooth manager
@@ -42,8 +46,17 @@ public class bluetoothListenerThread implements Runnable {
         listen();
     }
 
+    /**
+     * Does preliminary checks on the bluetooth device connected to the computer. First checks to ensure that
+     * the device is powered on, next tries to get the bluetooth MAC address and friendly name and prints them
+     * to Sys.out. The friendly name and MAC address are needed to facilitate the connection along with the UUID.
+     * Next, checks to see if device is discoverable and attempts to set it to discoverable if not using a call
+     * to getOrSetDiscoverableMode(). Finally creates a StreamConnectionNotifier object and uses the acceptAndOpen()
+     * method to accept an incoming bluetooth connection request. The resulting StreamConnection serves as the
+     * server socket and is passed to processConnection().
+     */
     private void listen() {
-        if (LocalDevice.isPowerOn()) {
+        if (LocalDevice.isPowerOn()) { //if power is off, do not do any further setting up
             try {
                 //The LocalDevice class defines the basic functions of the Bluetooth manager (From API)
                 localDevice = LocalDevice.getLocalDevice();
@@ -95,7 +108,13 @@ public class bluetoothListenerThread implements Runnable {
         }
     }
 
-//returns false for an undiscoverable device or if setDiscoverable() could not be completed, true otherwise
+    /**
+     * Returns false for an undiscoverable device or if setDiscoverable() could not be completed, true otherwise.
+     * Prints verbose output to Sys.out through the process.
+     * 
+     * @param localDevice
+     * @return a boolean representing whether or not the device is discoverable
+     */
     private static boolean getOrSetDiscoverableMode(LocalDevice localDevice) {
         boolean available = false;
 
@@ -108,7 +127,8 @@ public class bluetoothListenerThread implements Runnable {
             try {
                 available = localDevice.setDiscoverable(DiscoveryAgent.LIAC);
                 if (available) {
-                    System.out.println("Now set to discoverable");
+                    discoverableMode = localDevice.getDiscoverable();
+                    System.out.println("Now set to discoverable, " + discoverableMode);
                 } else {
                     System.out.println("Could not set device to discoverable mode.");
                 }
@@ -121,7 +141,13 @@ public class bluetoothListenerThread implements Runnable {
         }
         return available;
     }
-
+    
+    /**
+     * Opens an InputStream from the StreamConnection object and receives data passed by android app into a
+     * byte[] buffer.
+     * 
+     * @param connection 
+     */
     private static void processConnection(StreamConnection connection) {
         try {
             // prepare to receive data
