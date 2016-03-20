@@ -3,6 +3,7 @@ package fairestintheland.magicmirror;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
@@ -26,9 +27,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -115,11 +121,163 @@ public class MainActivity extends AppCompatActivity {
         syncButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                syncWithPi();
+                //syncWithPi();
+                //callSync();
+                new MyClientTask().execute();
             }
         });
 
     }
+
+
+
+    //___________________________________________________________
+    public class MyClientTask extends AsyncTask<Void, Void, Void> {
+
+
+        MyClientTask() {
+
+        }
+
+        public int unsignedToBytes(byte b) {
+            return b & 0xFF;
+        }
+
+        @Override
+        protected Void doInBackground(Void... arg0) {
+
+            Socket socket = null;
+            DataOutputStream dataOutputStream = null;
+            DataInputStream dataInputStream = null;
+
+            //byte a = unsignedToBytes((byte)-64);
+            //byte b = (byte)-64 & 0xFF;
+
+            InetAddress addr = null;
+            byte[] ipAddr = new byte[]{-64,-88,43,69};
+            ipAddr = new byte[]{-64,-88,43,-93};
+            ipAddr = new byte[]{-64,-88,1,-104}; //1.152
+            ipAddr = new byte[]{-64,-88,1,-93}; //1.163
+            try {
+                addr = InetAddress.getByAddress(ipAddr);
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                //socket = new Socket("192.168.43.69",60000);
+                //socket = new Socket(addr, 60000);
+                socket = new Socket(addr, 55555);
+                dataOutputStream = new DataOutputStream(
+                        socket.getOutputStream());
+                dataInputStream = new DataInputStream(socket.getInputStream());
+
+                /*if (msgToServer != null) {
+                    dataOutputStream.writeUTF(msgToServer);
+                }
+
+                response = dataInputStream.readUTF();*/
+
+            } catch (UnknownHostException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                //response = "UnknownHostException: " + e.toString();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                //response = "IOException: " + e.toString();
+            } finally {
+                if (socket != null) {
+                    try {
+                        socket.close();
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+
+                if (dataOutputStream != null) {
+                    try {
+                        dataOutputStream.close();
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+
+                if (dataInputStream != null) {
+                    try {
+                        dataInputStream.close();
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            //textResponse.setText(response);
+            super.onPostExecute(result);
+        }
+
+    }
+
+
+
+
+
+    public void callSync() {
+        new Sync().execute();
+    }
+
+    public class Sync extends AsyncTask<Void, Void, Void> {
+
+        Sync() {}
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                //EditText ipView = (EditText) findViewById(R.id.ipAddressTextInput);
+                //ipAddress = ipView.getText().toString();
+                Log.d("Sync", "Past getting IP. It is " + ipAddress);
+                parcel = new JSONArray();
+                for (boolean b : switchStates) {
+                    //{
+                    parcel.put(b);
+                }
+                Log.d("Sync", "Parcel created" + parcel.toString());
+                client = new Socket("192.168.1.152", 55555);
+
+                Log.d("Sync", "Connected to raspberry pi");
+                System.out.println("Connected to raspberry pi.");
+
+                writer = new PrintWriter(client.getOutputStream(), true);
+                Log.d("Sync", "About to write to the socket.");
+                writer.write(parcel.toString());
+                Log.d("Sync", "Wrote to socket");
+                writer.flush();
+                writer.close();
+                client.close();
+                //}
+            } catch (IOException e) {
+                Toast.makeText(context, "Unable to connect to server", Toast.LENGTH_SHORT).show();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            EditText ipView = (EditText) findViewById(R.id.ipAddressTextInput);
+            ipView.setText("Connected");
+            super.onPostExecute(aVoid);
+        }
+    }
+//---------------------------------------------------------------
+
+
 
     private void syncWithPi() {
         if (hasValidConnection()) {
@@ -135,7 +293,8 @@ public class MainActivity extends AppCompatActivity {
                             parcel.put(b);
                         }
                         Log.d("Sync", "Parcel created" + parcel.toString());
-                        client = new Socket(ipAddress, 55555);
+                        client = new Socket(ipAddress, 60000);
+
                         Log.d("Sync", "Connected to raspberry pi");
                         System.out.println("Connected to raspberry pi.");
 
