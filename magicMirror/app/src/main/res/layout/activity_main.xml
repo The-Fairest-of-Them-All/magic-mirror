@@ -33,9 +33,11 @@
             android:id="@+id/connect_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:text="@string/connect_button" />
+            android:text="@string/connect_button"
+            android:layout_marginTop="40dp"
+            android:layout_below="@+id/textView"
+            android:layout_alignLeft="@+id/sleepButton"
+            android:layout_alignStart="@+id/sleepButton" />
 
         <Button
             android:id="@+id/sleepButton"
@@ -45,6 +47,32 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="51dp"
             android:text="@string/sleep_button" />
+
+
+        <TextView
+            android:id="@+id/bluetoothInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/sleepButton"
+            android:text="Bluetooth info"/>
+
+
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_below="@+id/bluetoothInfo"
+            android:id="@+id/syncButton"
+            android:text="Sync via bluetooth"
+            android:onClick="startLooking"/>
+
+        <EditText
+            android:id="@+id/raspberryName"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_below="@+id/syncButton"
+            android:text="Enter raspberry computer name here"
+            android:layout_centerVertical="true" />
 
         <EditText
             android:id="@+id/ipAddressTextInput"
