@@ -10,6 +10,7 @@ import java.awt.GraphicsDevice.*;
 import java.net.*;
 import java.io.*;
 import java.util.Enumeration;
+import bluetooth.bluetoothListenerThread;
 /**
  *
  * @author KatieHorn
@@ -28,12 +29,15 @@ public class RpiUI extends JFrame {
 	
 	
     static final int BITMAP_SIZE = 8;
-    static final int SocketServerPORT = 55555;
+    static final int SocketServerPORT = 60_000;
     
     static ServerSocket serverSocket;
     static String ipAddress;
     static String message = "";
     static Thread socketServerThread;
+    
+    static JTextArea quoteArea;
+    static RpiUI uiThread;
 
     /**
      * @param args the command line arguments
@@ -47,8 +51,9 @@ public class RpiUI extends JFrame {
             + "anim id est laborum.";
     static String quote = "I'm ready - Spongebob Squarepants";
     
-/** set up the java Frame for mirror screen*/
-    private static void framer(){
+
+/** set up the java Frame for mirror screen*/ 
+    private void framer(){
         JFrame frame = new JFrame("Raspberry Pi App");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
@@ -150,7 +155,7 @@ public class RpiUI extends JFrame {
         row3r.gridy = 2;
         
         
-        JTextArea  quoteArea = new JTextArea(
+        quoteArea = new JTextArea(
                 quote, 6, 20);
         quoteArea.setFont(new Font("Roman", Font.BOLD, 20));
         quoteArea.setLineWrap(true);
@@ -185,22 +190,32 @@ public class RpiUI extends JFrame {
         frame.setVisible(true);
         
     }
+    
+    public void setQuote(String quote) {
+        quoteArea.append(quote);
+    }
+    
     public static void main(String[] args) throws IOException{
         // TODO code application logic here
         
+        uiThread = new RpiUI();
+        
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                framer();
+                uiThread.framer();
             }
         });
         
         
         System.out.println("Starting raspberry pi program.");
-        ipAddress = getIpAddress();
-        
+
+        /*ipAddress = getIpAddress();
         System.out.println("My IP address is: " + ipAddress);
         socketServerThread = new Thread(new SocketServerThread());
-        socketServerThread.start();
+        socketServerThread.start();*/
+        
+        Thread bluetoothListenerThread = new Thread(new bluetoothListenerThread(uiThread));
+        bluetoothListenerThread.start();
     }
     
 	

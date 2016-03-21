@@ -1,9 +1,20 @@
 package fairestintheland.magicmirror;
 
+import android.annotation.TargetApi;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothManager;
+import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -26,11 +37,19 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 
 /**used for create a connection between mobile application and the Raspberry Pi,
@@ -79,10 +98,32 @@ public class MainActivity extends AppCompatActivity {
     Context context;
     ConnectivityManager cm;
 
-	
-	/**
-	set up the UI and event listeners for Android Application
-	*/
+
+    BluetoothSocketConnection bluetoothSocketConnection;
+
+    //bluetooth vars
+    //int used to determine what activity was presented in the onActivityResult() method
+    private static final int REQUEST_ENABLE_BT = 100;
+    private String raspberryPiName;
+    //string defined on android and raspberry sides to establish connection
+    private final String UUIDSTRING = "a96d5795-f8c3-4b7a-9bad-1eefa9e11a94";
+    BluetoothManager bluetoothManager;
+    BluetoothAdapter bluetoothAdapter;
+    TextView bluetoothInfo;
+    ListView discoverableList;
+    boolean bluetoothAvailable;
+    IntentFilter filter;
+    BluetoothDevice device;
+    ArrayList<Parcelable> devices = new ArrayList<>(); //hostname and MAC address of every device that is discoverable
+    BluetoothSocket clientSocket = null;
+    UUID uuid;
+    InputStream clientSocketInputStream;
+    OutputStream clientSocketOutputStream;
+    EditText raspberryNameEditText;
+
+    TwitterMessage tMess;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
         }
         System.out.println("!!You got an event!!!" + cEvent.readCalendarEvent(this));
 
-        TwitterMessage tMess = new TwitterMessage();
+        tMess = new TwitterMessage();
         tMess.getTweet();
         switchStates = new boolean[]{false, false, false, false}; //Twitter,Email,Weather,Calendar
         context = this;
@@ -106,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
         navList = (ListView) findViewById(R.id.left_drawer);
         adapter = new MenuAdapter<>(this, android.R.layout.simple_list_item_1, theSwitches);
         navList.setAdapter(adapter);
-        //syncWithPi(); TODO commented this out for testing with different computers
+        //syncWithPi(); //TODO commented this out for testing with different computers
         sleepButton = (Button) findViewById(R.id.sleepButton);
         sleepButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -143,13 +184,364 @@ public class MainActivity extends AppCompatActivity {
         syncButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                syncWithPi();
+                //syncWithPi();
+                //callSync();
+                new MyClientTask().execute();
             }
         });
 
+        //start bluetooth services
+        bluetoothInfo = (TextView) findViewById(R.id.bluetoothInfo);
+        raspberryNameEditText = (EditText) findViewById(R.id.raspberryName);
+
+        new BluetoothAsync().execute();
+
     }
 
-	/**:  send message to the Raspberry Pi*/
+    //----------BLUETOOTH SECTION-------------------------------------------------------------------------
+    /**
+     * Performed asynchronously to set up bluetooth services in the background. This overrides the
+     * doInBackground and onPostExecute methods. It checks to see if bluetooth is supported on the
+     * android device first. If so, it checks to see whether bluetooth is enabled. If bluetooth is
+     * not enabled, it prompts to=he user with an activity so they can turn on bluetooth if desired.
+     * It also provides output to Sys.out for the programmer through the process.
+     */
+    public class BluetoothAsync extends AsyncTask<Void, Void, Void> {
+        BluetoothAsync() {}
+
+        @Override
+        protected Void doInBackground(Void... arg0) {
+            setupBluetooth();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            //textResponse.setText(response);
+            System.out.println("BluetoothAsync complete.");
+            super.onPostExecute(result);
+        }
+    }
+
+    /**
+     * Create a BroadcastReceiver for ACTION_FOUND, this is called every time a new device is found
+     * during device discovery. If a name matching the string defined by raspberryPiName, which the
+     * user can enter via am EditText object, tryToConnect() is called to create a BluetoothSocket
+     * and attempt to connect to a listening ServerBluetoothSocket. If the uesr does not enter the
+     * remote hostname correctly, tryToConnect() will not successfully connect.
+     */
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            // When discovery finds a device
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                // Get the BluetoothDevice object from the Intent
+                device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                devices.add(intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE));
+                // Add the name and address to an array adapter to show in a ListView
+                System.out.println("Found " + device.getName() + " at " + device.getAddress());
+                //discoverableList.add(device.getName() + "\n" + device.getAddress());
+                System.out.println(devices);
+
+                //try a connection based on device name
+                if (device.getName().equals(raspberryPiName)) {
+                    tryToConnect();
+                    return;
+                }
+            }
+        }
+    };
+
+    /**
+     * Checks to see if bluetooth is available and enabled on the phone, if it is not enabled,
+     * user will be presented with an activity to turn on bluetooth ,the response will be handled
+     * by onActivityResult
+     */
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
+    public void setupBluetooth() {
+        // Register the BroadcastReceiver
+        filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        registerReceiver(mReceiver, filter); // Don't forget to unregister during onDestroy
+
+        bluetoothManager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
+        bluetoothAdapter = bluetoothManager.getAdapter();
+        if (bluetoothAdapter == null) { //bluetooth not supported
+            bluetoothInfo.setText("Bluetooth unavailable on this device. Sorry.");
+        } else {
+            if (!bluetoothAdapter.isEnabled()) {
+                //presents activity to ask user to turn on bluetooth, response processed by onActivityResult()
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+            } else {
+                bluetoothInfo.setText("Bluetooth available and on. Great.");
+            }
+
+            //UUID is how the android app finds the raspberry app, this is also defined on the raspberry side
+            uuid = UUID.fromString(UUIDSTRING);
+        }
+    }
+
+    /**
+     * Attempt a bluetooth connection to a device whose name is known from the device discovery process.
+     * The device hostname is input by the user and this method is only called if that user input String
+     * matches a device hostname found in the discovery process. This method establishes a BluetoothSocket
+     * using createRfcommSocketToServiceRecord() and tries to connect to a listening BluetoothServerSocket
+     * that uses the same UUID.
+     */
+    private void tryToConnect() {
+        BluetoothDevice btDevice = device;
+        System.out.println("Trying to connect to " + raspberryPiName);
+
+        btDevice = bluetoothAdapter.getRemoteDevice(btDevice.getAddress());
+
+        try {
+            clientSocket = btDevice.createRfcommSocketToServiceRecord(uuid);
+            clientSocket.connect();
+            System.out.println("Connected to raspberry pi.");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        //write content to the socket if the socket was opened successfully
+        writeContentToSocket(clientSocket);
+    }
+
+
+    /**
+     *
+     * @param clientSocket an open BluetoothSocket object
+     */
+    public void writeContentToSocket(BluetoothSocket clientSocket) {
+
+
+        try {
+            byte[] buffer = new byte[1024];  // buffer store for the stream
+            buffer = raspberryPiName.getBytes();
+            clientSocketInputStream = clientSocket.getInputStream();
+            clientSocketOutputStream = clientSocket.getOutputStream();
+            //clientSocketOutputStream.write(buffer);
+            //System.out.println("Wrote " + new String(buffer) + " to raspberry.");
+
+            //send Twitter if true
+            if (switchStates[0]) {
+                String tweet = tMess.returnTweet();
+                buffer = new byte[1024];  // buffer store for the stream
+                buffer = tweet.getBytes();
+                clientSocketOutputStream.write(buffer);
+                System.out.println("Wrote " + new String(buffer) + " to raspberry.");
+            }
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Responds to sync button press, starts discovery of remote bluetooth devices that are set to
+     * discoverable. If the default string was not changed, the user is prompted to input a valid
+     * hostname.
+     *
+     * @param view
+     */
+    public void startLooking(View view) {
+        raspberryPiName = raspberryNameEditText.getText().toString().trim();
+
+        //only start discovery if user has entered a remote hostname
+        if (!raspberryPiName.equals("Enter raspberry computer name here")) {
+            if (!raspberryPiName.equals("Please reenter raspberry pi bluetooth name")) {
+                if (!raspberryPiName.isEmpty()) {
+                    //if false, bluetooth off, otherwise start discovery, when results arrive the callback is BroadcastReceiver
+                    bluetoothAvailable = bluetoothAdapter.startDiscovery();
+                } else {
+                    raspberryNameEditText.setText("Please reenter raspberry pi bluetooth name");
+                }
+            } else {
+                raspberryNameEditText.setText("Please reenter raspberry pi bluetooth name");
+            }
+        } else {
+            raspberryNameEditText.setText("Please reenter raspberry pi bluetooth name");
+        }
+    }
+
+    /**
+     * Respond to a user's interacting with an activity presented to turn on bluetooth capabilities.
+     *
+     * @param requestCode Defined in the calling code, allows response to multiple events,
+     *                    REQUEST_ENABLE_BT represents a bluetooth activity request
+     * @param resultCode Results of user's interaction with the activity
+     * @param data
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //responds to the user's response to the bluetooth enable prompt if it was presented
+        if (requestCode == REQUEST_ENABLE_BT) {
+            if (resultCode == RESULT_OK) {
+                bluetoothInfo.setText("You enabled bluetooth. Thanks.");
+            } else {
+                bluetoothInfo.setText("Bluetooth disabled.");
+            }
+        }
+    }
+
+    /**
+     * Overridden to unregister the BroadcastReceiver.
+     */
+    @Override
+    protected void onDestroy() {
+        //have to unregister BroadcastReceiver before the app closes
+        unregisterReceiver(mReceiver);
+        super.onDestroy();
+    }
+    //-----------------END BLUETOOTH SECTION-----------------------------------------------------------------
+
+
+
+    //-----------------IP SECTION----------------------------------------------------------------------------
+    public class MyClientTask extends AsyncTask<Void, Void, Void> {
+
+
+        MyClientTask() {
+
+        }
+
+        public int unsignedToBytes(byte b) {
+            return b & 0xFF;
+        }
+
+        @Override
+        protected Void doInBackground(Void... arg0) {
+
+            Socket socket = null;
+            DataOutputStream dataOutputStream = null;
+            DataInputStream dataInputStream = null;
+
+            //byte a = unsignedToBytes((byte)-64);
+            //byte b = (byte)-64 & 0xFF;
+
+            InetAddress addr = null;
+            byte[] ipAddr = new byte[]{-64,-88,43,69};
+            ipAddr = new byte[]{-64,-88,43,-93};
+            ipAddr = new byte[]{-64,-88,1,-104}; //1.152
+            ipAddr = new byte[]{-64,-88,1,-93}; //1.163
+            try {
+                addr = InetAddress.getByAddress(ipAddr);
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                //socket = new Socket("192.168.43.69",60000);
+                //socket = new Socket(addr, 60000);
+                socket = new Socket(addr, 55555);
+                dataOutputStream = new DataOutputStream(
+                        socket.getOutputStream());
+                dataInputStream = new DataInputStream(socket.getInputStream());
+
+                /*if (msgToServer != null) {
+                    dataOutputStream.writeUTF(msgToServer);
+                }
+
+                response = dataInputStream.readUTF();*/
+
+            } catch (UnknownHostException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                //response = "UnknownHostException: " + e.toString();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                //response = "IOException: " + e.toString();
+            } finally {
+                if (socket != null) {
+                    try {
+                        socket.close();
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+
+                if (dataOutputStream != null) {
+                    try {
+                        dataOutputStream.close();
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+
+                if (dataInputStream != null) {
+                    try {
+                        dataInputStream.close();
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            //textResponse.setText(response);
+            super.onPostExecute(result);
+        }
+
+    }
+
+    public void callSync() {
+        new Sync().execute();
+    }
+
+    public class Sync extends AsyncTask<Void, Void, Void> {
+
+        Sync() {}
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                //EditText ipView = (EditText) findViewById(R.id.ipAddressTextInput);
+                //ipAddress = ipView.getText().toString();
+                Log.d("Sync", "Past getting IP. It is " + ipAddress);
+                parcel = new JSONArray();
+                for (boolean b : switchStates) {
+                    //{
+                    parcel.put(b);
+                }
+                Log.d("Sync", "Parcel created" + parcel.toString());
+                client = new Socket("192.168.1.152", 55555);
+
+                Log.d("Sync", "Connected to raspberry pi");
+                System.out.println("Connected to raspberry pi.");
+
+                writer = new PrintWriter(client.getOutputStream(), true);
+                Log.d("Sync", "About to write to the socket.");
+                writer.write(parcel.toString());
+                Log.d("Sync", "Wrote to socket");
+                writer.flush();
+                writer.close();
+                client.close();
+                //}
+            } catch (IOException e) {
+                Toast.makeText(context, "Unable to connect to server", Toast.LENGTH_SHORT).show();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            EditText ipView = (EditText) findViewById(R.id.ipAddressTextInput);
+            ipView.setText("Connected");
+            super.onPostExecute(aVoid);
+        }
+    }
+//--------------------END IP SECTION------------------------------------------------------------------------------
+
+
+
     private void syncWithPi() {
         if (hasValidConnection()) {
             Thread t = new Thread() {
@@ -157,20 +549,26 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         EditText ipView = (EditText) findViewById(R.id.ipAddressTextInput);
                         ipAddress = ipView.getText().toString();
+                        Log.d("Sync", "Past getting IP. It is " + ipAddress);
                         parcel = new JSONArray();
                         for (boolean b : switchStates) {
-                            {
-                                parcel.put(b);
-                            }
-                            client = new Socket(ipAddress, 55555);
-                            System.out.println("Connected to raspberry pi.");
-
-                            writer = new PrintWriter(client.getOutputStream(), true);
-                            writer.write(parcel.toString());
-                            writer.flush();
-                            writer.close();
-                            client.close();
+                            //{
+                            parcel.put(b);
                         }
+                        Log.d("Sync", "Parcel created" + parcel.toString());
+                        client = new Socket(ipAddress, 60000);
+
+                        Log.d("Sync", "Connected to raspberry pi");
+                        System.out.println("Connected to raspberry pi.");
+
+                        writer = new PrintWriter(client.getOutputStream(), true);
+                        Log.d("Sync", "About to write to the socket.");
+                        writer.write(parcel.toString());
+                        Log.d("Sync", "Wrote to socket");
+                        writer.flush();
+                        writer.close();
+                        client.close();
+                        //}
                     } catch (IOException e) {
                         Toast.makeText(context, "Unable to connect to server", Toast.LENGTH_SHORT).show();
                     }
@@ -315,4 +713,36 @@ public class MainActivity extends AppCompatActivity {
             return v;
         }
     }
+
+    /**
+     * Overridden to unregister the BroadcastReceiver.
+     */
+    /*@Override
+    protected void onDestroy() {
+        unregisterReceiver(bluetoothSocketConnection.getmReceiver());
+        super.onDestroy();
+    }*/
+
+
+    /**
+     * Respond to a user's interacting with an activity presented to turn on bluetooth capabilities.
+     * This will alert the user as to whether they did or did not successfully enable bluetooth when
+     * called with requestCode == bluetoothSocketConnection.getREQUEST_ENABLE_BT()
+     *
+     * @param requestCode Defined in the calling code, allows response to multiple events,
+     *                    REQUEST_ENABLE_BT represents a bluetooth activity request
+     * @param resultCode Results of user's interaction with the activity
+     * @param data
+     */
+    /*@Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //responds to the user's response to the bluetooth enable prompt if it was presented
+        if (requestCode == bluetoothSocketConnection.getREQUEST_ENABLE_BT()) {
+            if (resultCode == RESULT_OK) {
+                //TODO change ref - bluetoothInfo.setText("You enabled bluetooth. Thanks.");
+            } else {
+                //TODO cheange ref - bluetoothInfo.setText("Bluetooth disabled.");
+            }
+        }
+    }*/
 }

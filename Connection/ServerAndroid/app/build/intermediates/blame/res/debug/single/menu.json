@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "C:\\Users\\Owner\\Documents\\mirror\\magic-mirror\\Connection\\ServerAndroid\\app\\build\\intermediates\\res\\merged\\debug\\menu\\menu_main.xml",
+        "source": "C:\\Users\\Owner\\Documents\\mirror\\magic-mirror\\Connection\\ServerAndroid\\app\\src\\main\\res\\menu\\menu_main.xml"
+    },
+    {
+        "merged": "C:\\Users\\Owner\\Documents\\mirror\\magic-mirror\\Test_Connection\\THISVERSIONWORKS\\ServerAndroid\\app\\build\\intermediates\\res\\merged\\debug\\menu\\menu_main.xml",
+        "source": "C:\\Users\\Owner\\Documents\\mirror\\magic-mirror\\Test_Connection\\THISVERSIONWORKS\\ServerAndroid\\app\\src\\main\\res\\menu\\menu_main.xml"
+    },
+    {
+        "merged": "C:\\Users\\Owner\\Desktop\\BothAndroid\\ServerAndroid\\app\\build\\intermediates\\res\\merged\\debug\\menu\\menu_main.xml",
+        "source": "C:\\Users\\Owner\\Desktop\\BothAndroid\\ServerAndroid\\app\\src\\main\\res\\menu\\menu_main.xml"
+    }
+]

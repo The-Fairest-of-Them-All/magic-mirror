@@ -7,3 +7,29 @@
 /Test_Connection/raspServer/rasp_version_of_android_server/raspberryPiServer/nbproject/private/
 /Test_Connection/raspServer/rasp_version_of_android_server/raspberryPiServer/build/
 /Test_Connection/raspServer/rasp_version_of_android_server/raspberryPiServer/dist/
+/Connection/AdaptedFromServerAndroid/nbproject/private/
+/Connection/AdaptedFromServerAndroid/build/
+
+#General Netbeans
+**nbproject/private/
+**build/
+**nbbuild/
+**dist/
+**nbdist/
+**nbactions.xml
+**.nb-gradle/
+
+#General Android
+**.gradle
+**/local.properties
+**/.idea/workspace.xml
+**/.idea/libraries
+**.DS_Store
+**/build
+.idea/vcs.xml
+/Connection/BluetoothServerAttemptOne/nbproject/private/
+
+**/private.xml
+**/misc.xml
+
+**RpiUI/nbproject/private/private.properties

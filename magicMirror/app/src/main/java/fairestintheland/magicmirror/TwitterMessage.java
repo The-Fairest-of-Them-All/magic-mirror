@@ -26,17 +26,26 @@ public class TwitterMessage {
 */
     final static String UserName = "cnn";
     private List<String> list;
+
+    private String tweet;
+    
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             Bundle bundle = msg.getData();
             String string = bundle.getString("myKey");
+            tweet = bundle.getString("myKey");
             for(int i =0;i<10;i++){
                 System.out.println("!!!!!!!twitter message!!!!!!"+string);
             }
 
         }
     };
+
+    public String returnTweet() {
+        getTweet();
+        return tweet;
+    }
 
 
 /**get tweets from the network and send it to the handler*/
