@@ -11,22 +11,25 @@
 /Connection/AdaptedFromServerAndroid/build/
 
 #General Netbeans
-nbproject/private/
-build/
-nbbuild/
-dist/
-nbdist/
-nbactions.xml
-.nb-gradle/
+**nbproject/private/
+**build/
+**nbbuild/
+**dist/
+**nbdist/
+**nbactions.xml
+**.nb-gradle/
 
 #General Android
-.gradle
-/local.properties
-/.idea/workspace.xml
-/.idea/libraries
-.DS_Store
-/build
+**.gradle
+**/local.properties
+**/.idea/workspace.xml
+**/.idea/libraries
+**.DS_Store
+**/build
 .idea/vcs.xml
 /Connection/BluetoothServerAttemptOne/nbproject/private/
 
-**private.xml
+**/private.xml
+**/misc.xml
+
+**RpiUI/nbproject/private/private.properties
