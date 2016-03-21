@@ -26,23 +26,21 @@ public class TwitterMessage {
 */
     final static String UserName = "cnn";
     private List<String> list;
+    String message="";
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             Bundle bundle = msg.getData();
             String string = bundle.getString("myKey");
-            for(int i =0;i<10;i++){
-                System.out.println("!!!!!!!twitter message!!!!!!"+string);
-            }
-
+            message = string;
+            System.out.println("!!!!!!!!!!handler"+message);
         }
     };
 
 
 /**get tweets from the network and send it to the handler*/
-    public void getTweet(){
+    public TwitterMessage(){
         list = new ArrayList<String>();
-
 
             Runnable runnable = new Runnable() {
                 public void run() {
@@ -69,7 +67,6 @@ public class TwitterMessage {
                             str = statue.getUser().getName() + ":   " + str;
                             list.add(str);
                         };
-
                         bundle.putString("myKey", list.toString());
                         msg.setData(bundle);
                         handler.sendMessage(msg);
@@ -86,7 +83,11 @@ public class TwitterMessage {
 //List<Status> statuses = twitter.getUserTimeline(UserName,new Paging(1,3));
 //twitter.updateStatus("this is send by Java project! not human");
 
+    }
 
+
+    public String getTweets(){
+        return message;
     }
 
 }

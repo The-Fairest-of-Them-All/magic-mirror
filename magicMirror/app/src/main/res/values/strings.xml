@@ -3,9 +3,13 @@
 
     <string name="hello_world">Press Button to Connect</string>
     <string name="hello_swipe">Or Swipe to change Preferences...</string>
-    <string name="connect_button">Sync</string>
-    <string name="sleep_button">Sleep</string>
-    <string name="wake_button">Wake Up</string>
+    <string name="IP_textview">Sever IP:</string>
+    <string name="ssid_textview">SSID:</string>
+    <string name="password_textview">Password:</string>
+    <string name="connect_button">Sync Setting to Mirror</string>
+    <string name="setting_button">Mirror Setting</string>
+    <string name="sleep_button">Sleep Mirror</string>
+    <string name="wake_button">Wake Up Mirror</string>
     <string name="font">Font Settings</string>
     <string name="font_format">Font Format</string>
     <string name="font_size">Font Size</string>

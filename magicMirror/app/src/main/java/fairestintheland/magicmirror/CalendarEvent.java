@@ -4,16 +4,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
-
-        import android.content.Context;
-        import android.database.Cursor;
-        import android.net.Uri;
-
-        import java.sql.SQLOutput;
-        import java.text.SimpleDateFormat;
-        import java.util.ArrayList;
-        import java.util.Calendar;
-        import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * used for fetching the google Calendar events
@@ -38,7 +32,7 @@ public class CalendarEvent {
 
 	
 	/**access into the google calendar and get all events  */
-    public static ArrayList<String> readCalendarEvent(Context context) {
+    public static String readCalendarEvent(Context context) {
         Cursor cursor = context.getContentResolver().query(
                         Uri.parse("content://com.android.calendar/events"),
                         new String[] { "title", "description", "dtstart", "dtend", "eventLocation" }, null,
@@ -75,7 +69,7 @@ public class CalendarEvent {
             cursor.moveToNext();
 
         }
-        return currentEvent;
+        return currentEvent.toString();
     }
 
 	/**change the date format from milliseconds to "dd/MM/yyyy  hh:mm:ss " */

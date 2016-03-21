@@ -8,6 +8,7 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -67,7 +68,10 @@ public class MainActivity extends AppCompatActivity {
     private ListView navList;
     private Button sleepButton;
     private Button syncButton;
+    private Button settingButton;
     private boolean sleeping;
+    public String eventMessage;
+    TwitterMessage tMess;
     private boolean[] switchStates;
     EditText ipBar;
 
@@ -76,10 +80,10 @@ public class MainActivity extends AppCompatActivity {
     private PrintWriter writer;
     String ipAddress;
     JSONArray parcel;
+    JSONObject JsonMessage;
     Context context;
     ConnectivityManager cm;
 
-	
 	/**
 	set up the UI and event listeners for Android Application
 	*/
@@ -89,13 +93,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         CalendarEvent cEvent = new CalendarEvent();
-        for (int i = 0; i < 10; i++) {
-            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        }
-        System.out.println("!!You got an event!!!" + cEvent.readCalendarEvent(this));
+        eventMessage = cEvent.readCalendarEvent(this);
+        System.out.println("!!You got an event!!! " + eventMessage);
 
-        TwitterMessage tMess = new TwitterMessage();
-        tMess.getTweet();
+
+
+         tMess = new TwitterMessage();
         switchStates = new boolean[]{false, false, false, false}; //Twitter,Email,Weather,Calendar
         context = this;
         sleeping = false;
@@ -139,10 +142,23 @@ public class MainActivity extends AppCompatActivity {
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
         };
+
+
+        settingButton = (Button) findViewById(R.id.settingButton);
+        settingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDrawerLayout.openDrawer(Gravity.LEFT);
+            }
+        });
+
+
         syncButton = (Button) findViewById(R.id.connect_button);
         syncButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                    getJSONMessage();
+
                 syncWithPi();
             }
         });
@@ -164,15 +180,15 @@ public class MainActivity extends AppCompatActivity {
                             }
                             client = new Socket(ipAddress, 55555);
                             System.out.println("Connected to raspberry pi.");
-
                             writer = new PrintWriter(client.getOutputStream(), true);
                             writer.write(parcel.toString());
                             writer.flush();
                             writer.close();
                             client.close();
+
                         }
                     } catch (IOException e) {
-                        Toast.makeText(context, "Unable to connect to server", Toast.LENGTH_SHORT).show();
+                       e.printStackTrace();
                     }
                 }
             };
@@ -197,10 +213,7 @@ public class MainActivity extends AppCompatActivity {
                         writer.flush();
                         writer.close();
                         client.close();
-
-                    } catch (IOException e) {
-                        Toast.makeText(context, "Unable to connect to server", Toast.LENGTH_SHORT).show();
-                    } catch (JSONException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -255,14 +268,70 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-/**inner class which set up all elements for the switch listview*/
+
+
+
+
+
+    public JSONObject getJSONMessage()  {
+        JSONObject newMessage = new JSONObject();
+        try{
+        for(int i =0;i <switchStates.length;i++){
+            newMessage.put(String.valueOf(theSwitches.get(i).getText()),switchStates[i]);
+        }
+        newMessage.put("events",eventMessage);
+        newMessage.put("tweets",tMess.getTweets());
+
+        System.out.println("JSON Message!!!!!!!!!!!!!!!!!!!!!!" + newMessage.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+            System.out.println("Ubable to collect all data to JSON!");
+        }
+       return newMessage;
+    }
+
+public JSONObject getWIFIAccount(){
+    JSONObject newMessage = new JSONObject();
+    try{
+        EditText ssidView = (EditText) findViewById(R.id.ssidText);
+        EditText passwordView = (EditText) findViewById(R.id.passWordText);
+
+        newMessage.put("SSID",ssidView.getText());
+        newMessage.put("password",passwordView.getText());
+
+        System.out.println("WIFI Message!!!!!!!!!!!!!!!" + newMessage.toString());
+    } catch (JSONException e) {
+        e.printStackTrace();
+        System.out.println("Ubable to collect all data to JSON!");
+    }
+    return newMessage;
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**inner class which set up all elements for the switch listview*/
     class MenuAdapter<T> extends ArrayAdapter<Switch> {
-		
+
 		/**
 		List<Switch> list: store all switch states
 		Context context: context of activity which this class used in
 		*/
-		
+
         List<Switch> list;
         Context context;
 
