@@ -12,6 +12,11 @@ import java.net.*;
 import java.io.*;
 import java.util.Enumeration;
 import bluetooth.bluetoothListenerThread;
+import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 /**
  *
@@ -37,10 +42,15 @@ public class RpiUI extends JFrame {
 
     private static JTextArea quoteArea;
     private static JTextArea twitArea;
+    private static JTextArea calArea;
+    private static JTextArea weatArea;
+    private static JTextArea timeArea;
     static GridBagConstraints twitc;
     static JPanel p;
     static RpiUI uiThread;
     static Runnable mainUiThread;
+    static LocalTime time;
+    static String currentTime;
 
     /**
      * @param args the command line arguments
@@ -108,7 +118,7 @@ public class RpiUI extends JFrame {
         topmiddlec.weightx = 60;
         topmiddlec.ipadx = 45;
 
-        JTextArea calArea = new JTextArea(
+        calArea = new JTextArea(
                 sample, 6, 20);
         calArea.setFont(new Font("Roman", Font.BOLD, 20));
         calArea.setLineWrap(true);
@@ -134,7 +144,7 @@ public class RpiUI extends JFrame {
         row2mid.weightx = 60;
         row2mid.weighty = 30;
 
-        JTextArea weatArea = new JTextArea(
+        weatArea = new JTextArea(
                 sample, 6, 20);
         weatArea.setFont(new Font("Roman", Font.BOLD, 20));
         weatArea.setLineWrap(true);
@@ -170,12 +180,25 @@ public class RpiUI extends JFrame {
         quotec.gridy = 3;
         quotec.anchor = GridBagConstraints.PAGE_END;
 
+        timeArea = new JTextArea(currentTime, 6, 20);
+        timeArea.setFont(new Font("Roman", Font.BOLD, 30));
+        timeArea.setLineWrap(false);
+        timeArea.setWrapStyleWord(true);
+        timeArea.setOpaque(false);
+        timeArea.setEditable(false);
+        timeArea.setForeground(Color.white);
+        GridBagConstraints quotet = new GridBagConstraints();
+        quotet.gridx = 1;
+        quotet.gridy = 1;
+        quotet.anchor = GridBagConstraints.PAGE_START;
+        
         GridBagConstraints lastblank = new GridBagConstraints();
         lastblank.gridx = 2;
         lastblank.gridy = 3;
 
         p.add(twitArea, twitc);
-        p.add(blank, topmiddlec);
+        //p.add(blank, topmiddlec);
+        p.add(timeArea, topmiddlec);
         p.add(calArea, calc);
         p.add(blank2, row2left);
         p.add(blank3, row2mid);
@@ -217,8 +240,10 @@ public class RpiUI extends JFrame {
     }
 
     public static void main(String[] args) throws IOException {
-        // TODO code application logic here
-
+        time = LocalTime.now();
+        currentTime = time.format(DateTimeFormatter.ofPattern("hh:mm a"));
+        
+        //reference to the UI thread so that if bluetooth info is received, it can be added from uiThread
         uiThread = new RpiUI();
 
         mainUiThread = new Runnable() {
