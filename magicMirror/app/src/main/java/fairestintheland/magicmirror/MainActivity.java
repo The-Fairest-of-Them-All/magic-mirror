@@ -340,8 +340,6 @@ public class MainActivity extends AppCompatActivity {
                 clientSocketOutputStream.flush();
             }
 
-            ///////////////////////SLEEP
-
             //write break keyword to end to socket connection on both sides
             clientSocketOutputStream.write(EXIT_KEYWORD.getBytes());
             System.out.println("Wrote " + EXIT_KEYWORD + " to raspberry.");

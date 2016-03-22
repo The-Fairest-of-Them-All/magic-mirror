@@ -85,10 +85,10 @@ public class bluetoothListenerThread implements Runnable {
             try {
                 bluetoothAddress = localDevice.getBluetoothAddress();
                 System.out.println("My bluetooth address is " + bluetoothAddress);
-                mainThread.replaceTwitter("My bluetooth address is " + bluetoothAddress);
+                mainThread.replaceJTextArea(mainThread.getTwitterJTextArea(), "My bluetooth address is " + bluetoothAddress);
                 bluetoothFriendlyName = localDevice.getFriendlyName();
                 System.out.println("Bluetooth friendly name is " + bluetoothFriendlyName + ". This is what you should connect to.");
-                mainThread.appendToTwitterNewline("Bluetooth friendly name is " + bluetoothFriendlyName + ". This is what you should connect to.");
+                mainThread.appendToJTextAreaNewline(mainThread.getTwitterJTextArea(), "Bluetooth friendly name is " + bluetoothFriendlyName + ". This is what you should connect to.");
                 //check whether device is discoverable, if not set it, if it cannot be set to discoverable, 
                 //discoverable is false
                 discoverable = getOrSetDiscoverableMode(localDevice);
@@ -169,7 +169,7 @@ public class bluetoothListenerThread implements Runnable {
      * Opens an InputStream from the StreamConnection object and receives data
      * passed by android app into a byte[] buffer.
      *
-     * @param connection
+     * @param connection an open StreamConnection object
      */
     private static void processConnection(StreamConnection connection) {
         try {
@@ -178,18 +178,20 @@ public class bluetoothListenerThread implements Runnable {
 
             System.out.println("waiting for input");
 
-            //receive input from android app
+            //receive input from android app, break from this loop when inputStream.read() returns -1
             while (true) {
                 byte[] inputBuffer = new byte[1024];
                 int result = inputStream.read(inputBuffer);
                 String input = new String(inputBuffer);
+                //if result is -1, the read from inputBuffer read nothing so we assume that we should close the socket on this side
                 if (input.equals(EXIT_KEYWORD) || result == -1) {
                     inputStream.close();
                     break;
                 }
                 else {
+                    //if we got valid input, print it to RIGHT NOW the twitter section
                     System.out.println(input);
-                    mainThread.appendToTwitterNewline(input);
+                    mainThread.appendToJTextAreaNewline(mainThread.getTwitterJTextArea(), input);
                     System.out.println("Waiting for more input.");
                 }
             }

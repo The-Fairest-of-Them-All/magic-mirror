@@ -35,8 +35,8 @@ public class RpiUI extends JFrame {
     static String message = "";
     static Thread socketServerThread;
 
-    static JTextArea quoteArea;
-    static JTextArea twitArea;
+    private static JTextArea quoteArea;
+    private static JTextArea twitArea;
     static GridBagConstraints twitc;
     static JPanel p;
     static RpiUI uiThread;
@@ -189,26 +189,30 @@ public class RpiUI extends JFrame {
         frame.setVisible(true);
 
     }
-
-    public void setQuote(String quote) {
-        quoteArea.append(quote);
+    
+    public void appendToJTextArea(JTextArea area, String newText) {
+        area.append(newText);
     }
     
-    public void appendToTwitter(String tweet) {
-        twitArea.append(tweet);
+    public void appendToJTextAreaNewline(JTextArea area, String newText) {
+        area.append('\n' + newText);
     }
     
-    public void appendToTwitterNewline(String tweet) {
-        twitArea.append('\n' + tweet);
+    public void insertIntoBeginningJTextArea(JTextArea area, String newText) {
+        area.insert(newText, 0);
     }
     
-    public void insertIntoBeginningTwitter(String tweet) {
-        twitArea.insert(tweet, 0);
+    public void replaceJTextArea(JTextArea area, String newText) {
+        String formerText = area.getText();
+        area.replaceRange(newText, 0, formerText.length());
     }
     
-    public void replaceTwitter(String tweet) {
-        String formerText = twitArea.getText();
-        twitArea.replaceRange(tweet, 0, formerText.length());
+    public JTextArea getTwitterJTextArea() {
+        return twitArea;
+    }
+    
+    public JTextArea getQuoteJTextArea() {
+        return quoteArea;
     }
 
     public static void main(String[] args) throws IOException {
@@ -232,7 +236,7 @@ public class RpiUI extends JFrame {
             Thread bluetoothListenerThread = new Thread(new bluetoothListenerThread(uiThread));
             bluetoothListenerThread.start();
         } catch (Exception e) {
-            uiThread.setQuote("Threw bluetooth exception.");
+            uiThread.replaceJTextArea(twitArea, ("Threw bluetooth exception."));
             e.printStackTrace();
         }
         
