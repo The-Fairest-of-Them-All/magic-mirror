@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package rpiui;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.GraphicsDevice.*;
@@ -11,32 +12,33 @@ import java.net.*;
 import java.io.*;
 import java.util.Enumeration;
 import bluetooth.bluetoothListenerThread;
+
 /**
  *
- * @author KatieHorn
-  create the UI for Raspberry PI and display the information on the screen.
+ * @author KatieHorn create the UI for Raspberry PI and display the information
+ * on the screen.
  */
 public class RpiUI extends JFrame {
-    
-	
-	/**
-	int SocketServerPORT :	 the port number of the sever 
-	String message: 	received messages which is from client
-	ServerSocket serverSocket: 	used for create a connection as a sever
-	String ipAddress:	 the IP address of the Raspberry Pi
-	Thread socketServerThread: 	Thread which used for handle the network action
-	*/
-	
-	
+
+    /**
+     * int SocketServerPORT :	the port number of the sever String message:
+     * received messages which is from client ServerSocket serverSocket: used
+     * for create a connection as a sever String ipAddress:	the IP address of
+     * the Raspberry Pi Thread socketServerThread: Thread which used for handle
+     * the network action
+     */
     static final int BITMAP_SIZE = 8;
     static final int SocketServerPORT = 60_000;
-    
+
     static ServerSocket serverSocket;
     static String ipAddress;
     static String message = "";
     static Thread socketServerThread;
-    
+
     static JTextArea quoteArea;
+    static JTextArea twitArea;
+    static GridBagConstraints twitc;
+    static JPanel p;
     static RpiUI uiThread;
 
     /**
@@ -50,62 +52,62 @@ public class RpiUI extends JFrame {
             + "sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit "
             + "anim id est laborum.";
     static String quote = "I'm ready - Spongebob Squarepants";
-    
 
-/** set up the java Frame for mirror screen*/ 
-    private void framer(){
+    /**
+     * set up the java Frame for mirror screen
+     */
+    private void framer() {
         JFrame frame = new JFrame("Raspberry Pi App");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setUndecorated(true);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setPreferredSize(screenSize);
 //        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 //        GraphicsDevice gd = ge.getDefaultScreenDevice();
 //        gd.setFullScreenWindow(frame);
-       
-        JPanel p = new JPanel(new GridBagLayout());
+
+        p = new JPanel(new GridBagLayout());
         p.setBackground(Color.black);
         p.setOpaque(true);
         p.setPreferredSize(screenSize);
-        
-        
-       JTextArea  twitArea = new JTextArea(
-                sample+sample, 6, 20);
+
+        twitArea = new JTextArea(
+                sample + sample, 6, 20);
         twitArea.setFont(new Font("Roman", Font.BOLD, 20));
         twitArea.setLineWrap(true);
         twitArea.setWrapStyleWord(true);
         twitArea.setOpaque(false);
         twitArea.setEditable(false);
         twitArea.setForeground(Color.white);
-        GridBagConstraints twitc = new GridBagConstraints();
-        twitc.gridy= 0;
+        twitc = new GridBagConstraints();
+        twitc.gridy = 0;
         twitc.gridx = 2;
         twitc.gridheight = 3;
-        
+
         twitc.fill = GridBagConstraints.VERTICAL;
         twitc.anchor = GridBagConstraints.FIRST_LINE_END;
-        
+
         JLabel blank = new JLabel();
-   //     blank.setForeground(Color.red);
-       JLabel blank2 = new JLabel();
-     //   blank2.setForeground(Color.red);
+        //     blank.setForeground(Color.red);
+        JLabel blank2 = new JLabel();
+        //   blank2.setForeground(Color.red);
         JLabel blank3 = new JLabel();
-    //    blank3.setForeground(Color.red);
+        //    blank3.setForeground(Color.red);
         JLabel blank4 = new JLabel();
-      //  blank4.setForeground(Color.red);
+        //  blank4.setForeground(Color.red);
         JLabel blank5 = new JLabel();
-      //  blank5.setForeground(Color.red);
+        //  blank5.setForeground(Color.red);
         JLabel blank6 = new JLabel();
-  //      blank6.setForeground(Color.red);
-  
+        //      blank6.setForeground(Color.red);
+
         GridBagConstraints topmiddlec = new GridBagConstraints();
         topmiddlec.gridy = 0;
         topmiddlec.gridx = 1;
         topmiddlec.weightx = 60;
         topmiddlec.ipadx = 45;
-        
-         JTextArea  calArea = new JTextArea(
+
+        JTextArea calArea = new JTextArea(
                 sample, 6, 20);
         calArea.setFont(new Font("Roman", Font.BOLD, 20));
         calArea.setLineWrap(true);
@@ -118,20 +120,20 @@ public class RpiUI extends JFrame {
         calc.gridx = 0;
         calc.weightx = 30;
         calc.anchor = GridBagConstraints.FIRST_LINE_START;
-        
+
         GridBagConstraints row2left = new GridBagConstraints();
-        row2left.gridy =1;
+        row2left.gridy = 1;
         row2left.gridx = 0;
         row2left.weightx = 60;
         row2left.weighty = 30;
-        
+
         GridBagConstraints row2mid = new GridBagConstraints();
-         row2mid.gridy =1;
+        row2mid.gridy = 1;
         row2mid.gridx = 1;
         row2mid.weightx = 60;
         row2mid.weighty = 30;
-        
-        JTextArea  weatArea = new JTextArea(
+
+        JTextArea weatArea = new JTextArea(
                 sample, 6, 20);
         weatArea.setFont(new Font("Roman", Font.BOLD, 20));
         weatArea.setLineWrap(true);
@@ -140,21 +142,20 @@ public class RpiUI extends JFrame {
         weatArea.setEditable(false);
         weatArea.setForeground(Color.white);
         GridBagConstraints weatc = new GridBagConstraints();
-        weatc.gridy= 2;
+        weatc.gridy = 2;
         weatc.gridx = 0;
         weatc.gridheight = 2;
         weatc.fill = GridBagConstraints.VERTICAL;
         weatc.anchor = GridBagConstraints.FIRST_LINE_START;
-        
+
         GridBagConstraints row3mid = new GridBagConstraints();
-        row3mid.gridx =1;
+        row3mid.gridx = 1;
         row3mid.gridy = 2;
-        
+
         GridBagConstraints row3r = new GridBagConstraints();
-        row3r.gridx =2;
+        row3r.gridx = 2;
         row3r.gridy = 2;
-        
-        
+
         quoteArea = new JTextArea(
                 quote, 6, 20);
         quoteArea.setFont(new Font("Roman", Font.BOLD, 20));
@@ -167,60 +168,81 @@ public class RpiUI extends JFrame {
         quotec.gridx = 1;
         quotec.gridy = 3;
         quotec.anchor = GridBagConstraints.PAGE_END;
-        
+
         GridBagConstraints lastblank = new GridBagConstraints();
         lastblank.gridx = 2;
         lastblank.gridy = 3;
-        
-        
-        
+
         p.add(twitArea, twitc);
         p.add(blank, topmiddlec);
         p.add(calArea, calc);
         p.add(blank2, row2left);
-        p.add(blank3,row2mid);
+        p.add(blank3, row2mid);
         p.add(weatArea, weatc);
         p.add(blank4, row3mid);
         p.add(blank5, row3r);
         p.add(quoteArea, quotec);
         frame.add(p);
-        
+
         frame.pack();
-        
+
         frame.setVisible(true);
-        
+
     }
-    
+
     public void setQuote(String quote) {
         quoteArea.append(quote);
     }
     
-    public static void main(String[] args) throws IOException{
+    public void appendToTwitter(String tweet) {
+        twitArea.append(tweet);
+    }
+    
+    public void appendToTwitterNewline(String tweet) {
+        twitArea.append('\n' + tweet);
+    }
+    
+    public void insertIntoBeginningTwitter(String tweet) {
+        twitArea.insert(tweet, 0);
+    }
+    
+    public void replaceTwitter(String tweet) {
+        String formerText = twitArea.getText();
+        twitArea.replaceRange(tweet, 0, formerText.length());
+    }
+
+    public static void main(String[] args) throws IOException {
         // TODO code application logic here
-        
+
         uiThread = new RpiUI();
-        
+
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 uiThread.framer();
             }
         });
-        
-        
+
         System.out.println("Starting raspberry pi program.");
 
         /*ipAddress = getIpAddress();
         System.out.println("My IP address is: " + ipAddress);
         socketServerThread = new Thread(new SocketServerThread());
         socketServerThread.start();*/
+        try {
+            Thread bluetoothListenerThread = new Thread(new bluetoothListenerThread(uiThread));
+            bluetoothListenerThread.start();
+        } catch (Exception e) {
+            uiThread.setQuote("Threw bluetooth exception.");
+            e.printStackTrace();
+        }
         
-        Thread bluetoothListenerThread = new Thread(new bluetoothListenerThread(uiThread));
-        bluetoothListenerThread.start();
     }
-    
-	
-	/**used for create a connection as a sever*/
+
+    /**
+     * used for create a connection as a sever
+     */
     private static class SocketServerThread extends Thread {
+
         int count = 0;
 
         @Override
@@ -298,7 +320,9 @@ public class RpiUI extends JFrame {
 
     }
 
-	/** get IP address of the current device*/
+    /**
+     * get IP address of the current device
+     */
     private static String getIpAddress() {
         String ip = "";
         try {
@@ -329,5 +353,5 @@ public class RpiUI extends JFrame {
 
         return ip;
     }
-    
+
 }

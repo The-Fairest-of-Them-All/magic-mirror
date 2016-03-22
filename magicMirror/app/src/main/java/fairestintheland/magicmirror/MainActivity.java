@@ -107,6 +107,8 @@ public class MainActivity extends AppCompatActivity {
     private String raspberryPiName;
     //string defined on android and raspberry sides to establish connection
     private final String UUIDSTRING = "a96d5795-f8c3-4b7a-9bad-1eefa9e11a94";
+    private static final String EXIT_KEYWORD = "DONE";
+
     BluetoothManager bluetoothManager;
     BluetoothAdapter bluetoothAdapter;
     TextView bluetoothInfo;
@@ -305,6 +307,13 @@ public class MainActivity extends AppCompatActivity {
 
         //write content to the socket if the socket was opened successfully
         writeContentToSocket(clientSocket);
+
+        //close socket before end of method so every time the sync button is pressed, a new connection is made
+        try {
+            clientSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -313,8 +322,6 @@ public class MainActivity extends AppCompatActivity {
      * @param clientSocket an open BluetoothSocket object
      */
     public void writeContentToSocket(BluetoothSocket clientSocket) {
-
-
         try {
             byte[] buffer = new byte[1024];  // buffer store for the stream
             buffer = raspberryPiName.getBytes();
@@ -330,9 +337,14 @@ public class MainActivity extends AppCompatActivity {
                 buffer = tweet.getBytes();
                 clientSocketOutputStream.write(buffer);
                 System.out.println("Wrote " + new String(buffer) + " to raspberry.");
+                clientSocketOutputStream.flush();
             }
 
+            ///////////////////////SLEEP
 
+            //write break keyword to end to socket connection on both sides
+            clientSocketOutputStream.write(EXIT_KEYWORD.getBytes());
+            System.out.println("Wrote " + EXIT_KEYWORD + " to raspberry.");
         } catch (IOException e) {
             e.printStackTrace();
         }

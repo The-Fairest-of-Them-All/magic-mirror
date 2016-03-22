@@ -18,16 +18,20 @@ import javax.microedition.io.StreamConnectionNotifier;
 import rpiui.RpiUI;
 
 /**
- * A thread used to asynchronously query the device about its bluetooth capabilities and if the capabilities
- * are sufficient, i.e. there is a bluetooth device, it is turned on, and it can be set to discoverable mode,
- * creates a server side socket and listens for a connection request from android app. Finally, if the connection
- * is established, this thread reads in the data passed by the android app.
- * 
+ * A thread used to asynchronously query the device about its bluetooth
+ * capabilities and if the capabilities are sufficient, i.e. there is a
+ * bluetooth device, it is turned on, and it can be set to discoverable mode,
+ * creates a server side socket and listens for a connection request from
+ * android app. Finally, if the connection is established, this thread reads in
+ * the data passed by the android app.
+ *
  * @author Keith Rasweiler
  */
 public class bluetoothListenerThread implements Runnable {
+
     //this is the UUID that is used to create a socket between android and raspberry via bluetooth
     private final String UUIDSTRING = "a96d5795f8c34b7a9bad1eefa9e11a94";
+    private static final String EXIT_KEYWORD = "DONE";
 
     public static String bluetoothAddress; //MAC address of the bluetooth adapter on raspberry pi
     public static int discoverableMode; //values described in getOrSetDiscoverableMode()
@@ -39,7 +43,6 @@ public class bluetoothListenerThread implements Runnable {
     public static LocalDevice localDevice; //The LocalDevice class defines the basic functions of the Bluetooth manager
     public static String bluetoothFriendlyName;
     public static RpiUI mainThread;
-   
 
     public bluetoothListenerThread(RpiUI mainThread) {
         this.mainThread = mainThread;
@@ -51,19 +54,29 @@ public class bluetoothListenerThread implements Runnable {
     }
 
     /**
-     * Does preliminary checks on the bluetooth device connected to the computer. First checks to ensure that
-     * the device is powered on, next tries to get the bluetooth MAC address and friendly name and prints them
-     * to Sys.out. The friendly name and MAC address are needed to facilitate the connection along with the UUID.
-     * Next, checks to see if device is discoverable and attempts to set it to discoverable if not using a call
-     * to getOrSetDiscoverableMode(). Finally creates a StreamConnectionNotifier object and uses the acceptAndOpen()
-     * method to accept an incoming bluetooth connection request. The resulting StreamConnection serves as the
-     * server socket and is passed to processConnection().
+     * Does preliminary checks on the bluetooth device connected to the
+     * computer. First checks to ensure that the device is powered on, next
+     * tries to get the bluetooth MAC address and friendly name and prints them
+     * to Sys.out. The friendly name and MAC address are needed to facilitate
+     * the connection along with the UUID. Next, checks to see if device is
+     * discoverable and attempts to set it to discoverable if not using a call
+     * to getOrSetDiscoverableMode(). Finally creates a StreamConnectionNotifier
+     * object and uses the acceptAndOpen() method to accept an incoming
+     * bluetooth connection request. The resulting StreamConnection serves as
+     * the server socket and is passed to processConnection().
      */
     private void listen() {
-        if (LocalDevice.isPowerOn()) { //if power is off, do not do any further setting up
+        if (!LocalDevice.isPowerOn()) { //if power is off, do not do any further setting up
+            System.out.println("Bluetooth is turned off.");
+            return;
+        } else {
             try {
                 //The LocalDevice class defines the basic functions of the Bluetooth manager (From API)
                 localDevice = LocalDevice.getLocalDevice();
+            } catch (BluetoothStateException e) {
+                System.err.println("BluetoothStateException in localDevice = LocalDevice.getLocalDevice();");
+                e.printStackTrace();
+                return;
             } catch (Exception e) {
                 e.printStackTrace();
                 return;
@@ -72,9 +85,10 @@ public class bluetoothListenerThread implements Runnable {
             try {
                 bluetoothAddress = localDevice.getBluetoothAddress();
                 System.out.println("My bluetooth address is " + bluetoothAddress);
+                mainThread.replaceTwitter("My bluetooth address is " + bluetoothAddress);
                 bluetoothFriendlyName = localDevice.getFriendlyName();
                 System.out.println("Bluetooth friendly name is " + bluetoothFriendlyName + ". This is what you should connect to.");
-
+                mainThread.appendToTwitterNewline("Bluetooth friendly name is " + bluetoothFriendlyName + ". This is what you should connect to.");
                 //check whether device is discoverable, if not set it, if it cannot be set to discoverable, 
                 //discoverable is false
                 discoverable = getOrSetDiscoverableMode(localDevice);
@@ -106,16 +120,21 @@ public class bluetoothListenerThread implements Runnable {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                try {
+                    //close connection at end of every loop iteration
+                    connection.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-        } else {
-            System.out.println("Bluetooth is turned off. Don't think we can do anything about that");
         }
     }
 
     /**
-     * Returns false for an undiscoverable device or if setDiscoverable() could not be completed, true otherwise.
-     * Prints verbose output to Sys.out through the process.
-     * 
+     * Returns false for an undiscoverable device or if setDiscoverable() could
+     * not be completed, true otherwise. Prints verbose output to Sys.out
+     * through the process.
+     *
      * @param localDevice
      * @return a boolean representing whether or not the device is discoverable
      */
@@ -129,7 +148,7 @@ public class bluetoothListenerThread implements Runnable {
         if (discoverableMode == DiscoveryAgent.NOT_DISCOVERABLE) {
             System.out.println("Discoverable mode is " + discoverableMode + " undiscoverable");
             try {
-                available = localDevice.setDiscoverable(DiscoveryAgent.LIAC);
+                available = localDevice.setDiscoverable(DiscoveryAgent.GIAC);
                 if (available) {
                     discoverableMode = localDevice.getDiscoverable();
                     System.out.println("Now set to discoverable, " + discoverableMode);
@@ -145,12 +164,12 @@ public class bluetoothListenerThread implements Runnable {
         }
         return available;
     }
-    
+
     /**
-     * Opens an InputStream from the StreamConnection object and receives data passed by android app into a
-     * byte[] buffer.
-     * 
-     * @param connection 
+     * Opens an InputStream from the StreamConnection object and receives data
+     * passed by android app into a byte[] buffer.
+     *
+     * @param connection
      */
     private static void processConnection(StreamConnection connection) {
         try {
@@ -164,8 +183,15 @@ public class bluetoothListenerThread implements Runnable {
                 byte[] inputBuffer = new byte[1024];
                 int result = inputStream.read(inputBuffer);
                 String input = new String(inputBuffer);
-                System.out.println(input);
-                mainThread.setQuote(input);
+                if (!input.equals(EXIT_KEYWORD)) {
+                    System.out.println(input);
+                    mainThread.appendToTwitterNewline(input);
+                    System.out.println("Waiting for more input.");
+                }
+                else {
+                    inputStream.close();
+                    break;
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
