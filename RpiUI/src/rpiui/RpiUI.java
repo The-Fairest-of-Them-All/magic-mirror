@@ -40,6 +40,7 @@ public class RpiUI extends JFrame {
     static GridBagConstraints twitc;
     static JPanel p;
     static RpiUI uiThread;
+    static Runnable mainUiThread;
 
     /**
      * @param args the command line arguments
@@ -189,28 +190,28 @@ public class RpiUI extends JFrame {
         frame.setVisible(true);
 
     }
-    
+
     public void appendToJTextArea(JTextArea area, String newText) {
         area.append(newText);
     }
-    
+
     public void appendToJTextAreaNewline(JTextArea area, String newText) {
         area.append('\n' + newText);
     }
-    
+
     public void insertIntoBeginningJTextArea(JTextArea area, String newText) {
         area.insert(newText, 0);
     }
-    
+
     public void replaceJTextArea(JTextArea area, String newText) {
         String formerText = area.getText();
         area.replaceRange(newText, 0, formerText.length());
     }
-    
+
     public JTextArea getTwitterJTextArea() {
         return twitArea;
     }
-    
+
     public JTextArea getQuoteJTextArea() {
         return quoteArea;
     }
@@ -220,11 +221,18 @@ public class RpiUI extends JFrame {
 
         uiThread = new RpiUI();
 
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+        mainUiThread = new Runnable() {
             public void run() {
                 uiThread.framer();
             }
-        });
+        };
+
+        /*javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                uiThread.framer();
+            }
+        })*/
+        javax.swing.SwingUtilities.invokeLater(mainUiThread);
 
         System.out.println("Starting raspberry pi program.");
 
@@ -232,14 +240,15 @@ public class RpiUI extends JFrame {
         System.out.println("My IP address is: " + ipAddress);
         socketServerThread = new Thread(new SocketServerThread());
         socketServerThread.start();*/
+        Thread bluetoothListenerThread = null;
         try {
-            Thread bluetoothListenerThread = new Thread(new bluetoothListenerThread(uiThread));
+            bluetoothListenerThread = new Thread(new bluetoothListenerThread(uiThread));
             bluetoothListenerThread.start();
+            bluetoothListenerThread.join();
         } catch (Exception e) {
             uiThread.replaceJTextArea(twitArea, ("Threw bluetooth exception."));
             e.printStackTrace();
         }
-        
     }
 
     /**
