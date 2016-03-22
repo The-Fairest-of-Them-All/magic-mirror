@@ -183,14 +183,14 @@ public class bluetoothListenerThread implements Runnable {
                 byte[] inputBuffer = new byte[1024];
                 int result = inputStream.read(inputBuffer);
                 String input = new String(inputBuffer);
-                if (!input.equals(EXIT_KEYWORD)) {
+                if (input.equals(EXIT_KEYWORD) || result == -1) {
+                    inputStream.close();
+                    break;
+                }
+                else {
                     System.out.println(input);
                     mainThread.appendToTwitterNewline(input);
                     System.out.println("Waiting for more input.");
-                }
-                else {
-                    inputStream.close();
-                    break;
                 }
             }
         } catch (Exception e) {
