@@ -32,6 +32,10 @@ public class bluetoothListenerThread implements Runnable {
     //this is the UUID that is used to create a socket between android and raspberry via bluetooth
     private final String UUIDSTRING = "a96d5795f8c34b7a9bad1eefa9e11a94";
     private static final String EXIT_KEYWORD = "DONE";
+    private static final String TWITTER_KEY = "T: ";
+    private static final String CALENDAR_KEY = "C: ";
+    private static final String WEATHER_KEY = "W: ";
+    private static final String QUOTE_KEY = "Q: ";
 
     public static String bluetoothAddress; //MAC address of the bluetooth adapter on raspberry pi
     public static int discoverableMode; //values described in getOrSetDiscoverableMode()
@@ -115,13 +119,14 @@ public class bluetoothListenerThread implements Runnable {
                 try {
                     //listen for client to connect to the url defined by url
                     connection = notifier.acceptAndOpen();
-                    System.out.println("Connection to Android accepted.");
+                    System.out.println("Connection to Android accepted. Bluetooth socket open.");
                     processConnection(connection);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 try {
                     //close connection at end of every loop iteration
+                    System.out.println("Closing bluetooth socket.");
                     connection.close();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -167,7 +172,7 @@ public class bluetoothListenerThread implements Runnable {
 
     /**
      * Opens an InputStream from the StreamConnection object and receives data
-     * passed by android app into a byte[] buffer.
+     * passed by android app into a byte[] buffer. Writes the received data into the display.
      *
      * @param connection an open StreamConnection object
      */
@@ -189,9 +194,26 @@ public class bluetoothListenerThread implements Runnable {
                     break;
                 }
                 else {
-                    //if we got valid input, print it to RIGHT NOW the twitter section
-                    System.out.println(input);
-                    mainThread.appendToJTextAreaNewline(mainThread.getTwitterJTextArea(), input);
+                    /*check to see if String represents Twitter data by comparing first 3 characters to defined string.
+                        and based on that result, write into the appropriate seciton on the screen*/
+                    if(input.regionMatches(0, TWITTER_KEY, 0, 3)) {
+                        System.out.println("THIS IS TWITTER: " + input);
+                        mainThread.appendToJTextAreaNewline(mainThread.getTwitterJTextArea(), input);
+                    } else if(input.regionMatches(0, QUOTE_KEY, 0, 3)) {
+                        System.out.println("THIS IS QUOTE: " + input);
+                        mainThread.replaceJTextArea(mainThread.getQuoteJTextArea(), input);
+                    } else if(input.regionMatches(0, WEATHER_KEY, 0, 3)) {
+                        System.out.println("THIS IS WEATHER: " + input);
+                        mainThread.replaceJTextArea(mainThread.getWeatherJTextArea(), input);
+                    } else if(input.regionMatches(0, CALENDAR_KEY, 0, 3)) {
+                        System.out.println("THIS IS CALENDAR: " + input);
+                        mainThread.replaceJTextArea(mainThread.getCalendarJTextArea(), input);
+                    } else {
+                        //append any "other" data to the Twitter area and print to Sys.out
+                        System.out.println("This: " + input + " isn't twitter, weather, quote, or calendar data");
+                        mainThread.appendToJTextAreaNewline(mainThread.getTwitterJTextArea(), input);
+                    }
+                    
                     System.out.println("Waiting for more input.");
                 }
             }

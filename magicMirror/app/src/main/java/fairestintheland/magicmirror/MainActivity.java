@@ -108,6 +108,10 @@ public class MainActivity extends AppCompatActivity {
     //string defined on android and raspberry sides to establish connection
     private final String UUIDSTRING = "a96d5795-f8c3-4b7a-9bad-1eefa9e11a94";
     private static final String EXIT_KEYWORD = "DONE";
+    private static final String TWITTER_KEY = "T: ";
+    private static final String CALENDAR_KEY = "C: ";
+    private static final String WEATHER_KEY = "W: ";
+    private static final String QUOTE_KEY = "Q: ";
 
     BluetoothManager bluetoothManager;
     BluetoothAdapter bluetoothAdapter;
@@ -330,18 +334,25 @@ public class MainActivity extends AppCompatActivity {
      */
     public void writeContentToSocket(BluetoothSocket clientSocket) {
         try {
-            byte[] buffer = new byte[1024];  // buffer store for the stream
-            buffer = raspberryPiName.getBytes();
-            clientSocketInputStream = clientSocket.getInputStream();
+            byte[] buffer;  // buffer store for the stream
+            //buffer = raspberryPiName.getBytes();
+            //clientSocketInputStream = clientSocket.getInputStream();
             clientSocketOutputStream = clientSocket.getOutputStream();
             //clientSocketOutputStream.write(buffer);
             //System.out.println("Wrote " + new String(buffer) + " to raspberry.");
 
+            /*In each of the following conditional statements, if the user has requested the data by
+            *   flipping a switch to turn that feature on, the data is requested from the appropriate
+            *   class, and the data is appended to a string containing a key that will help the raspberry
+            *   pi identify the class of data it has received.*/
+
             //send Twitter if true
             if (switchStates[0]) {
                 String tweet = tMess.returnTweet();
-                buffer = new byte[1024];  // buffer store for the stream
-                buffer = tweet.getBytes();
+                //buffer = new byte[1024];  // buffer store for the stream
+                StringBuilder output = new StringBuilder(TWITTER_KEY);
+                output.append(tweet);
+                buffer = output.toString().getBytes();
                 clientSocketOutputStream.write(buffer);
                 System.out.println("Wrote " + new String(buffer) + " to raspberry.");
                 clientSocketOutputStream.flush();
@@ -350,9 +361,10 @@ public class MainActivity extends AppCompatActivity {
             //send calendar events if true
             if  (switchStates[3]) {
                 currentEvent = cEvent.readCalendarEvent(this);
-                buffer = new byte[1024];  // buffer store for the stream
-                String temp = currentEvent.toString();
-                buffer = temp.getBytes();
+                //buffer = new byte[1024];  // buffer store for the stream
+                StringBuilder output = new StringBuilder(CALENDAR_KEY);
+                output.append(currentEvent.toString());
+                buffer = output.toString().getBytes();
                 clientSocketOutputStream.write(buffer);
                 System.out.println("Wrote " + new String(buffer) + " to raspberry.");
                 clientSocketOutputStream.flush();

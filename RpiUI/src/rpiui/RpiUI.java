@@ -239,6 +239,18 @@ public class RpiUI extends JFrame {
         return quoteArea;
     }
 
+    public JTextArea getCalendarJTextArea() {
+        return calArea;
+    }
+    
+    public JTextArea getWeatherJTextArea() {
+        return weatArea;
+    }
+    
+    public JTextArea getTimeJTextArea() {
+        return timeArea;
+    }
+    
     public static void main(String[] args) throws IOException {
         time = LocalTime.now();
         currentTime = time.format(DateTimeFormatter.ofPattern("hh:mm a"));
