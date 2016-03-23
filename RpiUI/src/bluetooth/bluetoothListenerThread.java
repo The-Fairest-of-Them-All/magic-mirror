@@ -14,7 +14,7 @@ import javax.bluetooth.UUID;
 import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnection;
 import javax.microedition.io.StreamConnectionNotifier;
-import com.intel.bluetooth.*;
+import com.intel.bluetooth.BluetoothStackBlueZ;
 
 import rpiui.RpiUI;
 
@@ -71,10 +71,10 @@ public class bluetoothListenerThread implements Runnable {
      * the server socket and is passed to processConnection().
      */
     private void listen() {
-       /*if (!LocalDevice.isPowerOn()) { //if power is off, do not do any further setting up
+       if (!LocalDevice.isPowerOn()) { //if power is off, do not do any further setting up
             System.out.println("Bluetooth is turned off.");
             return;
-        } else {*/
+        } else {
             try {
                 //The LocalDevice class defines the basic functions of the Bluetooth manager (From API)
                 localDevice = LocalDevice.getLocalDevice();
@@ -133,7 +133,7 @@ public class bluetoothListenerThread implements Runnable {
                     e.printStackTrace();
                 }
             }
-        //}
+        }
     }
 
     /**
