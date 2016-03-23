@@ -12,6 +12,8 @@ import java.net.*;
 import java.io.*;
 import java.util.Enumeration;
 import bluetooth.bluetoothListenerThread;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -49,8 +51,9 @@ public class RpiUI extends JFrame {
     static JPanel p;
     static RpiUI uiThread;
     static Runnable mainUiThread;
-    static LocalTime time;
-    static String currentTime;
+    static Thread bluetoothListenerThread;
+    static ActionListener updateClockDisplay;
+    static Timer t;
 
     /**
      * @param args the command line arguments
@@ -180,7 +183,7 @@ public class RpiUI extends JFrame {
         quotec.gridy = 3;
         quotec.anchor = GridBagConstraints.PAGE_END;
 
-        timeArea = new JTextArea(currentTime, 6, 20);
+        timeArea = new JTextArea("", 6, 20);
         timeArea.setFont(new Font("Roman", Font.BOLD, 30));
         timeArea.setLineWrap(false);
         timeArea.setWrapStyleWord(true);
@@ -191,7 +194,7 @@ public class RpiUI extends JFrame {
         quotet.gridx = 1;
         quotet.gridy = 1;
         quotet.anchor = GridBagConstraints.PAGE_START;
-        
+
         GridBagConstraints lastblank = new GridBagConstraints();
         lastblank.gridx = 2;
         lastblank.gridy = 3;
@@ -242,48 +245,62 @@ public class RpiUI extends JFrame {
     public JTextArea getCalendarJTextArea() {
         return calArea;
     }
-    
+
     public JTextArea getWeatherJTextArea() {
         return weatArea;
     }
-    
+
     public JTextArea getTimeJTextArea() {
         return timeArea;
     }
-    
+
     public static void main(String[] args) throws IOException {
-        time = LocalTime.now();
-        currentTime = time.format(DateTimeFormatter.ofPattern("hh:mm a"));
-        
+        System.out.println("Starting raspberry pi program.");
+
         //reference to the UI thread so that if bluetooth info is received, it can be added from uiThread
         uiThread = new RpiUI();
 
+        //declare a Runnable mainUiThread that starts the framer method of RpiUi
         mainUiThread = new Runnable() {
             public void run() {
                 uiThread.framer();
             }
         };
-
-        /*javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                uiThread.framer();
-            }
-        })*/
         javax.swing.SwingUtilities.invokeLater(mainUiThread);
-
-        System.out.println("Starting raspberry pi program.");
-
-        /*ipAddress = getIpAddress();
-        System.out.println("My IP address is: " + ipAddress);
-        socketServerThread = new Thread(new SocketServerThread());
-        socketServerThread.start();*/
-        Thread bluetoothListenerThread = null;
+        
+        bluetoothListenerThread = null;
         try {
             bluetoothListenerThread = new Thread(new bluetoothListenerThread(uiThread));
             bluetoothListenerThread.start();
-            bluetoothListenerThread.join();
         } catch (Exception e) {
             uiThread.replaceJTextArea(twitArea, ("Threw bluetooth exception."));
+            e.printStackTrace();
+        }
+        
+        //declare an actionlistener which updates the time
+        updateClockDisplay = new ActionListener() {
+            LocalTime time;
+            String currentTime;
+            
+            //overridden to update the time shown in the display every second
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //long timeLong = System.currentTimeMillis();
+                time = LocalTime.now();
+                currentTime = time.format(DateTimeFormatter.ofPattern("hh:mm:ss a"));
+                uiThread.replaceJTextArea(timeArea, currentTime);
+                }
+        };        
+        //schedule the Timer to execute the updateClockDisplay every second and start the timer
+        t = new Timer(1000, updateClockDisplay);
+        t.start();
+        
+        //join the bluetoothListenerThread thread
+        try {
+            bluetoothListenerThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
