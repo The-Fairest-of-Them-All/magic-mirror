@@ -12,6 +12,7 @@ import java.net.*;
 import java.io.*;
 import java.util.Enumeration;
 import bluetooth.bluetoothListenerThread;
+import invokecommandline.InvokeCommandLine;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Time;
@@ -294,6 +295,10 @@ public class RpiUI extends JFrame {
         //schedule the Timer to execute the updateClockDisplay every second and start the timer
         t = new Timer(1000, updateClockDisplay);
         t.start();
+        
+        InvokeCommandLine test = new InvokeCommandLine();
+        String[] commandAndArgs = {"ls", "-la"};
+        test.invoke(commandAndArgs);
         
         //join the bluetoothListenerThread thread
         try {
