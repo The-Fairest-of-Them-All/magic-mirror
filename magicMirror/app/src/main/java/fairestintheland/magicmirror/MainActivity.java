@@ -122,6 +122,8 @@ public class MainActivity extends AppCompatActivity {
     InputStream clientSocketInputStream;
     OutputStream clientSocketOutputStream;
     EditText raspberryNameEditText;
+    ArrayList<String> currentEvent;
+    CalendarEvent cEvent;
 
     TwitterMessage tMess;
 
@@ -131,10 +133,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        CalendarEvent cEvent = new CalendarEvent();
+        cEvent = new CalendarEvent();
         for (int i = 0; i < 10; i++) {
             System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         }
+        currentEvent = cEvent.readCalendarEvent(this);
+        String[] test = cEvent.getCNames();
         System.out.println("!!You got an event!!!" + cEvent.readCalendarEvent(this));
 
         tMess = new TwitterMessage();
@@ -142,8 +146,6 @@ public class MainActivity extends AppCompatActivity {
         switchStates = new boolean[]{false, false, false, false}; //Twitter,Email,Weather,Calendar
         context = this;
         sleeping = false;
-        //ipAddress = "10.0.0.58";
-        //ipAddress = "192.168.1.152";
         theSwitches = new ArrayList<Switch>();
         initSwitches();
         navList = (ListView) findViewById(R.id.left_drawer);
@@ -288,7 +290,8 @@ public class MainActivity extends AppCompatActivity {
      * The device hostname is input by the user and this method is only called if that user input String
      * matches a device hostname found in the discovery process. This method establishes a BluetoothSocket
      * using createRfcommSocketToServiceRecord() and tries to connect to a listening BluetoothServerSocket
-     * that uses the same UUID.
+     * that uses the same UUID. Before the method completes, the BluetoothSocket is closed so that on another
+     * button press to sync data, a new connection is established.
      */
     private void tryToConnect() {
         BluetoothDevice btDevice = device;
@@ -318,6 +321,10 @@ public class MainActivity extends AppCompatActivity {
 
 
     /**
+     * The method is passed an open BluetoothSocket. It checks all four switch states in order to
+     * determine what data to send to the raspberry app and then sends that data in order as well.
+     * The data is always sent as a byte array so it must be converted or serialized before sending
+     * in most cases.
      *
      * @param clientSocket an open BluetoothSocket object
      */
@@ -335,6 +342,17 @@ public class MainActivity extends AppCompatActivity {
                 String tweet = tMess.returnTweet();
                 buffer = new byte[1024];  // buffer store for the stream
                 buffer = tweet.getBytes();
+                clientSocketOutputStream.write(buffer);
+                System.out.println("Wrote " + new String(buffer) + " to raspberry.");
+                clientSocketOutputStream.flush();
+            }
+
+            //send calendar events if true
+            if  (switchStates[3]) {
+                currentEvent = cEvent.readCalendarEvent(this);
+                buffer = new byte[1024];  // buffer store for the stream
+                String temp = currentEvent.toString();
+                buffer = temp.getBytes();
                 clientSocketOutputStream.write(buffer);
                 System.out.println("Wrote " + new String(buffer) + " to raspberry.");
                 clientSocketOutputStream.flush();

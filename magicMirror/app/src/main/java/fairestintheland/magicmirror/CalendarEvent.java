@@ -35,17 +35,19 @@ public class CalendarEvent {
     public static ArrayList<String> startDates = new ArrayList<String>();
     public static ArrayList<String> endDates = new ArrayList<String>();
     public static ArrayList<String> descriptions = new ArrayList<String>();
+    static Cursor cursor;
+    static String[] CNames;
 
 	
 	/**access into the google calendar and get all events  */
     public static ArrayList<String> readCalendarEvent(Context context) {
-        Cursor cursor = context.getContentResolver().query(
+        cursor = context.getContentResolver().query(
                         Uri.parse("content://com.android.calendar/events"),
                         new String[] { "title", "description", "dtstart", "dtend", "eventLocation" }, null,
                         null, null);
         cursor.moveToFirst();
         // fetching calendars name
-        String CNames[] = new String[cursor.getCount()];
+        CNames = new String[cursor.getCount()];
 
         // fetching calendars id
         nameOfEvent.clear();
@@ -53,6 +55,7 @@ public class CalendarEvent {
         endDates.clear();
         descriptions.clear();
 
+        //add events that occur on the same day the user is accessing the calendar to currentEvent
         for (int i = 0; i < CNames.length; i++) {
             SimpleDateFormat formatter = new SimpleDateFormat(
                     "dd/MM/yyyy hh:mm:ss a");
@@ -76,6 +79,10 @@ public class CalendarEvent {
 
         }
         return currentEvent;
+    }
+
+    public String[] getCNames() {
+        return CNames;
     }
 
 	/**change the date format from milliseconds to "dd/MM/yyyy  hh:mm:ss " */
