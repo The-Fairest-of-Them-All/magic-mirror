@@ -71,7 +71,7 @@ public class bluetoothListenerThread implements Runnable {
      * the server socket and is passed to processConnection().
      */
     private void listen() {
-       if (!LocalDevice.isPowerOn()) { //if power is off, do not do any further setting up
+        if (!LocalDevice.isPowerOn()) { //if power is off, do not do any further setting up
             System.out.println("Bluetooth is turned off.");
             return;
         } else {
@@ -173,7 +173,8 @@ public class bluetoothListenerThread implements Runnable {
 
     /**
      * Opens an InputStream from the StreamConnection object and receives data
-     * passed by android app into a byte[] buffer. Writes the received data into the display.
+     * passed by android app into a byte[] buffer. Writes the received data into
+     * the display.
      *
      * @param connection an open StreamConnection object
      */
@@ -189,24 +190,24 @@ public class bluetoothListenerThread implements Runnable {
                 byte[] inputBuffer = new byte[1024];
                 int result = inputStream.read(inputBuffer);
                 String input = new String(inputBuffer);
+                input = input.trim();
                 //if result is -1, the read from inputBuffer read nothing so we assume that we should close the socket on this side
                 if (input.equals(EXIT_KEYWORD) || result == -1) {
                     inputStream.close();
                     break;
-                }
-                else {
+                } else {
                     /*check to see if String represents Twitter data by comparing first 3 characters to defined string.
                         and based on that result, write into the appropriate seciton on the screen*/
-                    if(input.regionMatches(0, TWITTER_KEY, 0, 3)) {
+                    if (input.regionMatches(0, TWITTER_KEY, 0, 3)) {
                         System.out.println("THIS IS TWITTER: " + input);
                         mainThread.appendToJTextAreaNewline(mainThread.getTwitterJTextArea(), input);
-                    } else if(input.regionMatches(0, QUOTE_KEY, 0, 3)) {
+                    } else if (input.regionMatches(0, QUOTE_KEY, 0, 3)) {
                         System.out.println("THIS IS QUOTE: " + input);
                         mainThread.replaceJTextArea(mainThread.getQuoteJTextArea(), input);
-                    } else if(input.regionMatches(0, WEATHER_KEY, 0, 3)) {
+                    } else if (input.regionMatches(0, WEATHER_KEY, 0, 3)) {
                         System.out.println("THIS IS WEATHER: " + input);
                         mainThread.replaceJTextArea(mainThread.getWeatherJTextArea(), input);
-                    } else if(input.regionMatches(0, CALENDAR_KEY, 0, 3)) {
+                    } else if (input.regionMatches(0, CALENDAR_KEY, 0, 3)) {
                         System.out.println("THIS IS CALENDAR: " + input);
                         mainThread.replaceJTextArea(mainThread.getCalendarJTextArea(), input);
                     } else {
@@ -214,7 +215,14 @@ public class bluetoothListenerThread implements Runnable {
                         System.out.println("This: " + input + " isn't twitter, weather, quote, or calendar data");
                         mainThread.appendToJTextAreaNewline(mainThread.getTwitterJTextArea(), input);
                     }
-                    
+
+                    //TODO temporary lat and long data so we can get weather integrated while working on location in android
+                    //this is Temple coordinates
+                    System.out.println("Temp version of weather.");
+                    String latitude = "39.981830";
+                    String longitude = "-75.155407";
+                    mainThread.replaceJTextArea(mainThread.getWeatherJTextArea(), input);
+
                     System.out.println("Waiting for more input.");
                 }
             }

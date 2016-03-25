@@ -1,5 +1,6 @@
 package fairestintheland.magicmirror;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -9,6 +10,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -16,6 +19,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -32,6 +36,10 @@ import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -53,30 +61,30 @@ import java.util.UUID;
 
 
 /**used for create a connection between mobile application and the Raspberry Pi,
-    and create a UI for the Android application*/
-public class MainActivity extends AppCompatActivity {
+ and create a UI for the Android application*/
+public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     //UI objects
-	
-	/**
-	DrawerLayout mDrawerLayout: 	a Layout for the all switch state, and it can hide on the left side of the application
-	ActionBarDrawerToggle mDrawerToggle: Toggle for hide and display the Drawer Layout
-	CharSequence mTitle:	 the title of the drawer layout
-	ArrayList<Switch> theSwitches:	store all switch states
-	MenuAdapter<Switch> adapter:  set up all elements for the switch listview
-	ListView navList: a ListView which is placed in the DrawerLayout and display the switches’ view 
-	Button sleepButton: set the sleeping state  
-	Button syncButton: send all switch states to Raspberry Pi
-	boolean sleeping: state for switch off the mirror screen
-	boolean[] switchState: store all switch states 
-	EditText ipBar: user enter the Raspberry’s IP address
-	Socket client: client socket which used for set up the connection
-	PrintWriter writer: used to send data to other side in socket 
-	String ipAddress: IP address of the Raspberry Pi
-	JSONArray parcel: store all messages which will send to the sever
-	Context context: context of current activity
-	ConnectivityManager cm: ConnectivityManager of current context
 
-	*/
+    /**
+     DrawerLayout mDrawerLayout: 	a Layout for the all switch state, and it can hide on the left side of the application
+     ActionBarDrawerToggle mDrawerToggle: Toggle for hide and display the Drawer Layout
+     CharSequence mTitle:	 the title of the drawer layout
+     ArrayList<Switch> theSwitches:	store all switch states
+     MenuAdapter<Switch> adapter:  set up all elements for the switch listview
+     ListView navList: a ListView which is placed in the DrawerLayout and display the switches’ view
+     Button sleepButton: set the sleeping state
+     Button syncButton: send all switch states to Raspberry Pi
+     boolean sleeping: state for switch off the mirror screen
+     boolean[] switchState: store all switch states
+     EditText ipBar: user enter the Raspberry’s IP address
+     Socket client: client socket which used for set up the connection
+     PrintWriter writer: used to send data to other side in socket
+     String ipAddress: IP address of the Raspberry Pi
+     JSONArray parcel: store all messages which will send to the sever
+     Context context: context of current activity
+     ConnectivityManager cm: ConnectivityManager of current context
+
+     */
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private CharSequence mDrawerTitle;
@@ -130,7 +138,8 @@ public class MainActivity extends AppCompatActivity {
     CalendarEvent cEvent;
 
     TwitterMessage tMess;
-
+    GoogleApiClient mGoogleApiClient;
+    Location mLastLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -203,6 +212,55 @@ public class MainActivity extends AppCompatActivity {
         raspberryNameEditText = (EditText) findViewById(R.id.raspberryName);
 
         new BluetoothAsync().execute();
+
+        // Create an instance of GoogleAPIClient.
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+        }
+
+    }
+
+    protected void onStart() {
+        mGoogleApiClient.connect();
+        super.onStart();
+    }
+
+    protected void onStop() {
+        mGoogleApiClient.disconnect();
+        super.onStop();
+    }
+
+    //@Override
+    public void onConnected(Bundle connectionHint) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+        if (mLastLocation != null) {
+            System.out.println("LOCATION" + String.valueOf(mLastLocation.getLatitude()));
+            System.out.println(String.valueOf(mLastLocation.getLongitude()));
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
 
     }
 
@@ -435,6 +493,8 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
     }
     //-----------------END BLUETOOTH SECTION-----------------------------------------------------------------
+
+
 
 
 

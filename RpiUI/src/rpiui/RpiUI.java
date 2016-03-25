@@ -216,24 +216,43 @@ public class RpiUI extends JFrame {
         frame.pack();
 
         frame.setVisible(true);
-
     }
 
     public void appendToJTextArea(JTextArea area, String newText) {
-        area.append(newText);
+        try {
+            area.append(newText);
+        } catch (NullPointerException e) {
+            System.out.println("The area was null.");
+            e.printStackTrace();
+        }
     }
 
     public void appendToJTextAreaNewline(JTextArea area, String newText) {
-        area.append('\n' + newText);
+        try {
+            area.append('\n' + newText);
+        } catch (NullPointerException e) {
+            System.out.println("The area was null.");
+            e.printStackTrace();
+        }
     }
 
     public void insertIntoBeginningJTextArea(JTextArea area, String newText) {
-        area.insert(newText, 0);
+        try {
+            area.insert(newText, 0);
+        } catch (NullPointerException e) {
+            System.out.println("The area was null.");
+            e.printStackTrace();
+        }
     }
 
     public void replaceJTextArea(JTextArea area, String newText) {
-        String formerText = area.getText();
-        area.replaceRange(newText, 0, formerText.length());
+        try {
+            String formerText = area.getText();
+            area.replaceRange(newText, 0, formerText.length());
+        } catch (NullPointerException e) {
+            System.out.println("The area was null.");
+            e.printStackTrace();
+        }
     }
 
     public JTextArea getTwitterJTextArea() {
@@ -269,7 +288,7 @@ public class RpiUI extends JFrame {
             }
         };
         javax.swing.SwingUtilities.invokeLater(mainUiThread);
-        
+
         bluetoothListenerThread = null;
         try {
             bluetoothListenerThread = new Thread(new bluetoothListenerThread(uiThread));
@@ -278,12 +297,12 @@ public class RpiUI extends JFrame {
             uiThread.replaceJTextArea(twitArea, ("Threw bluetooth exception."));
             e.printStackTrace();
         }
-        
+
         //declare an actionlistener which updates the time
         updateClockDisplay = new ActionListener() {
             LocalTime time;
             String currentTime;
-            
+
             //overridden to update the time shown in the display every second
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -291,16 +310,16 @@ public class RpiUI extends JFrame {
                 time = LocalTime.now();
                 currentTime = time.format(DateTimeFormatter.ofPattern("hh:mm:ss a"));
                 uiThread.replaceJTextArea(timeArea, currentTime);
-                }
-        };        
+            }
+        };
         //schedule the Timer to execute the updateClockDisplay every second and start the timer
         t = new Timer(1000, updateClockDisplay);
         t.start();
-        
+
         InvokeCommandLine test = new InvokeCommandLine();
         String[] commandAndArgs = {"ls", "-la"};
         test.invoke(commandAndArgs);
-        
+
         //join the bluetoothListenerThread thread
         try {
             bluetoothListenerThread.join();
