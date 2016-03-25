@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@android:drawable/ic_dialog_dialer"/>
-</selector><!-- From: file:/C:/Users/Owner/Documents/mirror/magic-mirror/Connection/magicMirror/app/src/main/res/drawable/ic_drawer.xml -->
