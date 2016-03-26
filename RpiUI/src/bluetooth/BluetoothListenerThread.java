@@ -15,6 +15,7 @@ import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnection;
 import javax.microedition.io.StreamConnectionNotifier;
 import com.intel.bluetooth.BluetoothStackBlueZ;
+import com.intel.bluetooth.BluetoothStackBlueZNativeTests;
 
 import rpiui.RpiUI;
 
@@ -28,7 +29,7 @@ import rpiui.RpiUI;
  *
  * @author Keith Rasweiler
  */
-public class bluetoothListenerThread implements Runnable {
+public class BluetoothListenerThread implements Runnable {
 
     //this is the UUID that is used to create a socket between android and raspberry via bluetooth
     private final String UUIDSTRING = "a96d5795f8c34b7a9bad1eefa9e11a94";
@@ -49,10 +50,13 @@ public class bluetoothListenerThread implements Runnable {
     public static String bluetoothFriendlyName;
     public static RpiUI mainThread;
 
-    public bluetoothListenerThread(RpiUI mainThread) {
+    public BluetoothListenerThread(RpiUI mainThread) {
         this.mainThread = mainThread;
     }
 
+    /**
+     * Invoked on start of the Runnable BluetoothListenerThread thread. This only calls listen().
+     */
     @Override
     public void run() {
         listen();
@@ -71,7 +75,7 @@ public class bluetoothListenerThread implements Runnable {
      * the server socket and is passed to processConnection().
      */
     private void listen() {
-        if (!LocalDevice.isPowerOn()) { //if power is off, do not do any further setting up
+        if (!LocalDevice.isPowerOn()) { //if power is off, do not do any further setting up, just display message
             System.out.println("Bluetooth is turned off.");
             return;
         } else {

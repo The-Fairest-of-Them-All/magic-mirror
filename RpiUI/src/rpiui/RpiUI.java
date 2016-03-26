@@ -11,7 +11,7 @@ import java.awt.GraphicsDevice.*;
 import java.net.*;
 import java.io.*;
 import java.util.Enumeration;
-import bluetooth.bluetoothListenerThread;
+import bluetooth.BluetoothListenerThread;
 import invokecommandline.InvokeCommandLine;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -291,7 +291,7 @@ public class RpiUI extends JFrame {
 
         bluetoothListenerThread = null;
         try {
-            bluetoothListenerThread = new Thread(new bluetoothListenerThread(uiThread));
+            bluetoothListenerThread = new Thread(new BluetoothListenerThread(uiThread));
             bluetoothListenerThread.start();
         } catch (Exception e) {
             uiThread.replaceJTextArea(twitArea, ("Threw bluetooth exception."));
