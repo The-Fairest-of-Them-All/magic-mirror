@@ -57,9 +57,6 @@ public class RpiUI extends JFrame {
     static ActionListener updateClockDisplay;
     static Timer t;
 
-    /**
-     * @param args the command line arguments
-     */
     static String sample = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, "
             + "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. "
             + "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi"
@@ -70,7 +67,8 @@ public class RpiUI extends JFrame {
     static String quote = "I'm ready - Spongebob Squarepants";
 
     /**
-     * set up the java Frame for mirror screen
+     * Sets up the java Frame for the mirror screen. Adds placeholder text to each area. Divides the screen into
+     * a grid system to specify where each designated area is located. Sets design specifications for the layout.
      */
     private void framer() {
         JFrame frame = new JFrame("Raspberry Pi App");
@@ -218,6 +216,12 @@ public class RpiUI extends JFrame {
         frame.setVisible(true);
     }
 
+    /**
+     * Appends the String newText to the existing text in the JTextArea area.
+     * 
+     * @param area JTextArea corresponding to the area into which you want to write
+     * @param newText a string to write into area
+     */
     public void appendToJTextArea(JTextArea area, String newText) {
         try {
             area.append(newText);
@@ -227,6 +231,12 @@ public class RpiUI extends JFrame {
         }
     }
 
+    /**
+     * Appends the String newText to the existing text in the JTextArea area on a newline.
+     * 
+     * @param area JTextArea corresponding to the area into which you want to write
+     * @param newText a string to write into area
+     */
     public void appendToJTextAreaNewline(JTextArea area, String newText) {
         try {
             area.append('\n' + newText);
@@ -236,6 +246,12 @@ public class RpiUI extends JFrame {
         }
     }
 
+    /**
+     * Inserts the String newText to the beginning of the existing text in the JTextArea area.
+     * 
+     * @param area JTextArea corresponding to the area into which you want to write
+     * @param newText a string to write into area
+     */
     public void insertIntoBeginningJTextArea(JTextArea area, String newText) {
         try {
             area.insert(newText, 0);
@@ -245,6 +261,12 @@ public class RpiUI extends JFrame {
         }
     }
 
+    /**
+     * Replaces the existing text in the JTextArea are with the String newText.
+     * 
+     * @param area JTextArea corresponding to the area into which you want to write
+     * @param newText a string to write into area
+     */
     public void replaceJTextArea(JTextArea area, String newText) {
         try {
             String formerText = area.getText();
@@ -255,26 +277,57 @@ public class RpiUI extends JFrame {
         }
     }
 
+    /**
+     * Returns the JTextArea for Twitter.
+     * 
+     * @return the JTextAre for Twitter 
+     */
     public JTextArea getTwitterJTextArea() {
         return twitArea;
     }
 
+    /**
+     * Returns the JTextArea for Quotes.
+     * 
+     * @return the JTextAre for Quotes 
+     */
     public JTextArea getQuoteJTextArea() {
         return quoteArea;
     }
 
+    /**
+     * Returns the JTextArea for the Calendar.
+     * 
+     * @return the JTextAre for the Calendar
+     */
     public JTextArea getCalendarJTextArea() {
         return calArea;
     }
 
+    /**
+     * Returns the JTextArea for Weather.
+     * 
+     * @return the JTextAre for Weather
+     */
     public JTextArea getWeatherJTextArea() {
         return weatArea;
     }
 
+    /**
+     * Returns the JTextArea for Time.
+     * 
+     * @return the JTextAre for Time 
+     */
     public JTextArea getTimeJTextArea() {
         return timeArea;
     }
 
+    /**
+     * This is the main function for the Raspberry Pi side of the MagicMirror project.
+     * 
+     * @param args command line arguments
+     * @throws IOException 
+     */
     public static void main(String[] args) throws IOException {
         System.out.println("Starting raspberry pi program.");
 
@@ -331,7 +384,7 @@ public class RpiUI extends JFrame {
     }
 
     /**
-     * used for create a connection as a sever
+     * Used to create a connection as a the server side of a Java socket. Emdedded class inside RpiUI.
      */
     private static class SocketServerThread extends Thread {
 
@@ -413,7 +466,9 @@ public class RpiUI extends JFrame {
     }
 
     /**
-     * get IP address of the current device
+     * Gets all known IP addresses and returns a string containing them.
+     * 
+     * @return String representing all assigned IP addresses associated with the device. 
      */
     private static String getIpAddress() {
         String ip = "";
