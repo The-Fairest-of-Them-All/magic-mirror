@@ -126,10 +126,7 @@ public class BluetoothListenerThread implements Runnable {
                     connection = notifier.acceptAndOpen();
                     System.out.println("Connection to Android accepted. Bluetooth socket open.");
                     processConnection(connection);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                try {
+                    
                     //close connection at end of every loop iteration
                     System.out.println("Closing bluetooth socket.");
                     connection.close();
@@ -229,7 +226,7 @@ public class BluetoothListenerThread implements Runnable {
                     weather.append(latitude).append("\n").append("Longitude: ").append(longitude);
                     mainThread.replaceJTextArea(mainThread.getWeatherJTextArea(), weather.toString());
 
-                    System.out.println("Waiting for more input.");
+                    System.out.println("End of input.");
                 }
             }
         } catch (Exception e) {
