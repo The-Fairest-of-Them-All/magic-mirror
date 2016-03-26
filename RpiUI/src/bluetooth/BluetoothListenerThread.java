@@ -225,7 +225,9 @@ public class BluetoothListenerThread implements Runnable {
                     System.out.println("Temp version of weather.");
                     String latitude = "39.981830";
                     String longitude = "-75.155407";
-                    mainThread.replaceJTextArea(mainThread.getWeatherJTextArea(), input);
+                    StringBuilder weather = new StringBuilder("Latitude: ");
+                    weather.append(latitude).append("\n").append("Longitude: ").append(longitude);
+                    mainThread.replaceJTextArea(mainThread.getWeatherJTextArea(), weather.toString());
 
                     System.out.println("Waiting for more input.");
                 }
