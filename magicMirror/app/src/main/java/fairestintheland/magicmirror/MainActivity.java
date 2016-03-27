@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
     //bluetooth vars
     //int used to determine what activity was presented in the onActivityResult() method
     private static final int REQUEST_ENABLE_BT = 100;
-    private String raspberryPiName;
+    private String raspberryPiName = "LENOVO-PC";
     //string defined on android and raspberry sides to establish connection
     private final String UUIDSTRING = "a96d5795-f8c3-4b7a-9bad-1eefa9e11a94";
     private static final String EXIT_KEYWORD = "DONE";
@@ -141,6 +141,8 @@ public class MainActivity extends AppCompatActivity {
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     GetLocation myLocation;
+    String latitude;
+    String longitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -216,8 +218,6 @@ public class MainActivity extends AppCompatActivity {
 
         myLocation = new GetLocation(context);
         myLocation.startLocationServices();
-        //System.out.println("Lat is " + myLocation.getLatitude());
-        //System.out.println("Long is " + myLocation.getLongitude());
     }
 
 
@@ -282,9 +282,14 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println(devices);
 
                 //try a connection based on device name
-                if (device.getName().equals(raspberryPiName)) {
-                    tryToConnect();
-                    return;
+                try {
+                    if (device.getName().equals(raspberryPiName)) {
+                        tryToConnect();
+                        return;
+                    }
+                } catch (NullPointerException e) {
+                    System.out.println("The name was null");
+                    e.printStackTrace();
                 }
             }
         }
@@ -382,6 +387,18 @@ public class MainActivity extends AppCompatActivity {
                 //buffer = new byte[1024];  // buffer store for the stream
                 StringBuilder output = new StringBuilder(TWITTER_KEY);
                 output.append(tweet);
+                buffer = output.toString().getBytes();
+                clientSocketOutputStream.write(buffer);
+                System.out.println("Wrote " + new String(buffer) + " to raspberry.");
+                clientSocketOutputStream.flush();
+            }
+
+            //send location data so that Raspberry can request weather data
+            if (switchStates[2]) {
+                latitude = myLocation.getLatitude();
+                longitude = myLocation.getLongitude();
+                StringBuilder output = new StringBuilder(WEATHER_KEY);
+                output.append(latitude).append(",").append(longitude);
                 buffer = output.toString().getBytes();
                 clientSocketOutputStream.write(buffer);
                 System.out.println("Wrote " + new String(buffer) + " to raspberry.");

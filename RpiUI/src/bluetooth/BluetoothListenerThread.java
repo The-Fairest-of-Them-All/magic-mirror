@@ -219,12 +219,12 @@ public class BluetoothListenerThread implements Runnable {
 
                     //TODO temporary lat and long data so we can get weather integrated while working on location in android
                     //this is Temple coordinates
-                    System.out.println("Temp version of weather.");
+                    /*System.out.println("Temp version of weather.");
                     String latitude = "39.981830";
                     String longitude = "-75.155407";
                     StringBuilder weather = new StringBuilder("Latitude: ");
                     weather.append(latitude).append("\n").append("Longitude: ").append(longitude);
-                    mainThread.replaceJTextArea(mainThread.getWeatherJTextArea(), weather.toString());
+                    mainThread.replaceJTextArea(mainThread.getWeatherJTextArea(), weather.toString());*/
 
                     System.out.println("End of input.");
                 }
