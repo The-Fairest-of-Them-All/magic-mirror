@@ -62,7 +62,7 @@ import java.util.UUID;
 
 /**used for create a connection between mobile application and the Raspberry Pi,
  and create a UI for the Android application*/
-public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class MainActivity extends AppCompatActivity {
     //UI objects
 
     /**
@@ -140,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     TwitterMessage tMess;
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
+    GetLocation myLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -213,56 +214,27 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         new BluetoothAsync().execute();
 
-        // Create an instance of GoogleAPIClient.
-        if (mGoogleApiClient == null) {
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(LocationServices.API)
-                    .build();
-        }
-
+        myLocation = new GetLocation(context);
+        myLocation.startLocationServices();
+        //System.out.println("Lat is " + myLocation.getLatitude());
+        //System.out.println("Long is " + myLocation.getLongitude());
     }
 
+
+    //---------LOCATION SECTION--------------------------------------------------------------------------
     protected void onStart() {
-        mGoogleApiClient.connect();
+        //mGoogleApiClient.connect();
         super.onStart();
     }
 
     protected void onStop() {
-        mGoogleApiClient.disconnect();
+        //mGoogleApiClient.disconnect();
+        myLocation.stopLocationServices();
         super.onStop();
     }
+    //-----------END LOCATION SECTION---------------------------------------------------------------------
 
-    //@Override
-    public void onConnected(Bundle connectionHint) {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                mGoogleApiClient);
-        if (mLastLocation != null) {
-            System.out.println("LOCATION" + String.valueOf(mLastLocation.getLatitude()));
-            System.out.println(String.valueOf(mLastLocation.getLongitude()));
-        }
-    }
 
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-
-    }
 
     //----------BLUETOOTH SECTION-------------------------------------------------------------------------
     /**
