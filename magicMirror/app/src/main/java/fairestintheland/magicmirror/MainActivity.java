@@ -168,7 +168,6 @@ public class MainActivity extends AppCompatActivity {
         navList = (ListView) findViewById(R.id.left_drawer);
         adapter = new MenuAdapter<>(this, android.R.layout.simple_list_item_1, theSwitches);
         navList.setAdapter(adapter);
-        //syncWithPi(); //TODO commented this out for testing with different computers
         sleepButton = (Button) findViewById(R.id.sleepButton);
         sleepButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -210,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        syncButton = (Button) findViewById(R.id.connect_button);
+        /*syncButton = (Button) findViewById(R.id.connect_button);
         syncButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -220,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
                 //callSync();
                 new MyClientTask().execute();
             }
-        });
+        });*/
 
         //start bluetooth services
         bluetoothInfo = (TextView) findViewById(R.id.bluetoothInfo);
@@ -244,6 +243,8 @@ public class MainActivity extends AppCompatActivity {
         myLocation.stopLocationServices();
         super.onStop();
     }
+
+
     //-----------END LOCATION SECTION---------------------------------------------------------------------
 
 
@@ -445,6 +446,28 @@ public class MainActivity extends AppCompatActivity {
      * @param view
      */
     public void startLooking(View view) {
+        raspberryPiName = raspberryNameEditText.getText().toString().trim();
+
+        //only start discovery if user has entered a remote hostname
+        if (!raspberryPiName.equals("Enter raspberry computer name here")) {
+            if (!raspberryPiName.equals("Please reenter raspberry pi bluetooth name")) {
+                if (!raspberryPiName.isEmpty()) {
+                    //if false, bluetooth off, otherwise start discovery, when results arrive the callback is BroadcastReceiver
+                    bluetoothAvailable = bluetoothAdapter.startDiscovery();
+                } else {
+                    raspberryNameEditText.setText("Please reenter raspberry pi bluetooth name");
+                }
+            } else {
+                raspberryNameEditText.setText("Please reenter raspberry pi bluetooth name");
+            }
+        } else {
+            raspberryNameEditText.setText("Please reenter raspberry pi bluetooth name");
+        }
+    }
+
+
+
+    public void look(View view) {
         raspberryPiName = raspberryNameEditText.getText().toString().trim();
 
         //only start discovery if user has entered a remote hostname
