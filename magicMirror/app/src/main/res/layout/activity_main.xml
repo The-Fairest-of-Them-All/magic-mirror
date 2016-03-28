@@ -17,7 +17,7 @@
             android:layout_above="@+id/sleepButton"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="39dp"
-            android:onClick="look"/>
+            android:onClick="startLooking"/>
 
         <Button
             android:id="@+id/sleepButton"

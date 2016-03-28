@@ -465,28 +465,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-
-    public void look(View view) {
-        raspberryPiName = raspberryNameEditText.getText().toString().trim();
-
-        //only start discovery if user has entered a remote hostname
-        if (!raspberryPiName.equals("Enter raspberry computer name here")) {
-            if (!raspberryPiName.equals("Please reenter raspberry pi bluetooth name")) {
-                if (!raspberryPiName.isEmpty()) {
-                    //if false, bluetooth off, otherwise start discovery, when results arrive the callback is BroadcastReceiver
-                    bluetoothAvailable = bluetoothAdapter.startDiscovery();
-                } else {
-                    raspberryNameEditText.setText("Please reenter raspberry pi bluetooth name");
-                }
-            } else {
-                raspberryNameEditText.setText("Please reenter raspberry pi bluetooth name");
-            }
-        } else {
-            raspberryNameEditText.setText("Please reenter raspberry pi bluetooth name");
-        }
-    }
-
     /**
      * Respond to a user's interacting with an activity presented to turn on bluetooth capabilities.
      *
