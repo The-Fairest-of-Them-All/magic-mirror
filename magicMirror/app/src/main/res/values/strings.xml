@@ -15,8 +15,15 @@
     <string name="font_size">Font Size</string>
     <string name="action_settings">Settings</string>
     <string name="Twitter">Twitter</string>
+    <string name="TwitterAccount">Twitter Account</string>
+    <string name="back">Back</string>
+    <string name="submit">Submit</string>
+    <string name="ConsumerKey">ConsumerKey</string>
+    <string name="ConsumerSecret">ConsumerSecret</string>
+    <string name="AccessToken">AccessToken</string>
+    <string name="AccessTokenSecret">AccessTokenSecret</string>
 
-<!-- TODO: Remove or change this placeholder text -->
+    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="drawer_open" />
     <string name="drawer_close" />
@@ -26,4 +33,13 @@
         <item>Weather</item>
         <item>Calendar</item>
     </string-array>
+
+    <string-array name="twitterAccountInfo">
+        <item>ConsumerKey</item>
+        <item>ConsumerSecret</item>
+        <item>AccessToken</item>
+        <item>AccessTokenSecret</item>
+    </string-array>
+
+
 </resources>

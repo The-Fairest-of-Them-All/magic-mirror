@@ -1,6 +1,7 @@
 package fairestintheland.magicmirror;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -69,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
     private Button sleepButton;
     private Button syncButton;
     private Button settingButton;
+    private Button twitterAccountButton;
     private boolean sleeping;
     public String eventMessage;
     TwitterMessage tMess;
@@ -162,6 +164,16 @@ public class MainActivity extends AppCompatActivity {
                 syncWithPi();
             }
         });
+
+
+        twitterAccountButton = (Button)findViewById(R.id.TwitterAccountButton_main);
+        View.OnClickListener oclA = new View.OnClickListener(){
+            public void onClick(View v){
+                Intent activityAIntent = new Intent (MainActivity.this,TwitterAccountActivity.class);
+                startActivity(activityAIntent);
+            }
+        };
+        twitterAccountButton.setOnClickListener(oclA);
 
     }
 
