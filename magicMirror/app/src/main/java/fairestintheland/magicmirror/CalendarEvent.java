@@ -33,41 +33,45 @@ public class CalendarEvent {
 	
 	/**access into the google calendar and get all events  */
     public static String readCalendarEvent(Context context) {
-        Cursor cursor = context.getContentResolver().query(
-                        Uri.parse("content://com.android.calendar/events"),
-                        new String[] { "title", "description", "dtstart", "dtend", "eventLocation" }, null,
-                        null, null);
-        cursor.moveToFirst();
-        // fetching calendars name
-        String CNames[] = new String[cursor.getCount()];
+        try {
+            Cursor cursor = context.getContentResolver().query(
+                    Uri.parse("content://com.android.calendar/events"),
+                    new String[]{"title", "description", "dtstart", "dtend", "eventLocation"}, null,
+                    null, null);
+            cursor.moveToFirst();
+            // fetching calendars name
+            String CNames[] = new String[cursor.getCount()];
 
-        // fetching calendars id
-        nameOfEvent.clear();
-        startDates.clear();
-        endDates.clear();
-        descriptions.clear();
+            // fetching calendars id
+            nameOfEvent.clear();
+            startDates.clear();
+            endDates.clear();
+            descriptions.clear();
 
-        for (int i = 0; i < CNames.length; i++) {
-            SimpleDateFormat formatter = new SimpleDateFormat(
-                    "dd/MM/yyyy hh:mm:ss a");
-            Date date = new Date();
-            String[] strSpit =formatter.format(date.getTime()).split(" ");
-            String str =getDate(Long.parseLong(cursor.getString(2)));
-            if(str.indexOf(strSpit[0])!=-1) {
-                currentEvent.add("Event:"+cursor.getString(0));
-                // currentEvent.add(str);
-                // currentEvent.add(getDate(Long.parseLong(cursor.getString(3))));
-                currentEvent.add(" Description:"+cursor.getString(1)+"; ");
+            for (int i = 0; i < CNames.length; i++) {
+                SimpleDateFormat formatter = new SimpleDateFormat(
+                        "dd/MM/yyyy hh:mm:ss a");
+                Date date = new Date();
+                String[] strSpit = formatter.format(date.getTime()).split(" ");
+                String str = getDate(Long.parseLong(cursor.getString(2)));
+                if (str.indexOf(strSpit[0]) != -1) {
+                    currentEvent.add("Event:" + cursor.getString(0));
+                    // currentEvent.add(str);
+                    // currentEvent.add(getDate(Long.parseLong(cursor.getString(3))));
+                    currentEvent.add(" Description:" + cursor.getString(1) + "; ");
 
-               // System.out.println("you got a event!!!!!!!!!!!!!! "+currentEvent.toString());
-                //      nameOfEvent.add(cursor.getString(0));
-                //     startDates.add(str);
-                //      endDates.add(getDate(Long.parseLong(cursor.getString(3))));
-                //     descriptions.add(cursor.getString(1));
+                    // System.out.println("you got a event!!!!!!!!!!!!!! "+currentEvent.toString());
+                    //      nameOfEvent.add(cursor.getString(0));
+                    //     startDates.add(str);
+                    //      endDates.add(getDate(Long.parseLong(cursor.getString(3))));
+                    //     descriptions.add(cursor.getString(1));
+                }
+                CNames[i] = cursor.getString(0);
+                cursor.moveToNext();
+
             }
-            CNames[i] = cursor.getString(0);
-            cursor.moveToNext();
-
+        }catch(Exception e){
+            e.printStackTrace();
         }
         return currentEvent.toString();
     }
