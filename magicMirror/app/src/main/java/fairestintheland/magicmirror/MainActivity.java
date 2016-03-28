@@ -23,6 +23,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -93,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
     private MenuAdapter<Switch> adapter;
     private ListView navList;
     private Button sleepButton;
+    private Button settingButton;
     private Button syncButton;
     private boolean sleeping;
     private boolean[] switchStates;
@@ -143,6 +145,7 @@ public class MainActivity extends AppCompatActivity {
     GetLocation myLocation;
     String latitude;
     String longitude;
+    public String eventMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,9 +153,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         cEvent = new CalendarEvent();
-        for (int i = 0; i < 10; i++) {
-            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        }
+
         currentEvent = cEvent.readCalendarEvent(this);
         String[] test = cEvent.getCNames();
         System.out.println("!!You got an event!!!" + cEvent.readCalendarEvent(this));
@@ -200,10 +201,21 @@ public class MainActivity extends AppCompatActivity {
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
         };
+
+        settingButton = (Button) findViewById(R.id.settingButton);
+        settingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDrawerLayout.openDrawer(Gravity.LEFT);
+            }
+        });
+
         syncButton = (Button) findViewById(R.id.connect_button);
         syncButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                getJSONMessage();
+
                 //syncWithPi();
                 //callSync();
                 new MyClientTask().execute();
@@ -801,6 +813,42 @@ public class MainActivity extends AppCompatActivity {
 
             return v;
         }
+    }
+
+    public JSONObject getJSONMessage()  {
+        JSONObject newMessage = new JSONObject();
+        try{
+            for(int i =0;i <switchStates.length;i++){
+                newMessage.put(String.valueOf(theSwitches.get(i).getText()),switchStates[i]);
+            }
+            newMessage.put("events",eventMessage);
+            newMessage.put("tweets",tMess.getTweets());
+
+            System.out.println("JSON Message!!!!!!!!!!!!!!!!!!!!!!" + newMessage.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+            System.out.println("Ubable to collect all data to JSON!");
+        }
+        return newMessage;
+    }
+
+    public JSONObject getWIFIAccount(){
+        JSONObject newMessage = new JSONObject();
+        try{
+            EditText ssidView = (EditText) findViewById(R.id.ssidText);
+            EditText passwordView = (EditText) findViewById(R.id.passWordText);
+
+            newMessage.put("SSID",ssidView.getText());
+            newMessage.put("password",passwordView.getText());
+
+            System.out.println("WIFI Message!!!!!!!!!!!!!!!" + newMessage.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+            System.out.println("Ubable to collect all data to JSON!");
+        }
+        return newMessage;
+
+
     }
 
     /**

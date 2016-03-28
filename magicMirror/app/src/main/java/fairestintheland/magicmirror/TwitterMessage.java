@@ -98,4 +98,8 @@ public class TwitterMessage {
 
     }
 
+    public String getTweets(){
+        return tweet;
+    }
+
 }

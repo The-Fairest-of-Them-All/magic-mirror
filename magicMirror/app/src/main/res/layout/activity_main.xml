@@ -9,45 +9,100 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/welcome"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="30dp"
-            android:layout_marginTop="61dp"
-            android:text="@string/hello_world"
-            android:textAppearance="?android:textAppearanceLarge" />
-
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/welcome"
-            android:layout_centerHorizontal="true"
-            android:text="@string/hello_swipe"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
         <Button
             android:id="@+id/connect_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/connect_button"
-            android:layout_marginTop="40dp"
-            android:layout_below="@+id/textView"
-            android:layout_alignLeft="@+id/sleepButton"
-            android:layout_alignStart="@+id/sleepButton" />
+            android:layout_above="@+id/sleepButton"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="39dp" />
 
         <Button
             android:id="@+id/sleepButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/connect_button"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="51dp"
-            android:text="@string/sleep_button" />
+            android:text="@string/sleep_button"
+            android:layout_marginBottom="57dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true" />
 
+        <EditText
+            android:id="@+id/ipAddressTextInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="192.168.1.155"
+            android:layout_alignTop="@+id/textView2"
+            android:layout_toRightOf="@+id/textView2"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/IP_textview"
+            android:textAppearance="?android:textAppearanceLarge"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="54dp"
+            android:layout_above="@+id/connect_button" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ssid_textview"
+            android:textAppearance="?android:textAppearanceLarge"
+            android:layout_marginTop="67dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/password_textview"
+            android:textAppearance="?android:textAppearanceLarge"
+            android:layout_below="@+id/textView3"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="36dp" />
+
+        <EditText
+            android:id="@+id/ssidText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/textView3"
+            android:layout_toRightOf="@+id/textView3"
+            android:layout_alignRight="@+id/passWordText"
+            android:layout_alignEnd="@+id/passWordText" />
+
+        <EditText
+            android:id="@+id/passWordText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/textView4"
+            android:layout_toRightOf="@+id/textView4"
+            android:layout_toEndOf="@+id/textView4" />
+
+        <Button
+            android:id="@+id/settingButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/setting_button"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/TwitterAccount"
+            android:id="@+id/TwitterAccountButton_main"
+            android:layout_alignBottom="@+id/settingButton"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
 
         <TextView
             android:id="@+id/bluetoothInfo"
@@ -56,16 +111,6 @@
             android:layout_below="@+id/sleepButton"
             android:text="Bluetooth info"/>
 
-
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_below="@+id/bluetoothInfo"
-            android:id="@+id/syncButton"
-            android:text="Sync via bluetooth"
-            android:onClick="startLooking"/>
-
         <EditText
             android:id="@+id/raspberryName"
             android:layout_width="match_parent"
@@ -73,16 +118,6 @@
             android:layout_below="@+id/syncButton"
             android:text="Enter raspberry computer name here"
             android:layout_centerVertical="true" />
-
-        <EditText
-            android:id="@+id/ipAddressTextInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_toLeftOf="@+id/sleepButton"
-            android:layout_toStartOf="@+id/sleepButton"
-            android:text="192.168.1.155" />
-
 
     </RelativeLayout>
 
