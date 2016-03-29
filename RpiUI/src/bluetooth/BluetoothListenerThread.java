@@ -16,6 +16,7 @@ import javax.microedition.io.StreamConnection;
 import javax.microedition.io.StreamConnectionNotifier;
 import com.intel.bluetooth.BluetoothStackBlueZ;
 import com.intel.bluetooth.BluetoothStackBlueZNativeTests;
+import javax.bluetooth.RemoteDevice;
 
 import rpiui.RpiUI;
 
@@ -49,6 +50,8 @@ public class BluetoothListenerThread implements Runnable {
     public static LocalDevice localDevice; //The LocalDevice class defines the basic functions of the Bluetooth manager
     public static String bluetoothFriendlyName;
     public static RpiUI mainThread;
+    public static DiscoveryAgent discoveryAgent;
+    public static RemoteDevice[] remotes;
 
     public BluetoothListenerThread(RpiUI mainThread) {
         this.mainThread = mainThread;
@@ -91,7 +94,7 @@ public class BluetoothListenerThread implements Runnable {
                 return;
             }
 
-            try {
+            try {                
                 bluetoothAddress = localDevice.getBluetoothAddress();
                 System.out.println("My bluetooth address is " + bluetoothAddress);
                 mainThread.replaceJTextArea(mainThread.getTwitterJTextArea(), "My bluetooth address is " + bluetoothAddress);
@@ -99,12 +102,18 @@ public class BluetoothListenerThread implements Runnable {
                 System.out.println("Bluetooth friendly name is " + bluetoothFriendlyName + ". This is what you should connect to.");
                 mainThread.appendToJTextAreaNewline(mainThread.getTwitterJTextArea(), "Bluetooth friendly name is " + bluetoothFriendlyName + ". This is what you should connect to.");
                 //check whether device is discoverable, if not set it, if it cannot be set to discoverable, 
-                //discoverable is false
+                //discoverable is false initially
                 discoverable = getOrSetDiscoverableMode(localDevice);
 
                 if (discoverable) {
                     //The DiscoveryAgent class provides methods to perform device and service discovery (From API)
-                    DiscoveryAgent agent = localDevice.getDiscoveryAgent();
+                    //get a discovery agent from the local device
+                    discoveryAgent = localDevice.getDiscoveryAgent();
+                    
+                    
+                    remotes = discoveryAgent.retrieveDevices(DiscoveryAgent.PREKNOWN);
+                    
+                    //TODO IF IN EXISTING, CALL DIFFERENT LISTEN
 
                     //UUID is how the android app finds the raspberry app                 
                     uuid = new UUID(UUIDSTRING, false);
@@ -193,7 +202,7 @@ public class BluetoothListenerThread implements Runnable {
                 String input = new String(inputBuffer);
                 input = input.trim();
                 //if result is -1, the read from inputBuffer read nothing so we assume that we should close the socket on this side
-                if (input.equals(EXIT_KEYWORD) || result == -1) {
+                if (input.regionMatches(0, EXIT_KEYWORD, 0, 4) || result == -1) {
                     inputStream.close();
                     break;
                 } else {
