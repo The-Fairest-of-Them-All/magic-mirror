@@ -243,8 +243,6 @@ public class MainActivity extends AppCompatActivity {
         myLocation.stopLocationServices();
         super.onStop();
     }
-
-
     //-----------END LOCATION SECTION---------------------------------------------------------------------
 
 
@@ -497,192 +495,6 @@ public class MainActivity extends AppCompatActivity {
     //-----------------END BLUETOOTH SECTION-----------------------------------------------------------------
 
 
-
-
-
-    //-----------------IP SECTION----------------------------------------------------------------------------
-    public class MyClientTask extends AsyncTask<Void, Void, Void> {
-
-
-        MyClientTask() {
-
-        }
-
-        public int unsignedToBytes(byte b) {
-            return b & 0xFF;
-        }
-
-        @Override
-        protected Void doInBackground(Void... arg0) {
-
-            Socket socket = null;
-            DataOutputStream dataOutputStream = null;
-            DataInputStream dataInputStream = null;
-
-            //byte a = unsignedToBytes((byte)-64);
-            //byte b = (byte)-64 & 0xFF;
-
-            InetAddress addr = null;
-            byte[] ipAddr = new byte[]{-64,-88,43,69};
-            ipAddr = new byte[]{-64,-88,43,-93};
-            ipAddr = new byte[]{-64,-88,1,-104}; //1.152
-            ipAddr = new byte[]{-64,-88,1,-93}; //1.163
-            try {
-                addr = InetAddress.getByAddress(ipAddr);
-            } catch (UnknownHostException e) {
-                e.printStackTrace();
-            }
-
-            try {
-                //socket = new Socket("192.168.43.69",60000);
-                //socket = new Socket(addr, 60000);
-                socket = new Socket(addr, 55555);
-                dataOutputStream = new DataOutputStream(
-                        socket.getOutputStream());
-                dataInputStream = new DataInputStream(socket.getInputStream());
-
-                /*if (msgToServer != null) {
-                    dataOutputStream.writeUTF(msgToServer);
-                }
-
-                response = dataInputStream.readUTF();*/
-
-            } catch (UnknownHostException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-                //response = "UnknownHostException: " + e.toString();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-                //response = "IOException: " + e.toString();
-            } finally {
-                if (socket != null) {
-                    try {
-                        socket.close();
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
-
-                if (dataOutputStream != null) {
-                    try {
-                        dataOutputStream.close();
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
-
-                if (dataInputStream != null) {
-                    try {
-                        dataInputStream.close();
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            //textResponse.setText(response);
-            super.onPostExecute(result);
-        }
-
-    }
-
-    public void callSync() {
-        new Sync().execute();
-    }
-
-    public class Sync extends AsyncTask<Void, Void, Void> {
-
-        Sync() {}
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            try {
-                //EditText ipView = (EditText) findViewById(R.id.ipAddressTextInput);
-                //ipAddress = ipView.getText().toString();
-                Log.d("Sync", "Past getting IP. It is " + ipAddress);
-                parcel = new JSONArray();
-                for (boolean b : switchStates) {
-                    //{
-                    parcel.put(b);
-                }
-                Log.d("Sync", "Parcel created" + parcel.toString());
-                client = new Socket("192.168.1.152", 55555);
-
-                Log.d("Sync", "Connected to raspberry pi");
-                System.out.println("Connected to raspberry pi.");
-
-                writer = new PrintWriter(client.getOutputStream(), true);
-                Log.d("Sync", "About to write to the socket.");
-                writer.write(parcel.toString());
-                Log.d("Sync", "Wrote to socket");
-                writer.flush();
-                writer.close();
-                client.close();
-                //}
-            } catch (IOException e) {
-                Toast.makeText(context, "Unable to connect to server", Toast.LENGTH_SHORT).show();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            EditText ipView = (EditText) findViewById(R.id.ipAddressTextInput);
-            ipView.setText("Connected");
-            super.onPostExecute(aVoid);
-        }
-    }
-//--------------------END IP SECTION------------------------------------------------------------------------------
-
-
-
-    private void syncWithPi() {
-        if (hasValidConnection()) {
-            Thread t = new Thread() {
-                public void run() {
-                    try {
-                        EditText ipView = (EditText) findViewById(R.id.ipAddressTextInput);
-                        ipAddress = ipView.getText().toString();
-                        Log.d("Sync", "Past getting IP. It is " + ipAddress);
-                        parcel = new JSONArray();
-                        for (boolean b : switchStates) {
-                            //{
-                            parcel.put(b);
-                        }
-                        Log.d("Sync", "Parcel created" + parcel.toString());
-                        client = new Socket(ipAddress, 60000);
-
-                        Log.d("Sync", "Connected to raspberry pi");
-                        System.out.println("Connected to raspberry pi.");
-
-                        writer = new PrintWriter(client.getOutputStream(), true);
-                        Log.d("Sync", "About to write to the socket.");
-                        writer.write(parcel.toString());
-                        Log.d("Sync", "Wrote to socket");
-                        writer.flush();
-                        writer.close();
-                        client.close();
-                        //}
-                    } catch (IOException e) {
-                        Toast.makeText(context, "Unable to connect to server", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            };
-            t.start();
-
-        } else {
-            Toast.makeText(context, "Please Connect to Internet network", Toast.LENGTH_LONG).show();
-        }
-    }
-
 	/** set  Raspberry Pi screen sleep*/
     private void setSleepMode() {
         if (hasValidConnection()) {
@@ -848,8 +660,6 @@ public class MainActivity extends AppCompatActivity {
             System.out.println("Ubable to collect all data to JSON!");
         }
         return newMessage;
-
-
     }
 
     /**
@@ -881,6 +691,190 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 //TODO cheange ref - bluetoothInfo.setText("Bluetooth disabled.");
             }
+        }
+    }*/
+
+    /*
+    //-----------------IP SECTION----------------------------------------------------------------------------
+    public class MyClientTask extends AsyncTask<Void, Void, Void> {
+
+
+        MyClientTask() {
+
+        }
+
+        public int unsignedToBytes(byte b) {
+            return b & 0xFF;
+        }
+
+        @Override
+        protected Void doInBackground(Void... arg0) {
+
+            Socket socket = null;
+            DataOutputStream dataOutputStream = null;
+            DataInputStream dataInputStream = null;
+
+            //byte a = unsignedToBytes((byte)-64);
+            //byte b = (byte)-64 & 0xFF;
+
+            InetAddress addr = null;
+            byte[] ipAddr = new byte[]{-64,-88,43,69};
+            ipAddr = new byte[]{-64,-88,43,-93};
+            ipAddr = new byte[]{-64,-88,1,-104}; //1.152
+            ipAddr = new byte[]{-64,-88,1,-93}; //1.163
+            try {
+                addr = InetAddress.getByAddress(ipAddr);
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                //socket = new Socket("192.168.43.69",60000);
+                //socket = new Socket(addr, 60000);
+                socket = new Socket(addr, 55555);
+                dataOutputStream = new DataOutputStream(
+                        socket.getOutputStream());
+                dataInputStream = new DataInputStream(socket.getInputStream());
+
+                /*if (msgToServer != null) {
+                    dataOutputStream.writeUTF(msgToServer);
+                }
+
+                response = dataInputStream.readUTF();****END COMMENT
+
+            } catch (UnknownHostException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                //response = "UnknownHostException: " + e.toString();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                //response = "IOException: " + e.toString();
+            } finally {
+                if (socket != null) {
+                    try {
+                        socket.close();
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+
+                if (dataOutputStream != null) {
+                    try {
+                        dataOutputStream.close();
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+
+                if (dataInputStream != null) {
+                    try {
+                        dataInputStream.close();
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            //textResponse.setText(response);
+            super.onPostExecute(result);
+        }
+
+    }
+
+    public void callSync() {
+        new Sync().execute();
+    }
+
+    public class Sync extends AsyncTask<Void, Void, Void> {
+
+        Sync() {}
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                //EditText ipView = (EditText) findViewById(R.id.ipAddressTextInput);
+                //ipAddress = ipView.getText().toString();
+                Log.d("Sync", "Past getting IP. It is " + ipAddress);
+                parcel = new JSONArray();
+                for (boolean b : switchStates) {
+                    //{
+                    parcel.put(b);
+                }
+                Log.d("Sync", "Parcel created" + parcel.toString());
+                client = new Socket("192.168.1.152", 55555);
+
+                Log.d("Sync", "Connected to raspberry pi");
+                System.out.println("Connected to raspberry pi.");
+
+                writer = new PrintWriter(client.getOutputStream(), true);
+                Log.d("Sync", "About to write to the socket.");
+                writer.write(parcel.toString());
+                Log.d("Sync", "Wrote to socket");
+                writer.flush();
+                writer.close();
+                client.close();
+                //}
+            } catch (IOException e) {
+                Toast.makeText(context, "Unable to connect to server", Toast.LENGTH_SHORT).show();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            EditText ipView = (EditText) findViewById(R.id.ipAddressTextInput);
+            ipView.setText("Connected");
+            super.onPostExecute(aVoid);
+        }
+    }
+//--------------------END IP SECTION------------------------------------------------------------------------------
+
+
+
+    private void syncWithPi() {
+        if (hasValidConnection()) {
+            Thread t = new Thread() {
+                public void run() {
+                    try {
+                        EditText ipView = (EditText) findViewById(R.id.ipAddressTextInput);
+                        ipAddress = ipView.getText().toString();
+                        Log.d("Sync", "Past getting IP. It is " + ipAddress);
+                        parcel = new JSONArray();
+                        for (boolean b : switchStates) {
+                            //{
+                            parcel.put(b);
+                        }
+                        Log.d("Sync", "Parcel created" + parcel.toString());
+                        client = new Socket(ipAddress, 60000);
+
+                        Log.d("Sync", "Connected to raspberry pi");
+                        System.out.println("Connected to raspberry pi.");
+
+                        writer = new PrintWriter(client.getOutputStream(), true);
+                        Log.d("Sync", "About to write to the socket.");
+                        writer.write(parcel.toString());
+                        Log.d("Sync", "Wrote to socket");
+                        writer.flush();
+                        writer.close();
+                        client.close();
+                        //}
+                    } catch (IOException e) {
+                        Toast.makeText(context, "Unable to connect to server", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            };
+            t.start();
+
+        } else {
+            Toast.makeText(context, "Please Connect to Internet network", Toast.LENGTH_LONG).show();
         }
     }*/
 }
