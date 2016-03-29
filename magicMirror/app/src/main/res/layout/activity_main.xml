@@ -24,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/sleep_button"
-            android:layout_marginBottom="57dp"
+            android:layout_marginBottom="83dp"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true" />
 
@@ -117,7 +117,18 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:text="Enter raspberry computer name here"
-            android:layout_centerVertical="true" />
+            android:layout_above="@+id/ipAddressTextInput"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/discover"
+            android:id="@+id/discoverDevices"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="30dp" />
 
     </RelativeLayout>
 
