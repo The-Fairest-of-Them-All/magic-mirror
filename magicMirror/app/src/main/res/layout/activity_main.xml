@@ -17,7 +17,7 @@
             android:layout_above="@+id/sleepButton"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="39dp"
-            android:onClick="startLooking"/>
+            android:onClick="syncContent"/>
 
         <Button
             android:id="@+id/sleepButton"
@@ -128,7 +128,8 @@
             android:id="@+id/discoverDevices"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="30dp" />
+            android:layout_marginBottom="30dp"
+            android:onClick="startLooking"/>
 
     </RelativeLayout>
 

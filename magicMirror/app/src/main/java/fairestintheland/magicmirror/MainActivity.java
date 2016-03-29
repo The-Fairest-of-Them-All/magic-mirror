@@ -57,7 +57,9 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 
@@ -146,6 +148,7 @@ public class MainActivity extends AppCompatActivity {
     String latitude;
     String longitude;
     public String eventMessage;
+    Set<BluetoothDevice> bondedDevices;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -243,6 +246,8 @@ public class MainActivity extends AppCompatActivity {
         myLocation.stopLocationServices();
         super.onStop();
     }
+
+
     //-----------END LOCATION SECTION---------------------------------------------------------------------
 
 
@@ -271,40 +276,6 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(result);
         }
     }
-
-    /**
-     * Create a BroadcastReceiver for ACTION_FOUND, this is called every time a new device is found
-     * during device discovery. If a name matching the string defined by raspberryPiName, which the
-     * user can enter via am EditText object, tryToConnect() is called to create a BluetoothSocket
-     * and attempt to connect to a listening ServerBluetoothSocket. If the uesr does not enter the
-     * remote hostname correctly, tryToConnect() will not successfully connect.
-     */
-    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            // When discovery finds a device
-            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                // Get the BluetoothDevice object from the Intent
-                device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                devices.add(intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE));
-                // Add the name and address to an array adapter to show in a ListView
-                System.out.println("Found " + device.getName() + " at " + device.getAddress());
-                //discoverableList.add(device.getName() + "\n" + device.getAddress());
-                System.out.println(devices);
-
-                //try a connection based on device name
-                try {
-                    if (device.getName().equals(raspberryPiName)) {
-                        tryToConnect();
-                        return;
-                    }
-                } catch (NullPointerException e) {
-                    System.out.println("The name was null");
-                    e.printStackTrace();
-                }
-            }
-        }
-    };
 
     /**
      * Checks to see if bluetooth is available and enabled on the phone, if it is not enabled,
@@ -336,6 +307,124 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * Respond to a user's interacting with an activity presented to turn on bluetooth capabilities.
+     *
+     * @param requestCode Defined in the calling code, allows response to multiple events,
+     *                    REQUEST_ENABLE_BT represents a bluetooth activity request
+     * @param resultCode Results of user's interaction with the activity
+     * @param data
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //responds to the user's response to the bluetooth enable prompt if it was presented
+        if (requestCode == REQUEST_ENABLE_BT) {
+            if (resultCode == RESULT_OK) {
+                bluetoothInfo.setText("You enabled bluetooth. Thanks.");
+            } else {
+                bluetoothInfo.setText("Bluetooth disabled.");
+            }
+        }
+    }
+
+    /**
+     * Responds to discover button press, starts discovery of remote bluetooth devices that are set to
+     * discoverable. If the default string was not changed, the user is prompted to input a valid
+     * hostname.
+     *
+     * @param view
+     */
+    public void startLooking(View view) {
+        raspberryPiName = raspberryNameEditText.getText().toString().trim();
+
+        //only start discovery if user has entered a remote hostname
+        if (!raspberryPiName.equals("Enter raspberry computer name here")) {
+            if (!raspberryPiName.equals("Please reenter raspberry pi bluetooth name")) {
+                if (!raspberryPiName.isEmpty()) {
+                    //if false, bluetooth off, otherwise start discovery, when results arrive the callback is BroadcastReceiver
+                    bluetoothAvailable = bluetoothAdapter.startDiscovery();
+                } else {
+                    raspberryNameEditText.setText("Please reenter raspberry pi bluetooth name");
+                }
+            } else {
+                raspberryNameEditText.setText("Please reenter raspberry pi bluetooth name");
+            }
+        } else {
+            raspberryNameEditText.setText("Please reenter raspberry pi bluetooth name");
+        }
+    }
+
+    /**
+     * Create a BroadcastReceiver for ACTION_FOUND, this is called every time a new device is found
+     * during device discovery. If a name matching the string defined by raspberryPiName, which the
+     * user can enter via am EditText object, tryToConnect() is called to create a BluetoothSocket
+     * and attempt to connect to a listening ServerBluetoothSocket. If the uesr does not enter the
+     * remote hostname correctly, tryToConnect() will not successfully connect.
+     */
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            // When discovery finds a device
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                // Get the BluetoothDevice object from the Intent
+                device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                devices.add(intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE));
+                // Add the name and address to an array adapter to show in a ListView
+                System.out.println("Found " + device.getName() + " at " + device.getAddress());
+                //discoverableList.add(device.getName() + "\n" + device.getAddress());
+                System.out.println(devices);
+
+                //try a connection based on device name
+                try {
+                    if (device.getName().equals(raspberryPiName)) {
+                        initialConnect();
+                        return;
+                    }
+                } catch (NullPointerException e) {
+                    System.out.println("The name was null");
+                    e.printStackTrace();
+                }
+            }
+        }
+    };
+
+    /**
+     * Attempt a bluetooth connection to a device whose name is known from the device discovery process.
+     * The device hostname is input by the user and this method is only called if that user input String
+     * matches a device hostname found in the discovery process. This method establishes a BluetoothSocket
+     * using createRfcommSocketToServiceRecord() and tries to connect to a listening BluetoothServerSocket
+     * that uses the same UUID. Before the method completes, the BluetoothSocket is closed so that on another
+     * button press to sync data, a new connection is established.
+     */
+    private void initialConnect() {
+        BluetoothDevice btDevice = device;
+        System.out.println("Trying to establish initial connection to " + raspberryPiName);
+
+        btDevice = bluetoothAdapter.getRemoteDevice(btDevice.getAddress());
+
+        try {
+            clientSocket = btDevice.createRfcommSocketToServiceRecord(uuid);
+            clientSocket.connect();
+            System.out.println("Connected to raspberry pi.");
+            //close socket after initial connection is made
+            clientSocket.close();
+            System.out.println("Socket successfully closed. Now paired.");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+    }
+
+
+    /**
+     * Called by the click of the Connect button. Sends content to raspberry pi assuming devices are already paired.
+     *
+     * @param view
+     */
+    public void syncContent(View view) {
+        tryToConnect();
+    }
+
+    /**
      * Attempt a bluetooth connection to a device whose name is known from the device discovery process.
      * The device hostname is input by the user and this method is only called if that user input String
      * matches a device hostname found in the discovery process. This method establishes a BluetoothSocket
@@ -344,28 +433,44 @@ public class MainActivity extends AppCompatActivity {
      * button press to sync data, a new connection is established.
      */
     private void tryToConnect() {
-        BluetoothDevice btDevice = device;
-        System.out.println("Trying to connect to " + raspberryPiName);
-
-        btDevice = bluetoothAdapter.getRemoteDevice(btDevice.getAddress());
-
-        try {
-            clientSocket = btDevice.createRfcommSocketToServiceRecord(uuid);
-            clientSocket.connect();
-            System.out.println("Connected to raspberry pi.");
-        } catch (IOException e) {
-            e.printStackTrace();
-            return;
+        BluetoothDevice btDevice = null;
+        bondedDevices = bluetoothAdapter.getBondedDevices();
+        raspberryPiName = raspberryNameEditText.getText().toString().trim();
+        Iterator<BluetoothDevice> iterator = bondedDevices.iterator();
+        while (iterator.hasNext()) {
+            BluetoothDevice temp = iterator.next();
+            String tempName = temp.getName();
+            if (tempName.equals(raspberryPiName)) {
+                btDevice = temp;
+                break;
+            }
         }
 
-        //write content to the socket if the socket was opened successfully
-        writeContentToSocket(clientSocket);
+        System.out.println("Trying to connect to bonded device " + raspberryPiName);
 
-        //close socket before end of method so every time the sync button is pressed, a new connection is made
-        try {
-            clientSocket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        //btDevice = bluetoothAdapter.getRemoteDevice(btDevice.getAddress());
+        if (btDevice == null) {
+            System.out.println("Device name that you input did not match a bonded device.");
+            return;
+        } else {
+            try {
+                clientSocket = btDevice.createRfcommSocketToServiceRecord(uuid);
+                clientSocket.connect();
+                System.out.println("Connected to raspberry pi.");
+            } catch (IOException e) {
+                e.printStackTrace();
+                return;
+            }
+
+            //write content to the socket if the socket was opened successfully
+            writeContentToSocket(clientSocket);
+
+            //close socket before end of method so every time the sync button is pressed, a new connection is made
+            try {
+                clientSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -433,53 +538,6 @@ public class MainActivity extends AppCompatActivity {
             System.out.println("Wrote " + EXIT_KEYWORD + " to raspberry.");
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    /**
-     * Responds to sync button press, starts discovery of remote bluetooth devices that are set to
-     * discoverable. If the default string was not changed, the user is prompted to input a valid
-     * hostname.
-     *
-     * @param view
-     */
-    public void startLooking(View view) {
-        raspberryPiName = raspberryNameEditText.getText().toString().trim();
-
-        //only start discovery if user has entered a remote hostname
-        if (!raspberryPiName.equals("Enter raspberry computer name here")) {
-            if (!raspberryPiName.equals("Please reenter raspberry pi bluetooth name")) {
-                if (!raspberryPiName.isEmpty()) {
-                    //if false, bluetooth off, otherwise start discovery, when results arrive the callback is BroadcastReceiver
-                    bluetoothAvailable = bluetoothAdapter.startDiscovery();
-                } else {
-                    raspberryNameEditText.setText("Please reenter raspberry pi bluetooth name");
-                }
-            } else {
-                raspberryNameEditText.setText("Please reenter raspberry pi bluetooth name");
-            }
-        } else {
-            raspberryNameEditText.setText("Please reenter raspberry pi bluetooth name");
-        }
-    }
-
-    /**
-     * Respond to a user's interacting with an activity presented to turn on bluetooth capabilities.
-     *
-     * @param requestCode Defined in the calling code, allows response to multiple events,
-     *                    REQUEST_ENABLE_BT represents a bluetooth activity request
-     * @param resultCode Results of user's interaction with the activity
-     * @param data
-     */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        //responds to the user's response to the bluetooth enable prompt if it was presented
-        if (requestCode == REQUEST_ENABLE_BT) {
-            if (resultCode == RESULT_OK) {
-                bluetoothInfo.setText("You enabled bluetooth. Thanks.");
-            } else {
-                bluetoothInfo.setText("Bluetooth disabled.");
-            }
         }
     }
 
