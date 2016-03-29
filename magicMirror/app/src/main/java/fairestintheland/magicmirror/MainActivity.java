@@ -416,26 +416,46 @@ public class MainActivity extends AppCompatActivity {
 
 
     /**
-     * Called by the click of the Connect button. Sends content to raspberry pi assuming devices are already paired.
+     * Called by the click of the Connect button. Method progression is
+     * syncContent->tryToConnect->writeContentToSocket
+     * If the devices are already paired, content is delivered to raspberry pi.
      *
      * @param view
      */
     public void syncContent(View view) {
-        tryToConnect();
+        raspberryPiName = raspberryNameEditText.getText().toString().trim();
+
+        //only try to deliver content if name has been changed
+        if (!raspberryPiName.equals("Enter raspberry computer name here")) {
+            if (!raspberryPiName.equals("Please reenter raspberry pi bluetooth name")) {
+                if (!raspberryPiName.isEmpty()) {
+                    //if false, bluetooth off, otherwise start discovery, when results arrive the callback is BroadcastReceiver
+                    tryToConnect();
+                } else {
+                    raspberryNameEditText.setText("Please reenter raspberry pi bluetooth name");
+                }
+            } else {
+                raspberryNameEditText.setText("Please reenter raspberry pi bluetooth name");
+            }
+        } else {
+            raspberryNameEditText.setText("Please reenter raspberry pi bluetooth name");
+        }
     }
 
     /**
-     * Attempt a bluetooth connection to a device whose name is known from the device discovery process.
-     * The device hostname is input by the user and this method is only called if that user input String
-     * matches a device hostname found in the discovery process. This method establishes a BluetoothSocket
-     * using createRfcommSocketToServiceRecord() and tries to connect to a listening BluetoothServerSocket
-     * that uses the same UUID. Before the method completes, the BluetoothSocket is closed so that on another
-     * button press to sync data, a new connection is established.
+     * Attempt a bluetooth connection to a device whose name is known from the list of bonded devices.
+     * The device hostname is input by the user and this method compares the user input hostname to the
+     * names of bonded devices and proceeds to deliver content if a match is foundThis method establishes a
+     * BluetoothSocket using createRfcommSocketToServiceRecord() and tries to connect to a listening
+     * BluetoothServerSocket that uses the same UUID. Before the method completes, the BluetoothSocket is
+     * closed so that on another button press to sync data, a new connection is established.
      */
     private void tryToConnect() {
         BluetoothDevice btDevice = null;
+        //query bonded devices, store them in a Set
         bondedDevices = bluetoothAdapter.getBondedDevices();
         raspberryPiName = raspberryNameEditText.getText().toString().trim();
+        //compare bonded device names with what the user entered into the raspberryNameEditText field
         Iterator<BluetoothDevice> iterator = bondedDevices.iterator();
         while (iterator.hasNext()) {
             BluetoothDevice temp = iterator.next();
@@ -446,13 +466,12 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        System.out.println("Trying to connect to bonded device " + raspberryPiName);
-
-        //btDevice = bluetoothAdapter.getRemoteDevice(btDevice.getAddress());
+        //if device is found, try to connect via bluetoothSockets, if not, break
         if (btDevice == null) {
             System.out.println("Device name that you input did not match a bonded device.");
             return;
         } else {
+            System.out.println("Trying to connect to bonded device " + raspberryPiName);
             try {
                 clientSocket = btDevice.createRfcommSocketToServiceRecord(uuid);
                 clientSocket.connect();
