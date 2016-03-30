@@ -451,6 +451,7 @@ public class MainActivity extends AppCompatActivity {
             //close socket after initial connection is made
             clientSocket.close();
             System.out.println("Socket successfully closed. Now paired.");
+            //TODO save hostname
         } catch (IOException e) {
             e.printStackTrace();
             return;
