@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
     //bluetooth vars
     //int used to determine what activity was presented in the onActivityResult() method
     private static final int REQUEST_ENABLE_BT = 100;
-    private String raspberryPiName = "LENOVO-PC";
+    private String raspberryPiName = LoadHostName();
     //string defined on android and raspberry sides to establish connection
     private final String UUIDSTRING = "a96d5795-f8c3-4b7a-9bad-1eefa9e11a94";
     private static final String EXIT_KEYWORD = "DONE";
@@ -239,6 +239,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         //mGoogleApiClient.disconnect();
         SaveSwitchStates();
+        SaveHostName();
         myLocation.stopLocationServices();
         super.onStop();
     }
@@ -286,6 +287,47 @@ public class MainActivity extends AppCompatActivity {
         }
         return b;
     }
+
+
+    private void SaveHostName() {
+        String fileName = "hosts.txt";
+        FileOutputStream output;
+        try
+        {
+            output = openFileOutput(fileName, Context.MODE_PRIVATE);
+            output.write(raspberryPiName.getBytes());
+            output.close();
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    private String LoadHostName() {
+        String s = "";
+        try {
+            FileInputStream input = openFileInput("hosts.txt");
+            byte[] bytes = new byte[1024];
+            input.read(bytes);
+            for(byte b : bytes)
+            {
+                s += (char)b;
+            }
+            input.close();
+
+        }catch(FileNotFoundException ex) //initial load, make default string
+        {
+            return "Enter raspberry computer name here";
+        }
+        catch (Exception e) //something else went wrong
+        {
+            e.printStackTrace();
+        }
+        return s;
+    }
+
+
     //-----------END FILE I/O---------------------------------------------------------------------------
 
     //----------BLUETOOTH SECTION-------------------------------------------------------------------------
@@ -373,9 +415,9 @@ public class MainActivity extends AppCompatActivity {
         syncButton = (Button) findViewById(R.id.connect_button);
         syncButton.setEnabled(false);
         syncButton.setClickable(false);
-
-        raspberryPiName = raspberryNameEditText.getText().toString().trim();
-
+        if(!raspberryNameEditText.getText().toString().trim().equals("Enter raspberry computer name here")) {
+            raspberryPiName = raspberryNameEditText.getText().toString().trim();
+        }
         //only start discovery if user has entered a remote hostname
         if (!raspberryPiName.equals("Enter raspberry computer name here")) {
             if (!raspberryPiName.equals("Please reenter raspberry pi bluetooth name")) {
@@ -451,12 +493,13 @@ public class MainActivity extends AppCompatActivity {
             //close socket after initial connection is made
             clientSocket.close();
             System.out.println("Socket successfully closed. Now paired.");
-            //TODO save hostname
+            SaveHostName();
         } catch (IOException e) {
             e.printStackTrace();
             return;
         }
     }
+
 
 
     /**
