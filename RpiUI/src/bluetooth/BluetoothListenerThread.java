@@ -34,25 +34,84 @@ public class BluetoothListenerThread implements Runnable {
 
     //this is the UUID that is used to create a socket between android and raspberry via bluetooth
     private final String UUIDSTRING = "a96d5795f8c34b7a9bad1eefa9e11a94";
+    
+    //Key strings used to determine what type of data has been received from Android.
     private static final String EXIT_KEYWORD = "DONE";
     private static final String TWITTER_KEY = "T: ";
     private static final String CALENDAR_KEY = "C: ";
     private static final String WEATHER_KEY = "W: ";
     private static final String QUOTE_KEY = "Q: ";
 
-    public static String bluetoothAddress; //MAC address of the bluetooth adapter on raspberry pi
-    public static int discoverableMode; //values described in getOrSetDiscoverableMode()
+    /**
+     *MAC address of the Bluetooth adapter on raspberry pi
+     */
+    public static String bluetoothAddress;
+
+    /**
+     *Represents the nature of the device's current discoverable mode. Valid values are
+     * DiscoveryAgent.GIAC - 0x9E8B33 (10390323), 
+     * DiscoveryAgent.LIAC -  0x9E8B00 (10390272), 
+     * DiscoveryAgent.NOT_DISCOVERABLE - 0x00 (0), 
+     * or a value in the range 0x9E8B00 to 0x9E8B3F.
+     */
+    public static int discoverableMode;
+
+    /**
+     * Used along with url to facilitate listening for connections that specify the matching UUID.
+     */
     public static StreamConnectionNotifier notifier;
+
+    /**
+     * Return value of getOrSetDiscoverableMode(). True if this device is discoverable, false if not.
+     */
     public static boolean discoverable;
-    public static UUID uuid; //UUID that is know on both client and server side used to create BluetoothSockets
+
+    /**
+     * UUID that is know on both client and server side used to create BluetoothSockets.
+     */
+    public static UUID uuid;
+
+    /**
+     * Needed to open notifier. 
+     */
     public static String url;
+
+    /**
+     * The connection to the Android app which is created when a connection is accepted.
+     */
     public static StreamConnection connection;
-    public static LocalDevice localDevice; //The LocalDevice class defines the basic functions of the Bluetooth manager
+
+    /**
+     * The LocalDevice class defines the basic functions of the Bluetooth manager.
+     */
+    public static LocalDevice localDevice;
+
+    /**
+     * The Bluetooth hostname that the device uses for connections to other devices.
+     */
     public static String bluetoothFriendlyName;
+
+    /**
+     * Reference to the main thread so that insertions into JTextAreas and printing to the screen are all handled
+     * by the UI thread.
+     */
     public static RpiUI mainThread;
+
+    /**
+     * Used to get the list of known remote Bluetooth devices.
+     */
     public static DiscoveryAgent discoveryAgent;
+
+    /**
+     * Array of remote devices known to the Bluetooth Adapter. 
+     */
     public static RemoteDevice[] remotes;
 
+    /**
+     * Constructor which takes a reference to an RpiUI object as an argument.
+     * 
+     * @param mainThread
+     */
     public BluetoothListenerThread(RpiUI mainThread) {
         this.mainThread = mainThread;
     }
@@ -110,10 +169,8 @@ public class BluetoothListenerThread implements Runnable {
                     //get a discovery agent from the local device
                     discoveryAgent = localDevice.getDiscoveryAgent();
                     
-                    
+                    //list of bonded devices known to this device
                     remotes = discoveryAgent.retrieveDevices(DiscoveryAgent.PREKNOWN);
-                    
-                    //TODO IF IN EXISTING, CALL DIFFERENT LISTEN
 
                     //UUID is how the android app finds the raspberry app                 
                     uuid = new UUID(UUIDSTRING, false);
@@ -121,7 +178,6 @@ public class BluetoothListenerThread implements Runnable {
                     //url required format is btspp: //hostname: [ CN | UUID ]; parameters for StreamConnectionNotifier
                     url = "btspp://localhost:" + uuid.toString() + ";name=RaspberryServer";
                     notifier = (StreamConnectionNotifier) Connector.open(url);
-
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -151,14 +207,14 @@ public class BluetoothListenerThread implements Runnable {
      * not be completed, true otherwise. Prints verbose output to Sys.out
      * through the process.
      *
-     * @param localDevice
+     * @param localDevice the Bluetooth adapter
      * @return a boolean representing whether or not the device is discoverable
      */
     private static boolean getOrSetDiscoverableMode(LocalDevice localDevice) {
         boolean available = false;
 
         //Retrieves the local device's discoverable mode. The return value will be DiscoveryAgent.GIAC - 0x9E8B33 (10390323), 
-        //DiscoveryAgent. -  0x9E8B00 (10390272), DiscoveryAgent.NOT_DISCOVERABLE - 0x00 (0), or a value in the 
+        //DiscoveryAgent.LIAC -  0x9E8B00 (10390272), DiscoveryAgent.NOT_DISCOVERABLE - 0x00 (0), or a value in the 
         //range 0x9E8B00 to 0x9E8B3F.
         discoverableMode = localDevice.getDiscoverable();
         if (discoverableMode == DiscoveryAgent.NOT_DISCOVERABLE) {
@@ -195,7 +251,7 @@ public class BluetoothListenerThread implements Runnable {
 
             System.out.println("waiting for input");
 
-            //receive input from android app, break from this loop when inputStream.read() returns -1
+            //receive input from android app, break from this loop when inputStream.read() returns -1 or if EXIT_KEYWORD is read
             while (true) {
                 byte[] inputBuffer = new byte[1024];
                 int result = inputStream.read(inputBuffer);

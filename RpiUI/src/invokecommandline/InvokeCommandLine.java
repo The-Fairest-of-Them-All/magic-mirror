@@ -12,12 +12,56 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * Used to allow programmatic connection of the Raspberry Pi to the user's local network by taking the user's SSID and
+ * password as arguments and appending those formatted values to the Raspberry Pi's wpa.supplicant file.
  *
- * @author Owner
+ * @author Keith
  */
 public class InvokeCommandLine {
+    
+    final String scriptName = "ENTER SCRIPT NAME HERE";
+    
+    private String SSID;
+    private String password;
+    
+    /**
+     * No arg constructor.
+     * 
+     */
+    public void InvokeCommandLine() {}
+    
+    /**
+     * Constructor taking both the user's SSID and password as arguments.
+     * 
+     * @param SSID
+     * @param password 
+     */
+    public void InvokeCommandLine(String SSID, String password) {
+        this.SSID = SSID;
+        this.password = password;
+    }
+    
+    /**
+     * Sets SSID to the passed argument.
+     * 
+     * @param SSID 
+     */
+    public void setSSID(String SSID) {
+        this.SSID = SSID;
+    }
+    
+    /**
+     * Sets password to the passed argument.
+     * 
+     * @param password 
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     /**
+     * Invokes any cmd or terminal command whose bin file is on the default PATH.
+     * 
      * @param commandAndArgs the command and command line arguments
      */
     public void invoke(String[] commandAndArgs) {
@@ -37,4 +81,18 @@ public class InvokeCommandLine {
         }
     }
 
+    /**
+     * Used to write the class's SSID and password values into the Raspberry Pi's wpa.supplicant file to attempt a
+     * programmatic connection to the user's home network. Invokes a terminal script defined by scriptName
+     * to do this.
+     */
+    public void connectToNetwork() {
+        if (SSID.equals("") || password.equals("")) {
+            System.out.println("SSID and password need to be set.");
+            return;
+        } else {
+            String[] connect = {scriptName, SSID, password};
+            invoke(connect);
+        }
+    }
 }
