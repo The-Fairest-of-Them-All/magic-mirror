@@ -334,6 +334,10 @@ public class MainActivity extends AppCompatActivity {
      * @param view
      */
     public void startLooking(View view) {
+        syncButton = (Button) findViewById(R.id.connect_button);
+        syncButton.setEnabled(false);
+        syncButton.setClickable(false);
+
         raspberryPiName = raspberryNameEditText.getText().toString().trim();
 
         //only start discovery if user has entered a remote hostname
@@ -351,6 +355,9 @@ public class MainActivity extends AppCompatActivity {
         } else {
             raspberryNameEditText.setText("Please reenter raspberry pi bluetooth name");
         }
+
+        syncButton.setEnabled(true);
+        syncButton.setClickable(true);
     }
 
     /**
@@ -423,6 +430,10 @@ public class MainActivity extends AppCompatActivity {
      * @param view
      */
     public void syncContent(View view) {
+        syncButton = (Button) findViewById(R.id.connect_button);
+        syncButton.setEnabled(false);
+        syncButton.setClickable(false);
+
         raspberryPiName = raspberryNameEditText.getText().toString().trim();
 
         //only try to deliver content if name has been changed
@@ -440,6 +451,8 @@ public class MainActivity extends AppCompatActivity {
         } else {
             raspberryNameEditText.setText("Please reenter raspberry pi bluetooth name");
         }
+        syncButton.setEnabled(true);
+        syncButton.setClickable(true);
     }
 
     /**

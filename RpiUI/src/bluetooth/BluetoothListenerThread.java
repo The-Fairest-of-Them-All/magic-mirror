@@ -210,7 +210,7 @@ public class BluetoothListenerThread implements Runnable {
                         and based on that result, write into the appropriate seciton on the screen*/
                     if (input.regionMatches(0, TWITTER_KEY, 0, 3)) {
                         System.out.println("THIS IS TWITTER: " + input);
-                        mainThread.appendToJTextAreaNewline(mainThread.getTwitterJTextArea(), input);
+                        mainThread.replaceJTextArea(mainThread.getTwitterJTextArea(), input);
                     } else if (input.regionMatches(0, QUOTE_KEY, 0, 3)) {
                         System.out.println("THIS IS QUOTE: " + input);
                         mainThread.replaceJTextArea(mainThread.getQuoteJTextArea(), input);
@@ -225,15 +225,6 @@ public class BluetoothListenerThread implements Runnable {
                         System.out.println("This: " + input + " isn't twitter, weather, quote, or calendar data");
                         mainThread.appendToJTextAreaNewline(mainThread.getTwitterJTextArea(), input);
                     }
-
-                    //TODO temporary lat and long data so we can get weather integrated while working on location in android
-                    //this is Temple coordinates
-                    /*System.out.println("Temp version of weather.");
-                    String latitude = "39.981830";
-                    String longitude = "-75.155407";
-                    StringBuilder weather = new StringBuilder("Latitude: ");
-                    weather.append(latitude).append("\n").append("Longitude: ").append(longitude);
-                    mainThread.replaceJTextArea(mainThread.getWeatherJTextArea(), weather.toString());*/
 
                     System.out.println("End of input.");
                 }
