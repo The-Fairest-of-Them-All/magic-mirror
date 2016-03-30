@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
      ConnectivityManager cm: ConnectivityManager of current context
 
      */
+    static final int TwitterAccount_REQUEST_CODE = 1111;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private CharSequence mDrawerTitle;
@@ -93,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
     private Button sleepButton;
     private Button settingButton;
     private Button syncButton;
+    private Button twitterAccountButton;
     private boolean sleeping;
     private boolean[] switchStates;
     EditText ipBar;
@@ -119,6 +121,11 @@ public class MainActivity extends AppCompatActivity {
     private static final String CALENDAR_KEY = "C: ";
     private static final String WEATHER_KEY = "W: ";
     private static final String QUOTE_KEY = "Q: ";
+
+    String   consumerKey = "bUh6sDhIGpN4UdE55litSTD8W";
+    String consumerSecret = "OlByFoaS9lJ8ewZEw9DOPGgVrby9EM6SepllWXrCnraw49r9DC";
+    String accessToken = "4889865377-JoGReMh6w6yS2PQQ8hKcVpHlaIKRH1gM4vGf6ui";
+    String accessTokenSecret = "qIvONWidLP10yKXsYyHfu1k3yzppUpxhbUc7TucF3bpp6";
 
     BluetoothManager bluetoothManager;
     BluetoothAdapter bluetoothAdapter;
@@ -156,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
         String[] test = cEvent.getCNames();
         System.out.println("!!You got an event!!!" + cEvent.readCalendarEvent(this));
 
-        tMess = new TwitterMessage();
+        tMess = new TwitterMessage(consumerKey, consumerSecret, accessToken, accessTokenSecret);
         tMess.getTweet();
         switchStates = LoadSwitchStates(); //Twitter,Email,Weather,Calendar
         context = this;
@@ -207,6 +214,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        twitterAccountButton = (Button)findViewById(R.id.TwitterAccountButton_main);
+        View.OnClickListener oclA = new View.OnClickListener(){
+            public void onClick(View v){
+                Intent activityAIntent = new Intent (MainActivity.this,TwitterLogActivity.class);
+                startActivityForResult(activityAIntent, TwitterAccount_REQUEST_CODE);
+            }
+        };
+        twitterAccountButton.setOnClickListener(oclA);
         /*syncButton = (Button) findViewById(R.id.connect_button);
         syncButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -235,6 +250,8 @@ public class MainActivity extends AppCompatActivity {
         //mGoogleApiClient.connect();
         super.onStart();
     }
+
+
 
     protected void onStop() {
         //mGoogleApiClient.disconnect();
@@ -394,6 +411,7 @@ public class MainActivity extends AppCompatActivity {
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
         //responds to the user's response to the bluetooth enable prompt if it was presented
         if (requestCode == REQUEST_ENABLE_BT) {
             if (resultCode == RESULT_OK) {
@@ -402,6 +420,20 @@ public class MainActivity extends AppCompatActivity {
                 bluetoothInfo.setText("Bluetooth disabled.");
             }
         }
+
+        if (requestCode == TwitterAccount_REQUEST_CODE) {
+            System.out.println("!!!!!!!you got a intent from twitter!!!!!!!!!!!!!!!!!!!!!!!!");
+            if (resultCode == RESULT_OK) {
+                String accountState = data.getStringExtra("accountState");
+                if(accountState.equals("true")){
+
+                    System.out.println("!!!!!!!!!!1success change the aaccount!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                }
+                else{ System.out.println("!!!!!!!!!!1false change the aaccount!!!!!!!!!!!1!!!!");}
+            }
+        }
+
+
     }
 
     /**
@@ -808,7 +840,7 @@ public class MainActivity extends AppCompatActivity {
                 newMessage.put(String.valueOf(theSwitches.get(i).getText()),switchStates[i]);
             }
             newMessage.put("events",eventMessage);
-            newMessage.put("tweets",tMess.getTweets());
+            newMessage.put("tweets",tMess.returnTweet());
 
             System.out.println("JSON Message!!!!!!!!!!!!!!!!!!!!!!" + newMessage.toString());
         } catch (JSONException e) {

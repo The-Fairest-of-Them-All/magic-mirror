@@ -13,20 +13,20 @@
         android:layout_height="wrap_content"
         android:text="@string/back"
         android:id="@+id/backbutton"
-        android:layout_marginBottom="74dp"
+        android:layout_marginBottom="68dp"
         android:layout_alignParentBottom="true"
-        android:layout_alignRight="@+id/textView2"
-        android:layout_alignEnd="@+id/textView2" />
+        android:layout_toRightOf="@+id/textView2"
+        android:layout_toEndOf="@+id/textView2" />
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/submit"
         android:id="@+id/submitbutton"
-        android:layout_below="@+id/linearLayout"
-        android:layout_toRightOf="@+id/textView2"
-        android:layout_toEndOf="@+id/textView2"
-        android:layout_marginLeft="59dp"
-        android:layout_marginStart="59dp" />
+        android:layout_marginLeft="49dp"
+        android:layout_marginStart="49dp"
+        android:layout_alignTop="@+id/backbutton"
+        android:layout_toRightOf="@+id/backbutton"
+        android:layout_toEndOf="@+id/backbutton" />
 
     <LinearLayout
         android:orientation="vertical"

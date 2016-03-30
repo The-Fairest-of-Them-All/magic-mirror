@@ -24,7 +24,12 @@ public class TwitterMessage {
 */
     final static String UserName = "cnn";
     private List<String> list;
-
+    String consumerKey ;
+    String consumerSecret;
+    String accessToken ;
+    String accessTokenSecret;
+    List<String> accountList;
+    private boolean accountState = false;
     private String tweet;
     
     Handler handler = new Handler() {
@@ -33,12 +38,41 @@ public class TwitterMessage {
             Bundle bundle = msg.getData();
             String string = bundle.getString("myKey");
             tweet = bundle.getString("myKey");
+            accountState = true;
             System.out.println("!!!!!!!twitter message!!!!!!"+string);
         }
     };
 
+
+
+
+    public TwitterMessage(String consumerKey,String consumerSecret,String accessToken,String accessTokenSecret){
+        this.consumerKey = consumerKey;
+        this.consumerSecret = consumerSecret;
+        this.accessToken= accessToken;
+        this.accessTokenSecret=accessTokenSecret;
+
+  /*     consumerKey = "bUh6sDhIGpN4UdE55litSTD8W";
+         consumerSecret = "OlByFoaS9lJ8ewZEw9DOPGgVrby9EM6SepllWXrCnraw49r9DC";
+         accessToken = "4889865377-JoGReMh6w6yS2PQQ8hKcVpHlaIKRH1gM4vGf6ui";
+         accessTokenSecret = "qIvONWidLP10yKXsYyHfu1k3yzppUpxhbUc7TucF3bpp6";*/
+    }
+
+    /**this will use the accoutn info and try to call getTweet()**/
+    public void changeAccount(String consumerKey,String consumerSecret,String accessToken,String accessTokenSecret){
+        accountState = false;
+        this.consumerKey = consumerKey;
+        this.consumerSecret = consumerSecret;
+        this.accessToken= accessToken;
+        this.accessTokenSecret=accessTokenSecret;
+    }
+
+
+    public boolean getAccountState(){
+        return accountState;
+    }
+
     public String returnTweet() {
-        getTweet();
         return tweet;
     }
 
@@ -48,20 +82,18 @@ public class TwitterMessage {
             Runnable runnable = new Runnable() {
                 public void run() {
                     try {
-                        String consumerKey = "bUh6sDhIGpN4UdE55litSTD8W";
-                        String consumerSecret = "OlByFoaS9lJ8ewZEw9DOPGgVrby9EM6SepllWXrCnraw49r9DC";
-                        String accessToken = "4889865377-JoGReMh6w6yS2PQQ8hKcVpHlaIKRH1gM4vGf6ui";
-                        String accessTokenSecret = "qIvONWidLP10yKXsYyHfu1k3yzppUpxhbUc7TucF3bpp6";
+
                         ConfigurationBuilder cb = new ConfigurationBuilder();
                         cb.setOAuthConsumerKey(consumerKey);
                         cb.setOAuthConsumerSecret(consumerSecret);
                         cb.setOAuthAccessToken(accessToken);
                         cb.setOAuthAccessTokenSecret(accessTokenSecret);
-
                         Bundle bundle = new Bundle();
                         Message msg = handler.obtainMessage();
 
                         Twitter twitter = new TwitterFactory(cb.build()).getInstance();
+
+                        //*****the endpoint to retrieve followers IDs is limited to 15 calls per 15 minutes
                         List<Status> statuses = twitter.getHomeTimeline(new Paging(1, 5));
 
                         for (Status statue:statuses ){
@@ -86,7 +118,5 @@ public class TwitterMessage {
             //List<Status> statuses = twitter.getUserTimeline(UserName,new Paging(1,3));
             //twitter.updateStatus("this is send by Java project! not human");
     }
-    public String getTweets(){
-        return tweet;
-    }
+
 }
