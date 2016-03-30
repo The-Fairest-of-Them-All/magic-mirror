@@ -1,6 +1,5 @@
 package fairestintheland.magicmirror;
 
-import android.Manifest;
 import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -10,7 +9,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -19,7 +17,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -38,24 +35,22 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.net.InetAddress;
 import java.net.Socket;
-import java.net.SocketAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -163,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
 
         tMess = new TwitterMessage();
         tMess.getTweet();
-        switchStates = new boolean[]{false, false, false, false}; //Twitter,Email,Weather,Calendar
+        switchStates = LoadSwitchStates(); //Twitter,Email,Weather,Calendar
         context = this;
         sleeping = false;
         theSwitches = new ArrayList<Switch>();
@@ -243,6 +238,7 @@ public class MainActivity extends AppCompatActivity {
 
     protected void onStop() {
         //mGoogleApiClient.disconnect();
+        SaveSwitchStates();
         myLocation.stopLocationServices();
         super.onStop();
     }
@@ -250,7 +246,47 @@ public class MainActivity extends AppCompatActivity {
 
     //-----------END LOCATION SECTION---------------------------------------------------------------------
 
+    //-----------FILE I/O-------------------------------------------------------------------------------
+    private void SaveSwitchStates()
+    {
+        String saveLocation = "switches.ser";
+        FileOutputStream output;
+        try
+        {
+            output = openFileOutput(saveLocation, Context.MODE_PRIVATE);
+            ObjectOutputStream objOut = new ObjectOutputStream(output);
+            objOut.writeObject(switchStates);
+            objOut.close();
+            output.close();
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
 
+    private boolean[] LoadSwitchStates()
+    {
+        boolean[] b = new boolean[4];
+        try {
+            FileInputStream input = openFileInput("switches.ser");
+            ObjectInputStream objIn = new ObjectInputStream(input);
+            b = (boolean[])objIn.readObject();
+            input.close();
+            objIn.close();
+
+        }catch(FileNotFoundException ex) //initial load, make default array
+        {
+            b = new boolean[]{false,false,false,false};
+            return b;
+        }
+        catch (Exception e) //something else went wrong
+        {
+            e.printStackTrace();
+        }
+        return b;
+    }
+    //-----------END FILE I/O---------------------------------------------------------------------------
 
     //----------BLUETOOTH SECTION-------------------------------------------------------------------------
     /**
@@ -578,6 +614,8 @@ public class MainActivity extends AppCompatActivity {
      */
     @Override
     protected void onDestroy() {
+        //Let's make sure we save before we leave
+        SaveSwitchStates();
         //have to unregister BroadcastReceiver before the app closes
         unregisterReceiver(mReceiver);
         super.onDestroy();
@@ -702,7 +740,7 @@ public class MainActivity extends AppCompatActivity {
             }
             TextView text = (TextView) v.findViewById(R.id.switch_name);
             Switch toggle = (Switch) v.findViewById(R.id.prefSwitch);
-
+            toggle.setChecked(switchStates[position]);
             // Now we can fill the layout with the right values
             text.setText(list.get(position).getText());
 
@@ -711,6 +749,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     switchStates[position] = isChecked;
                     Log.v("Switch State = ", list.get(position).getText() + " " + switchStates[position]);
+                    SaveSwitchStates();
                 }
             });
 
