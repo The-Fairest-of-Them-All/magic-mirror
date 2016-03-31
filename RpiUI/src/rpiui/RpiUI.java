@@ -373,9 +373,17 @@ public class RpiUI extends JFrame {
         String[] commandAndArgs = {"ls", "-la"};
         test.invoke(commandAndArgs);
 
-        //join the bluetoothListenerThread thread
+        //join the bluetoothListenerThread thread, stop the timer
         try {
-            bluetoothListenerThread.join();
+            Thread.State state;
+            if (bluetoothListenerThread.getState() == Thread.State.RUNNABLE) {
+                bluetoothListenerThread.join();
+            }
+            System.out.println("Bluetooth thread joined.");
+            if (t.isRunning()) {
+                t.stop();
+            }
+            System.out.println("Stopped the clock.");
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (Exception e) {
