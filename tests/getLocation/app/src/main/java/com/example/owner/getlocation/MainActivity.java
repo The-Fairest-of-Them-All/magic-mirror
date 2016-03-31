@@ -1,9 +1,11 @@
 package com.example.owner.getlocation;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -32,6 +34,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     String latitude;
     String longitude;
     final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1001;
+    Intent gpsOptionsIntent;
+    final int ENABLE_LOCATION = 900;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,39 +55,39 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .enableAutoManage(this, this)
+                    //.enableAutoManage(this, this)
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
                     .addApi(LocationServices.API)
                     .build();
         }
 
-        mLocationSettingsRequestBuilder = new LocationSettingsRequest.Builder()
+        /*mLocationSettingsRequestBuilder = new LocationSettingsRequest.Builder()
                 .addLocationRequest(mLocationRequest);
 
         //createLocationRequest();
 
         PendingResult<LocationSettingsResult> result =
                 LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient,
-                        mLocationSettingsRequestBuilder.build());
+                        mLocationSettingsRequestBuilder.build());*/
     }
 
-    protected void createLocationRequest() {
+    /*protected void createLocationRequest() {
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(100000); //every 100 seconds
         //mLocationRequest.setFastestInterval(5000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-    }
+    }*/
 
     protected void onStart() {
-        //mGoogleApiClient.connect();
+        mGoogleApiClient.connect();
         super.onStart();
     }
 
     protected void onStop() {
-        /*if (mGoogleApiClient.isConnected()) {
+        if (mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
-        }*/
+        }
         super.onStop();
     }
 
@@ -111,51 +115,67 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public void onConnected(Bundle bundle) {
+        int settings = 0;
+        try {
+            settings = Settings.Secure.getInt(getContentResolver(), Settings.Secure.LOCATION_MODE);
+        } catch (Settings.SettingNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        if (settings == 0) {
+            gpsOptionsIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivityForResult(gpsOptionsIntent, ENABLE_LOCATION);
+        }
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS_REQUEST_READ_CONTACTS);
             return;
         }
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS_REQUEST_READ_CONTACTS);
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                mGoogleApiClient);
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLastLocation != null) {
-            //mLatitudeText.setText(String.valueOf(mLastLocation.getLatitude()));
-            //mLongitudeText.setText(String.valueOf(mLastLocation.getLongitude()));
             latitude = (String.valueOf(mLastLocation.getLatitude()));
             longitude = (String.valueOf(mLastLocation.getLongitude()));
             System.out.println("Latitude: " + latitude);
             System.out.println("Longitude: " + longitude);
         } else {
-            Toast.makeText(this, "Location not allowed", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Location was null", Toast.LENGTH_LONG).show();
+            System.out.println("Location was null");
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        //super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_READ_CONTACTS: {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    latitude = (String.valueOf(mLastLocation.getLatitude()));
+                    /*latitude = (String.valueOf(mLastLocation.getLatitude()));
                     longitude = (String.valueOf(mLastLocation.getLongitude()));
                     System.out.println("Latitude: " + latitude);
-                    System.out.println("Longitude: " + longitude);
-
+                    System.out.println("Longitude: " + longitude);*/
+                    System.out.println("Permission granted.");
                 } else {
 
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
+                    System.out.println("Permission denied.");
                 }
                 return;
+            }
+        }
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //super.onActivityResult(requestCode, resultCode, data);
+
+        //responds to the user's response to the location enable prompt if it was presented
+        if (requestCode == ENABLE_LOCATION) {
+            if (resultCode == RESULT_OK) {
+                System.out.println("You enabled location.");
+            } else {
+                System.out.println("You did not enable location.");
             }
         }
     }
