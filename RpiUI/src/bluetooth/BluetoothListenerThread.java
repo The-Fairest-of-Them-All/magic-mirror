@@ -14,9 +14,8 @@ import javax.bluetooth.UUID;
 import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnection;
 import javax.microedition.io.StreamConnectionNotifier;
-//import com.intel.bluetooth.BluetoothStackBlueZ;
-import com.intel.bluetooth.BluetoothStackBlueZNativeTests;
 import javax.bluetooth.RemoteDevice;
+import com.intel.bluetooth.*;
 
 import rpiui.RpiUI;
 
