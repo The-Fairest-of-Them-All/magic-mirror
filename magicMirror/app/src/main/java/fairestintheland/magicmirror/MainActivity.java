@@ -856,6 +856,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     //-----------------END BLUETOOTH SECTION-----------------------------------------------------------------
 
 
+    private void makeRaspberrySleep() {
+
+    }
+
 	/** set  Raspberry Pi screen sleep*/
     private void setSleepMode() {
         if (hasValidConnection()) {
