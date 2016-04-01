@@ -58,6 +58,8 @@ public class RpiUI extends JFrame {
     static Thread bluetoothListenerThread;
     static ActionListener updateClockDisplay;
     static Timer t;
+    boolean display = true;
+    JFrame frame;
 
     static String sample = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, "
             + "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. "
@@ -73,7 +75,7 @@ public class RpiUI extends JFrame {
      * a grid system to specify where each designated area is located. Sets design specifications for the layout.
      */
     private void framer() {
-        JFrame frame = new JFrame("Raspberry Pi App");
+        frame = new JFrame("Raspberry Pi App");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setUndecorated(true);
@@ -215,7 +217,7 @@ public class RpiUI extends JFrame {
 
         frame.pack();
 
-        frame.setVisible(true);
+        frame.setVisible(display);
     }
 
     /**
@@ -382,8 +384,6 @@ public class RpiUI extends JFrame {
         t = new Timer(1000, updateClockDisplay);
         t.start();
 
-        
-
         //join the bluetoothListenerThread thread, stop the timer
         try {
             Thread.State state;
@@ -400,6 +400,11 @@ public class RpiUI extends JFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    public void toggleDisplay() {
+        display = !display;
+        frame.setVisible(display);
     }
 
     /**

@@ -268,6 +268,7 @@ public class BluetoothListenerThread implements Runnable {
                     inputStream.close();
                     break;
                 } else if (input.regionMatches(0, SLEEP_KEYWORD, 0, 5) || result == -1) {
+                    mainThread.toggleDisplay();
                     inputStream.close();
                     break;
                 } else {

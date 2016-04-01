@@ -195,7 +195,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             @Override
             public void onClick(View v) {
                 sleeping = !sleeping;
-                setSleepMode();
+                //setSleepMode();
+                makeRaspberrySleep();
                 if (sleeping) {
                     sleepButton.setText(R.string.wake_button);
                 } else {
@@ -698,7 +699,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             if (!raspberryPiName.equals("Please reenter raspberry pi bluetooth name")) {
                 if (!raspberryPiName.isEmpty()) {
                     //if false, bluetooth off, otherwise start discovery, when results arrive the callback is BroadcastReceiver
-                    tryToConnect();
+                    tryToConnect(0);
                 } else {
                     raspberryNameEditText.setText("Please reenter raspberry pi bluetooth name");
                 }
@@ -720,7 +721,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
      * BluetoothServerSocket that uses the same UUID. Before the method completes, the BluetoothSocket is
      * closed so that on another button press to sync data, a new connection is established.
      */
-    private void tryToConnect() {
+    private void tryToConnect(int dataOrSleep) {
         BluetoothDevice btDevice = null;
         //query bonded devices, store them in a Set
         bondedDevices = bluetoothAdapter.getBondedDevices();
@@ -751,8 +752,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 return;
             }
 
-            //write content to the socket if the socket was opened successfully
-            writeContentToSocket(clientSocket);
+            if (dataOrSleep == 0) {
+                //write content to the socket if the socket was opened successfully
+                writeContentToSocket(clientSocket);
+            }else {
+                writeSleepToSocket(clientSocket);
+            }
 
             //close socket before end of method so every time the sync button is pressed, a new connection is made
             try {
@@ -853,12 +858,48 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         unregisterReceiver(mReceiver);
         super.onDestroy();
     }
+
+    private void makeRaspberrySleep() {
+        raspberryPiName = raspberryNameEditText.getText().toString().trim();
+
+        //only try to deliver content if name has been changed
+        if (!raspberryPiName.equals("Enter raspberry computer name here")) {
+            if (!raspberryPiName.equals("Please reenter raspberry pi bluetooth name")) {
+                if (!raspberryPiName.isEmpty()) {
+                    //if false, bluetooth off, otherwise start discovery, when results arrive the callback is BroadcastReceiver
+                    tryToConnect(1);
+                } else {
+                    raspberryNameEditText.setText("Please reenter raspberry pi bluetooth name");
+                }
+            } else {
+                raspberryNameEditText.setText("Please reenter raspberry pi bluetooth name");
+            }
+        } else {
+            raspberryNameEditText.setText("Please reenter raspberry pi bluetooth name");
+        }
+    }
+
+    public void writeSleepToSocket(BluetoothSocket clientSocket) {
+        try {
+            byte[] buffer;  // buffer store for the stream
+            clientSocketOutputStream = clientSocket.getOutputStream();
+
+            buffer = SLEEP_KEYWORD.getBytes();
+            clientSocketOutputStream.write(buffer);
+            System.out.println("Wrote " + new String(buffer) + " to raspberry.");
+            clientSocketOutputStream.flush();
+            
+            //write break keyword to end to socket connection on both sides
+            clientSocketOutputStream.write(EXIT_KEYWORD.getBytes());
+            System.out.println("Wrote " + EXIT_KEYWORD + " to raspberry.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     //-----------------END BLUETOOTH SECTION-----------------------------------------------------------------
 
 
-    private void makeRaspberrySleep() {
 
-    }
 
 	/** set  Raspberry Pi screen sleep*/
     private void setSleepMode() {
