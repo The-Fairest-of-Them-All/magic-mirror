@@ -341,6 +341,11 @@ public class RpiUI extends JFrame {
             }
         };
         javax.swing.SwingUtilities.invokeLater(mainUiThread);
+        
+        InvokeCommandLine test = new InvokeCommandLine();
+        //String[] commandAndArgs = {"ls", "-la"};
+        String[] commandAndArgs = {"sudo", "hciconfig", "hci0", "up"};
+        test.invoke(commandAndArgs);
 
         bluetoothListenerThread = null;
         try {
@@ -369,9 +374,7 @@ public class RpiUI extends JFrame {
         t = new Timer(1000, updateClockDisplay);
         t.start();
 
-        InvokeCommandLine test = new InvokeCommandLine();
-        String[] commandAndArgs = {"ls", "-la"};
-        test.invoke(commandAndArgs);
+        
 
         //join the bluetoothListenerThread thread, stop the timer
         try {

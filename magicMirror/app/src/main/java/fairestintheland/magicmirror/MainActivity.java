@@ -1,5 +1,6 @@
 package fairestintheland.magicmirror;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -9,6 +10,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -16,7 +18,9 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.provider.Settings;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -35,7 +39,11 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -60,7 +68,7 @@ import java.util.UUID;
 
 /**used for create a connection between mobile application and the Raspberry Pi,
  and create a UI for the Android application*/
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     //UI objects
 
     /**
@@ -146,11 +154,19 @@ public class MainActivity extends AppCompatActivity {
     TwitterMessage tMess;
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
-    GetLocation myLocation;
-    String latitude;
-    String longitude;
+    //GetLocation myLocation;
+    String latitude = "";
+    String longitude = "";
     public String eventMessage;
     Set<BluetoothDevice> bondedDevices;
+
+
+
+    LocationRequest mLocationRequest;
+    LocationSettingsRequest.Builder mLocationSettingsRequestBuilder;
+    final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1001;
+    Intent gpsOptionsIntent;
+    final int ENABLE_LOCATION = 900;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -240,18 +256,141 @@ public class MainActivity extends AppCompatActivity {
 
         new BluetoothAsync().execute();
 
-        myLocation = new GetLocation(context);
-        myLocation.startLocationServices();
+        //myLocation = new GetLocation(context);
+        //myLocation.startLocationServices();
+
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    //.enableAutoManage(this, this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+        }
     }
 
 
     //---------LOCATION SECTION--------------------------------------------------------------------------
     protected void onStart() {
-        //mGoogleApiClient.connect();
+        mGoogleApiClient.connect();
         super.onStart();
     }
 
+    protected void onStop() {
+        if (mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
+        super.onStop();
+    }
 
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        int settings = 0;
+        try {
+            settings = Settings.Secure.getInt(getContentResolver(), Settings.Secure.LOCATION_MODE);
+        } catch (Settings.SettingNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        if (settings == 0) {
+            gpsOptionsIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivityForResult(gpsOptionsIntent, ENABLE_LOCATION);
+        }
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+            return;
+        }
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (mLastLocation != null) {
+            Toast.makeText(this, "Location is ok", Toast.LENGTH_LONG).show();
+            latitude = (String.valueOf(mLastLocation.getLatitude()));
+            longitude = (String.valueOf(mLastLocation.getLongitude()));
+            System.out.println("Latitude: " + latitude);
+            System.out.println("Longitude: " + longitude);
+        } else {
+            Toast.makeText(this, "Location was null", Toast.LENGTH_LONG).show();
+            System.out.println("Location was null");
+        }
+    }
+
+    public void lookForLocation() {
+        int settings = 0;
+        try {
+            settings = Settings.Secure.getInt(getContentResolver(), Settings.Secure.LOCATION_MODE);
+        } catch (Settings.SettingNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        if (settings == 0) {
+            gpsOptionsIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivityForResult(gpsOptionsIntent, ENABLE_LOCATION);
+        }
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+            return;
+        }
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (mLastLocation != null) {
+            Toast.makeText(this, "Location is ok", Toast.LENGTH_LONG).show();
+            latitude = (String.valueOf(mLastLocation.getLatitude()));
+            longitude = (String.valueOf(mLastLocation.getLongitude()));
+            System.out.println("Latitude: " + latitude);
+            System.out.println("Longitude: " + longitude);
+        } else {
+            Toast.makeText(this, "Location was null", Toast.LENGTH_LONG).show();
+            System.out.println("Location was null");
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_READ_CONTACTS: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    /*latitude = (String.valueOf(mLastLocation.getLatitude()));
+                    longitude = (String.valueOf(mLastLocation.getLongitude()));
+                    System.out.println("Latitude: " + latitude);
+                    System.out.println("Longitude: " + longitude);*/
+                    System.out.println("Permission granted.");
+                    Toast.makeText(this, "Permission granted", Toast.LENGTH_LONG).show();
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    System.out.println("Permission denied.");
+                    Toast.makeText(this, "Permission denied", Toast.LENGTH_LONG).show();
+                }
+                return;
+            }
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Log.i("LOC", "Connection suspended");
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.i("LOC", "Connection failed: ConnectionResult.getErrorCode() = " + connectionResult.getErrorCode());
+    }
+
+
+    /*protected void onStart() {
+        //mGoogleApiClient.connect();
+        super.onStart();
+    }
 
     protected void onStop() {
         //mGoogleApiClient.disconnect();
@@ -259,9 +398,7 @@ public class MainActivity extends AppCompatActivity {
         SaveHostName();
         myLocation.stopLocationServices();
         super.onStop();
-    }
-
-
+    }*/
     //-----------END LOCATION SECTION---------------------------------------------------------------------
 
     //-----------FILE I/O-------------------------------------------------------------------------------
@@ -433,7 +570,14 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-
+        //responds to the user's response to the location enable prompt if it was presented
+        if (requestCode == ENABLE_LOCATION) {
+            if (resultCode == RESULT_OK) {
+                System.out.println("You enabled location.");
+            } else {
+                System.out.println("You did not enable location.");
+            }
+        }
     }
 
     /**
@@ -655,14 +799,26 @@ public class MainActivity extends AppCompatActivity {
 
             //send location data so that Raspberry can request weather data
             if (switchStates[2]) {
-                latitude = myLocation.getLatitude();
-                longitude = myLocation.getLongitude();
-                StringBuilder output = new StringBuilder(WEATHER_KEY);
-                output.append(latitude).append(",").append(longitude);
-                buffer = output.toString().getBytes();
-                clientSocketOutputStream.write(buffer);
-                System.out.println("Wrote " + new String(buffer) + " to raspberry.");
-                clientSocketOutputStream.flush();
+                if (latitude.isEmpty() || longitude.isEmpty()) {
+                    lookForLocation();
+                }
+                if (latitude.isEmpty() || longitude.isEmpty()) {
+                    StringBuilder output = new StringBuilder(WEATHER_KEY);
+                    output.append("I need your location to get the weather.");
+                    buffer = output.toString().getBytes();
+                    clientSocketOutputStream.write(buffer);
+                    System.out.println("Wrote " + new String(buffer) + " to raspberry.");
+                    clientSocketOutputStream.flush();
+                } else {
+                    latitude = getLatitude();
+                    longitude = getLongitude();
+                    StringBuilder output = new StringBuilder(WEATHER_KEY);
+                    output.append(latitude).append(",").append(longitude);
+                    buffer = output.toString().getBytes();
+                    clientSocketOutputStream.write(buffer);
+                    System.out.println("Wrote " + new String(buffer) + " to raspberry.");
+                    clientSocketOutputStream.flush();
+                }
             }
 
             //send calendar events if true
