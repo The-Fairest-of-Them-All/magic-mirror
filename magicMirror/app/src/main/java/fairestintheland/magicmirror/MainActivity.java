@@ -129,6 +129,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private static final String CALENDAR_KEY = "C: ";
     private static final String WEATHER_KEY = "W: ";
     private static final String QUOTE_KEY = "Q: ";
+    private static final String SLEEP_KEYWORD = "SLEEP";
 
     String   consumerKey = "bUh6sDhIGpN4UdE55litSTD8W";
     String consumerSecret = "OlByFoaS9lJ8ewZEw9DOPGgVrby9EM6SepllWXrCnraw49r9DC";

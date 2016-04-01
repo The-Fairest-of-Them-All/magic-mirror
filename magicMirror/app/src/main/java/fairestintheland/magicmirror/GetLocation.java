@@ -1,3 +1,7 @@
+/*
+NOT USED RIGHT NOW. ALL OF THIS FUNCTIONALITY HADS BEEN MOVED TO MAIN
+ */
+
 package fairestintheland.magicmirror;
 
 /**

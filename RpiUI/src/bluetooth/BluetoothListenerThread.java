@@ -33,66 +33,72 @@ public class BluetoothListenerThread implements Runnable {
 
     //this is the UUID that is used to create a socket between android and raspberry via bluetooth
     private final String UUIDSTRING = "a96d5795f8c34b7a9bad1eefa9e11a94";
-    
+
     //Key strings used to determine what type of data has been received from Android.
     private static final String EXIT_KEYWORD = "DONE";
     private static final String TWITTER_KEY = "T: ";
     private static final String CALENDAR_KEY = "C: ";
     private static final String WEATHER_KEY = "W: ";
     private static final String QUOTE_KEY = "Q: ";
+    private static final String SLEEP_KEYWORD = "SLEEP";
 
     /**
-     *MAC address of the Bluetooth adapter on raspberry pi
+     * MAC address of the Bluetooth adapter on raspberry pi
      */
     public static String bluetoothAddress;
 
     /**
-     *Represents the nature of the device's current discoverable mode. Valid values are
-     * DiscoveryAgent.GIAC - 0x9E8B33 (10390323), 
-     * DiscoveryAgent.LIAC -  0x9E8B00 (10390272), 
-     * DiscoveryAgent.NOT_DISCOVERABLE - 0x00 (0), 
-     * or a value in the range 0x9E8B00 to 0x9E8B3F.
+     * Represents the nature of the device's current discoverable mode. Valid
+     * values are DiscoveryAgent.GIAC - 0x9E8B33 (10390323), DiscoveryAgent.LIAC
+     * - 0x9E8B00 (10390272), DiscoveryAgent.NOT_DISCOVERABLE - 0x00 (0), or a
+     * value in the range 0x9E8B00 to 0x9E8B3F.
      */
     public static int discoverableMode;
 
     /**
-     * Used along with url to facilitate listening for connections that specify the matching UUID.
+     * Used along with url to facilitate listening for connections that specify
+     * the matching UUID.
      */
     public static StreamConnectionNotifier notifier;
 
     /**
-     * Return value of getOrSetDiscoverableMode(). True if this device is discoverable, false if not.
+     * Return value of getOrSetDiscoverableMode(). True if this device is
+     * discoverable, false if not.
      */
     public static boolean discoverable;
 
     /**
-     * UUID that is know on both client and server side used to create BluetoothSockets.
+     * UUID that is know on both client and server side used to create
+     * BluetoothSockets.
      */
     public static UUID uuid;
 
     /**
-     * Needed to open notifier. 
+     * Needed to open notifier.
      */
     public static String url;
 
     /**
-     * The connection to the Android app which is created when a connection is accepted.
+     * The connection to the Android app which is created when a connection is
+     * accepted.
      */
     public static StreamConnection connection;
 
     /**
-     * The LocalDevice class defines the basic functions of the Bluetooth manager.
+     * The LocalDevice class defines the basic functions of the Bluetooth
+     * manager.
      */
     public static LocalDevice localDevice;
 
     /**
-     * The Bluetooth hostname that the device uses for connections to other devices.
+     * The Bluetooth hostname that the device uses for connections to other
+     * devices.
      */
     public static String bluetoothFriendlyName;
 
     /**
-     * Reference to the main thread so that insertions into JTextAreas and printing to the screen are all handled
-     * by the UI thread.
+     * Reference to the main thread so that insertions into JTextAreas and
+     * printing to the screen are all handled by the UI thread.
      */
     public static RpiUI mainThread;
 
@@ -102,13 +108,13 @@ public class BluetoothListenerThread implements Runnable {
     public static DiscoveryAgent discoveryAgent;
 
     /**
-     * Array of remote devices known to the Bluetooth Adapter. 
+     * Array of remote devices known to the Bluetooth Adapter.
      */
     public static RemoteDevice[] remotes;
 
     /**
      * Constructor which takes a reference to an RpiUI object as an argument.
-     * 
+     *
      * @param mainThread
      */
     public BluetoothListenerThread(RpiUI mainThread) {
@@ -116,7 +122,8 @@ public class BluetoothListenerThread implements Runnable {
     }
 
     /**
-     * Invoked on start of the Runnable BluetoothListenerThread thread. This only calls listen().
+     * Invoked on start of the Runnable BluetoothListenerThread thread. This
+     * only calls listen().
      */
     @Override
     public void run() {
@@ -152,7 +159,7 @@ public class BluetoothListenerThread implements Runnable {
                 return;
             }
 
-            try {                
+            try {
                 bluetoothAddress = localDevice.getBluetoothAddress();
                 System.out.println("My bluetooth address is " + bluetoothAddress);
                 mainThread.replaceJTextArea(mainThread.getTwitterJTextArea(), "My bluetooth address is " + bluetoothAddress);
@@ -167,7 +174,7 @@ public class BluetoothListenerThread implements Runnable {
                     //The DiscoveryAgent class provides methods to perform device and service discovery (From API)
                     //get a discovery agent from the local device
                     discoveryAgent = localDevice.getDiscoveryAgent();
-                    
+
                     //list of bonded devices known to this device
                     remotes = discoveryAgent.retrieveDevices(DiscoveryAgent.PREKNOWN);
 
@@ -190,7 +197,7 @@ public class BluetoothListenerThread implements Runnable {
                     connection = notifier.acceptAndOpen();
                     System.out.println("Connection to Android accepted. Bluetooth socket open.");
                     processConnection(connection);
-                    
+
                     //close connection at end of every loop iteration
                     System.out.println("Closing bluetooth socket.");
                     connection.close();
@@ -258,6 +265,9 @@ public class BluetoothListenerThread implements Runnable {
                 input = input.trim();
                 //if result is -1, the read from inputBuffer read nothing so we assume that we should close the socket on this side
                 if (input.regionMatches(0, EXIT_KEYWORD, 0, 4) || result == -1) {
+                    inputStream.close();
+                    break;
+                } else if (input.regionMatches(0, SLEEP_KEYWORD, 0, 5) || result == -1) {
                     inputStream.close();
                     break;
                 } else {
