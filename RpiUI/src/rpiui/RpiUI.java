@@ -21,6 +21,8 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import com.intel.bluetooth.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -340,7 +342,13 @@ public class RpiUI extends JFrame {
                 uiThread.framer();
             }
         };
-        javax.swing.SwingUtilities.invokeLater(mainUiThread);
+        //javax.swing.SwingUtilities.invokeLater(mainUiThread);
+        mainUiThread.run();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(RpiUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
         InvokeCommandLine test = new InvokeCommandLine();
         //String[] commandAndArgs = {"ls", "-la"};
