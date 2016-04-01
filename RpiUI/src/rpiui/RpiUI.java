@@ -60,6 +60,8 @@ public class RpiUI extends JFrame {
     static Timer t;
     boolean display = true;
     JFrame frame;
+    JFrame blank;
+    JPanel blankPanel;
 
     static String sample = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, "
             + "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. "
@@ -75,11 +77,24 @@ public class RpiUI extends JFrame {
      * a grid system to specify where each designated area is located. Sets design specifications for the layout.
      */
     private void framer() {
+        blank = new JFrame("Raspberry Pi App");
+        blank.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        blank.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        blank.setUndecorated(true);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        blank.setPreferredSize(screenSize);
+        
+        blankPanel = new JPanel(new GridBagLayout());
+        blankPanel.setBackground(Color.black);
+        blankPanel.setOpaque(true);
+        blankPanel.setPreferredSize(screenSize);
+        blank.add(blankPanel);
+        blank.pack();
+        
         frame = new JFrame("Raspberry Pi App");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setUndecorated(true);
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setPreferredSize(screenSize);
 //        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 //        GraphicsDevice gd = ge.getDefaultScreenDevice();
@@ -218,6 +233,8 @@ public class RpiUI extends JFrame {
         frame.pack();
 
         frame.setVisible(display);
+        
+        blank.setVisible(!display);
     }
 
     /**
@@ -405,6 +422,7 @@ public class RpiUI extends JFrame {
     public void toggleDisplay() {
         display = !display;
         frame.setVisible(display);
+        blank.setVisible(!display);
     }
 
     /**

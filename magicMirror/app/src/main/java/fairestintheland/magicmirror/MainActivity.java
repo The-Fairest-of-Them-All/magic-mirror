@@ -888,7 +888,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             clientSocketOutputStream.write(buffer);
             System.out.println("Wrote " + new String(buffer) + " to raspberry.");
             clientSocketOutputStream.flush();
-            
+
             //write break keyword to end to socket connection on both sides
             clientSocketOutputStream.write(EXIT_KEYWORD.getBytes());
             System.out.println("Wrote " + EXIT_KEYWORD + " to raspberry.");
