@@ -115,7 +115,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     Context context;
     ConnectivityManager cm;
 
-
     BluetoothSocketConnection bluetoothSocketConnection;
 
     //bluetooth vars
@@ -125,11 +124,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     //string defined on android and raspberry sides to establish connection
     private final String UUIDSTRING = "a96d5795-f8c3-4b7a-9bad-1eefa9e11a94";
     private static final String EXIT_KEYWORD = "DONE";
+    private static final String SLEEP_KEYWORD = "SLEEP";
+    private static final String MAKE_CONNECTION_KEYWORD = "CONNECT";
     private static final String TWITTER_KEY = "T: ";
     private static final String CALENDAR_KEY = "C: ";
     private static final String WEATHER_KEY = "W: ";
     private static final String QUOTE_KEY = "Q: ";
-    private static final String SLEEP_KEYWORD = "SLEEP";
+
+    private final int DATA = 0;
+    private final int SLEEP = 1;
+    private final int CONNECT = 2;
 
     String   consumerKey = "bUh6sDhIGpN4UdE55litSTD8W";
     String consumerSecret = "OlByFoaS9lJ8ewZEw9DOPGgVrby9EM6SepllWXrCnraw49r9DC";
@@ -160,8 +164,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     String longitude = "";
     public String eventMessage;
     Set<BluetoothDevice> bondedDevices;
-
-
 
     LocationRequest mLocationRequest;
     LocationSettingsRequest.Builder mLocationSettingsRequestBuilder;
@@ -486,8 +488,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
         return s;
     }
-
-
     //-----------END FILE I/O---------------------------------------------------------------------------
 
     //----------BLUETOOTH SECTION-------------------------------------------------------------------------
@@ -695,7 +695,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             if (!raspberryNameEditText.getText().toString().trim().isEmpty()) {
                 raspberryPiName = raspberryNameEditText.getText().toString().trim();
 
-                tryToConnect(0);
+                tryToConnect(DATA);
             } else {
                 raspberryNameEditText.setText("Please enter raspberry pi bluetooth name");
             }
@@ -712,7 +712,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
      * BluetoothServerSocket that uses the same UUID. Before the method completes, the BluetoothSocket is
      * closed so that on another button press to sync data, a new connection is established.
      */
-    private void tryToConnect(int dataOrSleep) {
+    private void tryToConnect(int dataOrSleepORConnect) {
         BluetoothDevice btDevice = null;
         //query bonded devices, store them in a Set
         bondedDevices = bluetoothAdapter.getBondedDevices();
@@ -743,11 +743,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 return;
             }
 
-            if (dataOrSleep == 0) {
+            if (dataOrSleepORConnect == DATA) {
                 //write content to the socket if the socket was opened successfully
                 writeContentToSocket(clientSocket);
-            }else {
+            }else if (dataOrSleepORConnect == SLEEP){
                 writeSleepToSocket(clientSocket);
+            } else if (dataOrSleepORConnect == CONNECT) {
+
             }
 
             //close socket before end of method so every time the sync button is pressed, a new connection is made
@@ -757,6 +759,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 e.printStackTrace();
             }
         }
+    }
+
+    public void writeConnectDataToSocket(BluetoothSocket clientSocket) {
+
     }
 
 
@@ -858,7 +864,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             if (!raspberryPiName.equals("Please reenter raspberry pi bluetooth name")) {
                 if (!raspberryPiName.isEmpty()) {
                     //if false, bluetooth off, otherwise start discovery, when results arrive the callback is BroadcastReceiver
-                    tryToConnect(1);
+                    tryToConnect(SLEEP);
                 } else {
                     raspberryNameEditText.setText("Please reenter raspberry pi bluetooth name");
                 }
