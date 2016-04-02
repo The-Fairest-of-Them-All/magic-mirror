@@ -760,7 +760,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }else if (dataOrSleepORConnect == SLEEP){
                 writeSleepToSocket(clientSocket);
             } else if (dataOrSleepORConnect == CONNECT) {
-
+                writeConnectDataToSocket(clientSocket);
             }
 
             //close socket before end of method so every time the sync button is pressed, a new connection is made
@@ -772,6 +772,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
     }
 
+    /**
+     * Writes the SSID and password to the raspberry pi.
+     *
+     * @param clientSocket an open and connected BluetoothSocket object
+     */
     public void writeConnectDataToSocket(BluetoothSocket clientSocket) {
 
     }
@@ -783,7 +788,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
      * The data is always sent as a byte array so it must be converted or serialized before sending
      * in most cases.
      *
-     * @param clientSocket an open BluetoothSocket object
+     * @param clientSocket an open and connected BluetoothSocket object
      */
     public void writeContentToSocket(BluetoothSocket clientSocket) {
         try {
@@ -878,26 +883,29 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         super.onDestroy();
     }
 
+    /**
+     * If the user pressed the sleep button and the raspberryNameEditText field passes validation,
+     * call tryToConnect with the SLEEP keyword.
+     */
     private void makeRaspberrySleep() {
-        raspberryPiName = raspberryNameEditText.getText().toString().trim();
+        //only start discovery if user has entered a remote hostname
+        if(!raspberryNameEditText.getText().toString().trim().equals("Enter raspberry computer name here")) {
+            if (!raspberryNameEditText.getText().toString().trim().isEmpty()) {
+                raspberryPiName = raspberryNameEditText.getText().toString().trim();
 
-        //only try to deliver content if name has been changed
-        if (!raspberryPiName.equals("Enter raspberry computer name here")) {
-            if (!raspberryPiName.equals("Please reenter raspberry pi bluetooth name")) {
-                if (!raspberryPiName.isEmpty()) {
-                    //if false, bluetooth off, otherwise start discovery, when results arrive the callback is BroadcastReceiver
-                    tryToConnect(SLEEP);
-                } else {
-                    raspberryNameEditText.setText("Please reenter raspberry pi bluetooth name");
-                }
+                //call tryToConnect and specify that the SLEEP keyword should be passed
+                tryToConnect(SLEEP);
             } else {
-                raspberryNameEditText.setText("Please reenter raspberry pi bluetooth name");
+                raspberryNameEditText.setText("Please enter raspberry pi bluetooth name");
             }
-        } else {
-            raspberryNameEditText.setText("Please reenter raspberry pi bluetooth name");
         }
     }
 
+    /**
+     * Write the SLEEP_KEYWORD to raspberry pi to cause it to stop displaying all JTextAreas.
+     *
+     * @param clientSocket open and connected BluetoothSocket
+     */
     public void writeSleepToSocket(BluetoothSocket clientSocket) {
         try {
             byte[] buffer;  // buffer store for the stream

@@ -41,6 +41,7 @@ public class BluetoothListenerThread implements Runnable {
     private static final String WEATHER_KEY = "W: ";
     private static final String QUOTE_KEY = "Q: ";
     private static final String SLEEP_KEYWORD = "SLEEP";
+    private static final String MAKE_CONNECTION_KEYWORD = "CONNECT";
 
     /**
      * MAC address of the Bluetooth adapter on raspberry pi
@@ -277,7 +278,12 @@ public class BluetoothListenerThread implements Runnable {
                     mainThread.toggleDisplay();
                     inputStream.close();
                     break;
-                } else {
+                } else if (input.regionMatches(0, MAKE_CONNECTION_KEYWORD, 0, 7) || result == -1) {
+                    //TODO call the exec method to write connect details to wpa_supplicant
+                    mainThread.appendToJTextAreaNewline(mainThread.getTwitterJTextArea(), "I'll try to connect to the network you specified.");
+                    inputStream.close();
+                    break;
+                }else {
                     /*check to see if String represents Twitter data by comparing first 3 characters to defined string.
                         and based on that result, write into the appropriate seciton on the screen*/
                     if (input.regionMatches(0, TWITTER_KEY, 0, 3)) {
