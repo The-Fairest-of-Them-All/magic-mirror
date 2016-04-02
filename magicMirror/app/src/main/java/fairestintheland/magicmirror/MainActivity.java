@@ -172,6 +172,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     final int ENABLE_LOCATION = 900;
     int locationSettings;
 
+    String[] quotes = {"Strive not to be a success, but rather to be of value. -Albert Einstein",
+            "Every strike brings me closer to the next home run. -Babe Ruth",
+            "Life is what happens to you while you're busy making other plans. -John Lennon",
+            "I'm ready - Spongebob Squarepants"};
+    int quotePosition;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -182,6 +189,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         currentEvent = cEvent.readCalendarEvent(this);
         String[] test = cEvent.getCNames();
         System.out.println("!!You got an event!!!" + cEvent.readCalendarEvent(this));
+
+        quotePosition = quotes.length;
 
         tMess = new TwitterMessage(consumerKey, consumerSecret, accessToken, accessTokenSecret);
         tMess.getTweet();
@@ -695,6 +704,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             if (!raspberryNameEditText.getText().toString().trim().isEmpty()) {
                 raspberryPiName = raspberryNameEditText.getText().toString().trim();
 
+                //call tryToConnect and specify that the app content should be passed
                 tryToConnect(DATA);
             } else {
                 raspberryNameEditText.setText("Please enter raspberry pi bluetooth name");
@@ -743,6 +753,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 return;
             }
 
+            //determine which method to call to write data to raspberry based on the passed int value
             if (dataOrSleepORConnect == DATA) {
                 //write content to the socket if the socket was opened successfully
                 writeContentToSocket(clientSocket);
@@ -835,6 +846,17 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 System.out.println("Wrote " + new String(buffer) + " to raspberry.");
                 clientSocketOutputStream.flush();
             }
+
+            //send quote data, rotate through quote array
+            StringBuilder output = new StringBuilder(QUOTE_KEY);
+            if (quotePosition == quotes.length)
+                quotePosition = 0;
+            output.append(quotes[quotePosition]);
+            quotePosition++;
+            buffer = output.toString().getBytes();
+            clientSocketOutputStream.write(buffer);
+            System.out.println("Wrote " + new String(buffer) + " to raspberry.");
+            clientSocketOutputStream.flush();
 
             //write break keyword to end to socket connection on both sides
             clientSocketOutputStream.write(EXIT_KEYWORD.getBytes());
