@@ -82,7 +82,7 @@ public class InvokeCommandLine {
     }
 
     /**
-     * Used to write the class's SSID and password values into the Raspberry Pi's wpa.supplicant file to attempt a
+     * Used to write the classes SSID and password values into the Raspberry Pi's wpa.supplicant file to attempt a
      * programmatic connection to the user's home network. Invokes a terminal script defined by scriptName
      * to do this.
      */

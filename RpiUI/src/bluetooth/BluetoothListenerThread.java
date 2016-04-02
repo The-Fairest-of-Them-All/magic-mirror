@@ -143,34 +143,30 @@ public class BluetoothListenerThread implements Runnable {
      * the server socket and is passed to processConnection().
      */
     private void listen() {
-        if (!LocalDevice.isPowerOn()) { //if power is off, do not do any further setting up, just display message
+        //if power is off, do not do any further setting up, just display message
+        if (!LocalDevice.isPowerOn()) { 
             System.out.println("Bluetooth is turned off.");
-            return;
         } else {
             try {
                 //The LocalDevice class defines the basic functions of the Bluetooth manager (From API)
                 localDevice = LocalDevice.getLocalDevice();
-            } catch (BluetoothStateException e) {
-                System.err.println("BluetoothStateException in localDevice = LocalDevice.getLocalDevice();");
-                e.printStackTrace();
-                return;
-            } catch (Exception e) {
-                e.printStackTrace();
-                return;
-            }
-
-            try {
+                System.out.println("Got a local device");
+                
                 bluetoothAddress = localDevice.getBluetoothAddress();
                 System.out.println("My bluetooth address is " + bluetoothAddress);
                 mainThread.replaceJTextArea(mainThread.getTwitterJTextArea(), "My bluetooth address is " + bluetoothAddress);
+                
                 bluetoothFriendlyName = localDevice.getFriendlyName();
                 System.out.println("Bluetooth friendly name is " + bluetoothFriendlyName + ". This is what you should connect to.");
                 mainThread.appendToJTextAreaNewline(mainThread.getTwitterJTextArea(), "Bluetooth friendly name is " + bluetoothFriendlyName + ". This is what you should connect to.");
+                
                 //check whether device is discoverable, if not set it, if it cannot be set to discoverable, 
-                //discoverable is false initially
+                //discoverable is false
                 discoverable = getOrSetDiscoverableMode(localDevice);
 
                 if (discoverable) {
+                    mainThread.appendToJTextAreaNewline(mainThread.getTwitterJTextArea(), "I am now discoverable");
+
                     //The DiscoveryAgent class provides methods to perform device and service discovery (From API)
                     //get a discovery agent from the local device
                     discoveryAgent = localDevice.getDiscoveryAgent();
@@ -185,13 +181,21 @@ public class BluetoothListenerThread implements Runnable {
                     url = "btspp://localhost:" + uuid.toString() + ";name=RaspberryServer";
                     notifier = (StreamConnectionNotifier) Connector.open(url);
                 }
-            } catch (Exception e) {
+            } catch (BluetoothStateException e) {
+                System.err.println("BluetoothStateException");
+                e.printStackTrace();
+                return;
+            }catch (Exception e) {
                 e.printStackTrace();
                 return;
             }
-
+            
+            /*wait for bluetooth connection from Android app, the program will wait at the acceptAndOpen
+                method call line indefinitely for incoming connections so when the program has started
+                whether it is the first run or any subsequent run, the program runs up to that line
+                before waiting for the conneciton*/
             while (true) {
-                System.out.println("Waiting for connection from Android app...");
+                System.out.println("Waiting for bluetooth connection from Android app...");
                 try {
                     //listen for client to connect to the url defined by url
                     connection = notifier.acceptAndOpen();
@@ -199,8 +203,8 @@ public class BluetoothListenerThread implements Runnable {
                     processConnection(connection);
 
                     //close connection at end of every loop iteration
-                    System.out.println("Closing bluetooth socket.");
                     connection.close();
+                    System.out.println("Closed bluetooth socket.");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -224,12 +228,13 @@ public class BluetoothListenerThread implements Runnable {
         //range 0x9E8B00 to 0x9E8B3F.
         discoverableMode = localDevice.getDiscoverable();
         if (discoverableMode == DiscoveryAgent.NOT_DISCOVERABLE) {
-            System.out.println("Discoverable mode is " + discoverableMode + " undiscoverable");
+            System.out.println("Not discoverable: mode is " + discoverableMode);
             try {
+                //attempt to set device to discoverable mode
                 available = localDevice.setDiscoverable(DiscoveryAgent.GIAC);
-                if (available) {
+                if (available) { //if successful
                     discoverableMode = localDevice.getDiscoverable();
-                    System.out.println("Now set to discoverable, " + discoverableMode);
+                    System.out.println("Now set to discoverable: mode is " + discoverableMode);
                 } else {
                     System.out.println("Could not set device to discoverable mode.");
                 }
@@ -237,7 +242,7 @@ public class BluetoothListenerThread implements Runnable {
                 e.printStackTrace();
             }
         } else {
-            System.out.println("Discoverable mode is " + discoverableMode + " discoverable");
+            System.out.println("Discoverable: mode is " + discoverableMode);
             available = true;
         }
         return available;
@@ -267,6 +272,7 @@ public class BluetoothListenerThread implements Runnable {
                 if (input.regionMatches(0, EXIT_KEYWORD, 0, 4) || result == -1) {
                     inputStream.close();
                     break;
+                //if the SLEEP_KEYWORD is read, hide all JTextArea objects
                 } else if (input.regionMatches(0, SLEEP_KEYWORD, 0, 5) || result == -1) {
                     mainThread.toggleDisplay();
                     inputStream.close();
@@ -291,10 +297,10 @@ public class BluetoothListenerThread implements Runnable {
                         System.out.println("This: " + input + " isn't twitter, weather, quote, or calendar data");
                         mainThread.appendToJTextAreaNewline(mainThread.getTwitterJTextArea(), input);
                     }
-
-                    System.out.println("End of input.");
+                    //System.out.println("End of input.");
                 }
             }
+            System.out.println("End of input.");
         } catch (Exception e) {
             e.printStackTrace();
         }

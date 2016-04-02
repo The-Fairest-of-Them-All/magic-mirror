@@ -38,13 +38,15 @@ public class RpiUI extends JFrame {
      * the Raspberry Pi Thread socketServerThread: Thread which used for handle
      * the network action
      */
-    static final int BITMAP_SIZE = 8;
+    
+    //THESE VARS UNUSED CURRENTLY
+    /*static final int BITMAP_SIZE = 8;
     static final int SocketServerPORT = 60_000;
 
     static ServerSocket serverSocket;
     static String ipAddress;
     static String message = "";
-    static Thread socketServerThread;
+    static Thread socketServerThread;*/
 
     private static JTextArea quoteArea;
     private static JTextArea twitArea;
@@ -58,10 +60,8 @@ public class RpiUI extends JFrame {
     static Thread bluetoothListenerThread;
     static ActionListener updateClockDisplay;
     static Timer t;
-    boolean display = true;
+    boolean display = true; //determines whether or not the JTextAreas should be displayed
     JFrame frame;
-    JFrame blank;
-    JPanel blankPanel;
 
     static String sample = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, "
             + "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. "
@@ -398,6 +398,8 @@ public class RpiUI extends JFrame {
                 t.stop();
             }
             System.out.println("Stopped the clock.");
+            
+            //TODO need to have a way to join the UI thread
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -405,6 +407,11 @@ public class RpiUI extends JFrame {
         }
     }
     
+    /**
+     * Flips the display boolean and changes the visibility of all JTextAreas which display text to
+     * reflect the new value. Called by BluetoothListenerThread when it receives the SLEEP_KEYWORD
+     * from the Android app.
+     */
     public void toggleDisplay() {
         display = !display;
         twitArea.setVisible(display);
@@ -415,9 +422,10 @@ public class RpiUI extends JFrame {
     }
 
     /**
+     * CURRENTLY UNUSED
      * Used to create a connection as a the server side of a Java socket. Emdedded class inside RpiUI.
      */
-    private static class SocketServerThread extends Thread {
+    /*private static class SocketServerThread extends Thread {
 
         int count = 0;
 
@@ -455,7 +463,7 @@ public class RpiUI extends JFrame {
 
                     System.out.println(message);
                     String msgReply = "Hello from Raspberry Pi (Regular computer right now), you are #" + count;
-                    dataOutputStream.writeUTF(msgReply);*/
+                    dataOutputStream.writeUTF(msgReply);
                 }
             } catch (IOException e) {
                 // TODO Auto-generated catch block
@@ -494,14 +502,15 @@ public class RpiUI extends JFrame {
             }
         }
 
-    }
+    }*/
 
     /**
+     * CURRENTLY UNUSED
      * Gets all known IP addresses and returns a string containing them.
      * 
      * @return String representing all assigned IP addresses associated with the device. 
      */
-    private static String getIpAddress() {
+    /*private static String getIpAddress() {
         String ip = "";
         try {
             Enumeration<NetworkInterface> enumNetworkInterfaces = NetworkInterface
@@ -530,6 +539,6 @@ public class RpiUI extends JFrame {
         }
 
         return ip;
-    }
+    }*/
 
 }
