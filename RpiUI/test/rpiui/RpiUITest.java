@@ -184,8 +184,7 @@ public class RpiUITest {
         System.out.println("toggleDisplay");
         RpiUI instance = new RpiUI();
         instance.toggleDisplay();
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assert(instance.display == false);
     }
     
 }

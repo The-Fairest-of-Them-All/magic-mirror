@@ -58,6 +58,13 @@ public class InvokeCommandLine {
     public void setPassword(String password) {
         this.password = password;
     }
+    
+    public String getSSID() {
+        return SSID;
+    }
+    public String getPassword() {
+        return password;
+    }
 
     /**
      * Invokes any cmd or terminal command whose bin file is on the default PATH.

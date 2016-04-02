@@ -55,12 +55,12 @@ public class InvokeCommandLineTest {
     @Test
     public void testInvokeCommandLine_String_String() {
         System.out.println("InvokeCommandLine");
-        String SSID = "";
-        String password = "";
+        String SSID = "test";
+        String password = "ABCDEFG";
         InvokeCommandLine instance = new InvokeCommandLine();
         instance.InvokeCommandLine(SSID, password);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertEquals(SSID, instance.getSSID());
+        assertEquals(password, instance.getPassword());
     }
 
     /**
@@ -69,11 +69,11 @@ public class InvokeCommandLineTest {
     @Test
     public void testSetSSID() {
         System.out.println("setSSID");
-        String SSID = "";
+        String SSID = "Test";
         InvokeCommandLine instance = new InvokeCommandLine();
         instance.setSSID(SSID);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        //TODO  SHOULD USE REFLECTION
+        assertEquals(SSID, instance.getSSID());
     }
 
     /**
@@ -82,11 +82,11 @@ public class InvokeCommandLineTest {
     @Test
     public void testSetPassword() {
         System.out.println("setPassword");
-        String password = "";
+        String password = "passwordTest";
         InvokeCommandLine instance = new InvokeCommandLine();
         instance.setPassword(password);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        //TODO SHOULD USE REFLECTION
+        assertEquals(password, instance.getPassword());
     }
 
     /**
@@ -95,11 +95,12 @@ public class InvokeCommandLineTest {
     @Test
     public void testInvoke() {
         System.out.println("invoke");
-        String[] commandAndArgs = null;
+        String expectedOutput = "ABCDEFG";
+        String[] commandAndArgs = {"echo", expectedOutput};
         InvokeCommandLine instance = new InvokeCommandLine();
         instance.invoke(commandAndArgs);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        //TODO SHOULD CAPTURE SYS.OUT AND COMPARE RESULTS
+        fail("nothing yet");
     }
 
     /**
