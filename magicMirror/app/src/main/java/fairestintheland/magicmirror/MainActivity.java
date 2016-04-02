@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     //bluetooth vars
     //int used to determine what activity was presented in the onActivityResult() method
     private static final int REQUEST_ENABLE_BT = 100;
-    private String raspberryPiName = LoadHostName();
+    private String raspberryPiName = "";
     //string defined on android and raspberry sides to establish connection
     private final String UUIDSTRING = "a96d5795-f8c3-4b7a-9bad-1eefa9e11a94";
     private static final String EXIT_KEYWORD = "DONE";
@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     LocationRequest mLocationRequest;
     LocationSettingsRequest.Builder mLocationSettingsRequestBuilder;
-    final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1001;
+    final int MY_PERMISSIONS_REQUEST_LOCATION = 1001;
     Intent gpsOptionsIntent;
     final int ENABLE_LOCATION = 900;
     int locationSettings;
@@ -256,18 +256,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         //start bluetooth services
         bluetoothInfo = (TextView) findViewById(R.id.bluetoothInfo);
         raspberryNameEditText = (EditText) findViewById(R.id.raspberryName);
+        raspberryPiName = LoadHostName();
+        raspberryNameEditText.setText(raspberryPiName);
 
         new BluetoothAsync().execute();
 
-        //myLocation = new GetLocation(context);
-        //myLocation.startLocationServices();
-
-        //ask user to turn on location
+        //ask user to turn on location if it is not currently enabled
         getOrSetLocation();
 
-        /*if (locationSettings == 0) {
-            Toast.makeText(this, "Location not enabled", Toast.LENGTH_LONG).show();
-        } else {*/
             if (mGoogleApiClient == null) {
                 mGoogleApiClient = new GoogleApiClient.Builder(this)
                         //.enableAutoManage(this, this)
@@ -276,12 +272,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                         .addApi(LocationServices.API)
                         .build();
             }
-        //}
     }
 
 
     //---------LOCATION SECTION--------------------------------------------------------------------------
 
+    /**
+     * Checks the permissions for access to the user's location and if location is not currently enabled,
+     * presents an activity requesting that user enables location on the phone.
+     */
     private void getOrSetLocation() {
         locationSettings = 0;
         try {
@@ -324,24 +323,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public void onConnected(Bundle bundle) {
-        /*int locationSettings = 0;
-        try {
-            locationSettings = Settings.Secure.getInt(getContentResolver(), Settings.Secure.LOCATION_MODE);
-        } catch (Settings.SettingNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        if (locationSettings == 0) {
-            gpsOptionsIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            startActivityForResult(gpsOptionsIntent, ENABLE_LOCATION);
-        }*/
+        //check that Manifest declares permissions and that they are allowed
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS_REQUEST_LOCATION);
             return;
         }
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLastLocation != null) {
-            Toast.makeText(this, "Location is ok", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Location retrieved", Toast.LENGTH_LONG).show();
             latitude = (String.valueOf(mLastLocation.getLatitude()));
             longitude = (String.valueOf(mLastLocation.getLongitude()));
             System.out.println("Latitude: " + latitude);
@@ -353,28 +342,19 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     public void lookForLocation() {
-        /*int settings = 0;
-        try {
-            settings = Settings.Secure.getInt(getContentResolver(), Settings.Secure.LOCATION_MODE);
-        } catch (Settings.SettingNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        if (settings == 0) {
-            gpsOptionsIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            startActivityForResult(gpsOptionsIntent, ENABLE_LOCATION);
-        }*/
+        //if location is not yet enabled, ask user to enable it
         if (locationSettings == 0) {
             getOrSetLocation();
         }
 
+        //check that Manifest declares permissions and that they are allowed
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS_REQUEST_LOCATION);
             return;
         }
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLastLocation != null) {
-            Toast.makeText(this, "Location is ok", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Location retrieved", Toast.LENGTH_LONG).show();
             latitude = (String.valueOf(mLastLocation.getLatitude()));
             longitude = (String.valueOf(mLastLocation.getLongitude()));
             System.out.println("Latitude: " + latitude);
@@ -388,22 +368,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_READ_CONTACTS: {
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    /*latitude = (String.valueOf(mLastLocation.getLatitude()));
-                    longitude = (String.valueOf(mLastLocation.getLongitude()));
-                    System.out.println("Latitude: " + latitude);
-                    System.out.println("Longitude: " + longitude);*/
-                    System.out.println("Permission granted.");
-                    Toast.makeText(this, "Permission granted", Toast.LENGTH_LONG).show();
+            case MY_PERMISSIONS_REQUEST_LOCATION: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    System.out.println("Location permission granted.");
+                    Toast.makeText(this, "Location permission granted", Toast.LENGTH_LONG).show();
                 } else {
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                    System.out.println("Permission denied.");
-                    Toast.makeText(this, "Permission denied", Toast.LENGTH_LONG).show();
+                    System.out.println("Location permission denied.");
+                    Toast.makeText(this, "Location permission denied", Toast.LENGTH_LONG).show();
                 }
                 return;
             }
@@ -626,25 +597,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         syncButton = (Button) findViewById(R.id.connect_button);
         syncButton.setEnabled(false);
         syncButton.setClickable(false);
-        if(!raspberryNameEditText.getText().toString().trim().equals("Enter raspberry computer name here")) {
-            raspberryPiName = raspberryNameEditText.getText().toString().trim();
-        }
-        //only start discovery if user has entered a remote hostname
-        if (!raspberryPiName.equals("Enter raspberry computer name here")) {
-            if (!raspberryPiName.equals("Please reenter raspberry pi bluetooth name")) {
-                if (!raspberryPiName.isEmpty()) {
-                    //if false, bluetooth off, otherwise start discovery, when results arrive the callback is BroadcastReceiver
-                    bluetoothAvailable = bluetoothAdapter.startDiscovery();
-                } else {
-                    raspberryNameEditText.setText("Please reenter raspberry pi bluetooth name");
-                }
-            } else {
-                raspberryNameEditText.setText("Please reenter raspberry pi bluetooth name");
-            }
-        } else {
-            raspberryNameEditText.setText("Please reenter raspberry pi bluetooth name");
-        }
 
+        //only start discovery if user has entered a remote hostname
+        if(!raspberryNameEditText.getText().toString().trim().equals("Enter raspberry computer name here")) {
+            if (!raspberryNameEditText.getText().toString().trim().isEmpty()) {
+                raspberryPiName = raspberryNameEditText.getText().toString().trim();
+
+                //if false, bluetooth off, otherwise start discovery, when results arrive the callback is BroadcastReceiver
+                bluetoothAvailable = bluetoothAdapter.startDiscovery();
+            } else {
+                raspberryNameEditText.setText("Please enter raspberry pi bluetooth name");
+            }
+        }
         syncButton.setEnabled(true);
         syncButton.setClickable(true);
     }
@@ -705,6 +669,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             clientSocket.close();
             System.out.println("Socket successfully closed. Now paired.");
             SaveHostName();
+            System.out.println("Saved the hostname " + raspberryPiName);
         } catch (IOException e) {
             e.printStackTrace();
             return;
@@ -725,22 +690,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         syncButton.setEnabled(false);
         syncButton.setClickable(false);
 
-        raspberryPiName = raspberryNameEditText.getText().toString().trim();
+        //only start discovery if user has entered a remote hostname
+        if(!raspberryNameEditText.getText().toString().trim().equals("Enter raspberry computer name here")) {
+            if (!raspberryNameEditText.getText().toString().trim().isEmpty()) {
+                raspberryPiName = raspberryNameEditText.getText().toString().trim();
 
-        //only try to deliver content if name has been changed
-        if (!raspberryPiName.equals("Enter raspberry computer name here")) {
-            if (!raspberryPiName.equals("Please reenter raspberry pi bluetooth name")) {
-                if (!raspberryPiName.isEmpty()) {
-                    //if false, bluetooth off, otherwise start discovery, when results arrive the callback is BroadcastReceiver
-                    tryToConnect(0);
-                } else {
-                    raspberryNameEditText.setText("Please reenter raspberry pi bluetooth name");
-                }
+                tryToConnect(0);
             } else {
-                raspberryNameEditText.setText("Please reenter raspberry pi bluetooth name");
+                raspberryNameEditText.setText("Please enter raspberry pi bluetooth name");
             }
-        } else {
-            raspberryNameEditText.setText("Please reenter raspberry pi bluetooth name");
         }
         syncButton.setEnabled(true);
         syncButton.setClickable(true);
