@@ -312,11 +312,19 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
     }
 
+    /**
+     * Overridden to manually manage the Google play connection.
+     */
+    @Override
     protected void onStart() {
         mGoogleApiClient.connect();
         super.onStart();
     }
 
+    /**
+     * Overridden to manually manage the Google play connection.
+     */
+    @Override
     protected void onStop() {
         if (mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
@@ -324,14 +332,30 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         super.onStop();
     }
 
+    /**
+     * Returns the latitude as a String.
+     *
+     * @return latitude as a String
+     */
     public String getLatitude() {
         return latitude;
     }
 
+    /**
+     * Returns the longitude as a String.
+     *
+     * @return longitude as a String
+     */
     public String getLongitude() {
         return longitude;
     }
 
+    /**
+     * Called when the app has successfully connected to the Google play services. Checks that appropriate
+     * permissions are declared in the Manifest and if they are, tries to retrieve the last known location.
+     *
+     * @param bundle
+     */
     @Override
     public void onConnected(Bundle bundle) {
         //check that Manifest declares permissions and that they are allowed
@@ -352,6 +376,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
     }
 
+    /**
+     * Called before passing data to raspberry. Checks that GPS is enabled, checks that Manifest declarations
+     * are ok, and if these are successful, tries to retrieve most recent location.
+     */
     public void lookForLocation() {
         //if location is not yet enabled, ask user to enable it
         if (locationSettings == 0) {
@@ -376,11 +404,19 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
     }
 
+    /**
+     * Called after consulting the Manifest to check that permissions are met and granted.
+     *
+     * @param requestCode int value passed to the request
+     * @param permissions
+     * @param grantResults
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_LOCATION: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                        grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                     System.out.println("Location permission granted.");
                     Toast.makeText(this, "Location permission granted", Toast.LENGTH_LONG).show();
                 } else {
