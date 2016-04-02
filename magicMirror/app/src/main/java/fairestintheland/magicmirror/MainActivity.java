@@ -168,6 +168,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1001;
     Intent gpsOptionsIntent;
     final int ENABLE_LOCATION = 900;
+    int locationSettings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -261,18 +262,46 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         //myLocation = new GetLocation(context);
         //myLocation.startLocationServices();
 
-        if (mGoogleApiClient == null) {
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    //.enableAutoManage(this, this)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(LocationServices.API)
-                    .build();
-        }
+        //ask user to turn on location
+        getOrSetLocation();
+
+        /*if (locationSettings == 0) {
+            Toast.makeText(this, "Location not enabled", Toast.LENGTH_LONG).show();
+        } else {*/
+            if (mGoogleApiClient == null) {
+                mGoogleApiClient = new GoogleApiClient.Builder(this)
+                        //.enableAutoManage(this, this)
+                        .addConnectionCallbacks(this)
+                        .addOnConnectionFailedListener(this)
+                        .addApi(LocationServices.API)
+                        .build();
+            }
+        //}
     }
 
 
     //---------LOCATION SECTION--------------------------------------------------------------------------
+
+    private void getOrSetLocation() {
+        locationSettings = 0;
+        try {
+            locationSettings = Settings.Secure.getInt(getContentResolver(), Settings.Secure.LOCATION_MODE);
+        } catch (Settings.SettingNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        if (locationSettings == 0) {
+            gpsOptionsIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivityForResult(gpsOptionsIntent, ENABLE_LOCATION);
+        }
+
+        try {
+            locationSettings = Settings.Secure.getInt(getContentResolver(), Settings.Secure.LOCATION_MODE);
+        } catch (Settings.SettingNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
     protected void onStart() {
         mGoogleApiClient.connect();
         super.onStart();
@@ -295,17 +324,17 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public void onConnected(Bundle bundle) {
-        int settings = 0;
+        /*int locationSettings = 0;
         try {
-            settings = Settings.Secure.getInt(getContentResolver(), Settings.Secure.LOCATION_MODE);
+            locationSettings = Settings.Secure.getInt(getContentResolver(), Settings.Secure.LOCATION_MODE);
         } catch (Settings.SettingNotFoundException e) {
             e.printStackTrace();
         }
 
-        if (settings == 0) {
+        if (locationSettings == 0) {
             gpsOptionsIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
             startActivityForResult(gpsOptionsIntent, ENABLE_LOCATION);
-        }
+        }*/
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS_REQUEST_READ_CONTACTS);
             return;
@@ -324,7 +353,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     public void lookForLocation() {
-        int settings = 0;
+        /*int settings = 0;
         try {
             settings = Settings.Secure.getInt(getContentResolver(), Settings.Secure.LOCATION_MODE);
         } catch (Settings.SettingNotFoundException e) {
@@ -334,7 +363,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         if (settings == 0) {
             gpsOptionsIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
             startActivityForResult(gpsOptionsIntent, ENABLE_LOCATION);
+        }*/
+        if (locationSettings == 0) {
+            getOrSetLocation();
         }
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS_REQUEST_READ_CONTACTS);
             return;

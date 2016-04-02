@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import static rpiui.RpiUI.sample;
 
 /**
  *
@@ -44,12 +45,11 @@ public class RpiUITest {
     @Test
     public void testAppendToJTextArea() {
         System.out.println("appendToJTextArea");
-        JTextArea area = null;
-        String newText = "";
+        JTextArea area = new JTextArea("ORIGINAL", 6, 20);
+        String newText = "NEW";
         RpiUI instance = new RpiUI();
         instance.appendToJTextArea(area, newText);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertEquals("ORIGINALNEW", area.getText());
     }
 
     /**
