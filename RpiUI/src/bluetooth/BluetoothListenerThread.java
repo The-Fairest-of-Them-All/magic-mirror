@@ -16,6 +16,7 @@ import javax.microedition.io.StreamConnection;
 import javax.microedition.io.StreamConnectionNotifier;
 import javax.bluetooth.RemoteDevice;
 import com.intel.bluetooth.*;
+import rpiui.ParseMMData;
 
 import rpiui.RpiUI;
 
@@ -35,13 +36,15 @@ public class BluetoothListenerThread implements Runnable {
     private final String UUIDSTRING = "a96d5795f8c34b7a9bad1eefa9e11a94";
 
     //Key strings used to determine what type of data has been received from Android.
-    private static final String EXIT_KEYWORD = "DONE";
     private static final String TWITTER_KEY = "T: ";
     private static final String CALENDAR_KEY = "C: ";
     private static final String WEATHER_KEY = "W: ";
     private static final String QUOTE_KEY = "Q: ";
+    private static final String EXIT_KEYWORD = "DONE";
     private static final String SLEEP_KEYWORD = "SLEEP";
     private static final String MAKE_CONNECTION_KEYWORD = "CONNECT";
+    
+    private BluetoothListenerThread btThread;
 
     /**
      * MAC address of the Bluetooth adapter on raspberry pi
@@ -129,6 +132,22 @@ public class BluetoothListenerThread implements Runnable {
         this.mainThread = null;
     }
 
+    public static String getTwitterKey() {
+        return TWITTER_KEY;
+    }
+    
+    public static String getQuoteKey() {
+        return QUOTE_KEY;
+    }
+    
+    public static String getCalendarKey() {
+        return CALENDAR_KEY;
+    }
+    
+    public static String getWeatherKey() {
+        return WEATHER_KEY;
+    }
+    
     /**
      * Invoked on start of the Runnable BluetoothListenerThread thread. This
      * only calls listen().
@@ -279,6 +298,9 @@ public class BluetoothListenerThread implements Runnable {
         try {
             // prepare to receive data
             InputStream inputStream = connection.openInputStream();
+            
+            ParseMMData parser = new ParseMMData();
+            //ParseMMData parser = new ParseMMData(getTwitterKey(), getCalendarKey(), getWeatherKey(), getQuoteKey());
 
             System.out.println("waiting for input");
 

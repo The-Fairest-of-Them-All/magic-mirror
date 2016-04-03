@@ -46,8 +46,8 @@ public class ParseMMDataTest {
     @Test
     public void testParseWeather() {
         System.out.println("parseWeather");
-        String input = "";
-        String expResult = "";
+        String input = "W: aaa";
+        String expResult = "aaa";
         String result = instance.parseWeather(input);
         assertEquals(expResult, result);
     }
@@ -58,8 +58,8 @@ public class ParseMMDataTest {
     @Test
     public void testParseTwitter() {
         System.out.println("parseTwitter");
-        String input = "";
-        String expResult = "";
+        String input = "T: bbb";
+        String expResult = "bbb";
         String result = instance.parseTwitter(input);
         assertEquals(expResult, result);
     }
@@ -70,8 +70,8 @@ public class ParseMMDataTest {
     @Test
     public void testParseCalendar() {
         System.out.println("parseCalendar");
-        String input = "";
-        String expResult = "";
+        String input = "C: ccc";
+        String expResult = "ccc";
         String result = instance.parseCalendar(input);
         assertEquals(expResult, result);
     }
@@ -82,8 +82,8 @@ public class ParseMMDataTest {
     @Test
     public void testParseQuote() {
         System.out.println("parseQuote");
-        String input = "";
-        String expResult = "";
+        String input = "Q: ddd";
+        String expResult = "ddd";
         String result = instance.parseQuote(input);
         assertEquals(expResult, result);
     }
