@@ -132,18 +132,38 @@ public class BluetoothListenerThread implements Runnable {
         this.mainThread = null;
     }
 
+    /**
+     * Returns the keyword that designates a Twitter message.
+     * 
+     * @return a String representing the Twitter message keyword
+     */
     public static String getTwitterKey() {
         return TWITTER_KEY;
     }
     
+    /**
+     * Returns the keyword that designates a Quote message.
+     * 
+     * @return a String representing the Quote message keyword
+     */
     public static String getQuoteKey() {
         return QUOTE_KEY;
     }
     
+    /**
+     * Returns the keyword that designates a Calendar message.
+     * 
+     * @return a String representing the Calendar message keyword
+     */
     public static String getCalendarKey() {
         return CALENDAR_KEY;
     }
     
+    /**
+     * Returns the keyword that designates a Weather message.
+     * 
+     * @return a String representing the Weather message keyword
+     */
     public static String getWeatherKey() {
         return WEATHER_KEY;
     }
