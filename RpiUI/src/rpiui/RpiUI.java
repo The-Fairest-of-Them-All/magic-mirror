@@ -73,6 +73,11 @@ public class RpiUI extends JFrame {
     static String quote = "I'm ready - Spongebob Squarepants";
 
     /**
+     * No arg constructor.
+     */
+    public RpiUI() {}
+    
+    /**
      * Sets up the java Frame for the mirror screen. Adds placeholder text to each area. Divides the screen into
      * a grid system to specify where each designated area is located. Sets design specifications for the layout.
      */

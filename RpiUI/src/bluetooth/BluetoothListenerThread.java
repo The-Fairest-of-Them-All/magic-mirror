@@ -299,8 +299,8 @@ public class BluetoothListenerThread implements Runnable {
             // prepare to receive data
             InputStream inputStream = connection.openInputStream();
             
-            ParseMMData parser = new ParseMMData();
-            //ParseMMData parser = new ParseMMData(getTwitterKey(), getCalendarKey(), getWeatherKey(), getQuoteKey());
+            //create instance of ParseMMData class to format the incoming data
+            ParseMMData parser = new ParseMMData(getTwitterKey(), getCalendarKey(), getWeatherKey(), getQuoteKey());
 
             System.out.println("waiting for input");
 
@@ -324,24 +324,26 @@ public class BluetoothListenerThread implements Runnable {
                     mainThread.appendToJTextAreaNewline(mainThread.getTwitterJTextArea(), "I'll try to connect to the network you specified.");
                     inputStream.close();
                     break;
-                } else /*check to see if String represents Twitter data by comparing first 3 characters to defined string.
-                        and based on that result, write into the appropriate seciton on the screen*/ if (input.regionMatches(0, TWITTER_KEY, 0, 3)) {
+                } else if (input.regionMatches(0, TWITTER_KEY, 0, 3)) {
                     System.out.println("THIS IS TWITTER: " + input);
-                    mainThread.replaceJTextArea(mainThread.getTwitterJTextArea(), input);
+                    String twit = parser.parseTwitter(input);
+                    mainThread.replaceJTextArea(mainThread.getTwitterJTextArea(), twit);
                 } else if (input.regionMatches(0, QUOTE_KEY, 0, 3)) {
                     System.out.println("THIS IS QUOTE: " + input);
-                    mainThread.replaceJTextArea(mainThread.getQuoteJTextArea(), input);
+                    String quote = parser.parseQuote(input);
+                    mainThread.replaceJTextArea(mainThread.getQuoteJTextArea(), quote);
                 } else if (input.regionMatches(0, WEATHER_KEY, 0, 3)) {
                     System.out.println("THIS IS WEATHER: " + input);
-                    mainThread.replaceJTextArea(mainThread.getWeatherJTextArea(), input);
+                    String weather = parser.parseWeather(input);
+                    mainThread.replaceJTextArea(mainThread.getWeatherJTextArea(), weather);
                 } else if (input.regionMatches(0, CALENDAR_KEY, 0, 3)) {
                     System.out.println("THIS IS CALENDAR: " + input);
-                    //TODO call parse
-                    mainThread.replaceJTextArea(mainThread.getCalendarJTextArea(), input);
+                    String cal = parser.parseCalendar(input);
+                    mainThread.replaceJTextArea(mainThread.getCalendarJTextArea(), cal);
                 } else {
                     //append any "other" data to the Twitter area and print to Sys.out
                     System.out.println("This: " + input + " isn't twitter, weather, quote, or calendar data");
-                    mainThread.appendToJTextAreaNewline(mainThread.getTwitterJTextArea(), input);
+                    //mainThread.appendToJTextAreaNewline(mainThread.getTwitterJTextArea(), input);
                 } //System.out.println("End of input.");
             }
             System.out.println("End of input.");
