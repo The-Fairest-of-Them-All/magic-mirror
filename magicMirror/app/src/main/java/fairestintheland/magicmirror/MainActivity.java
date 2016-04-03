@@ -103,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private Button settingButton;
     private Button syncButton;
     private Button twitterAccountButton;
+    private Button discoverButton;
     private boolean sleeping;
     private boolean[] switchStates;
     EditText ipBar;
@@ -185,7 +186,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         setContentView(R.layout.activity_main);
 
         cEvent = new CalendarEvent();
-
         currentEvent = cEvent.readCalendarEvent(this);
         String[] test = cEvent.getCNames();
         System.out.println("!!You got an event!!!" + cEvent.readCalendarEvent(this));
@@ -194,14 +194,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         tMess = new TwitterMessage(consumerKey, consumerSecret, accessToken, accessTokenSecret);
         tMess.getTweet();
-        switchStates = LoadSwitchStates(); //Twitter,Email,Weather,Calendar
-        context = this;
-        sleeping = false;
+
         theSwitches = new ArrayList<Switch>();
         initSwitches();
+        switchStates = LoadSwitchStates(); //Twitter,Email,Weather,Calendar
+
+        context = this;
+        sleeping = false;
+
         navList = (ListView) findViewById(R.id.left_drawer);
         adapter = new MenuAdapter<>(this, android.R.layout.simple_list_item_1, theSwitches);
         navList.setAdapter(adapter);
+
         sleepButton = (Button) findViewById(R.id.sleepButton);
         sleepButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -216,6 +220,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 }
             }
         });
+
         mTitle = mDrawerTitle = getTitle();
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
@@ -252,6 +257,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
         };
         twitterAccountButton.setOnClickListener(oclA);
+
         /*syncButton = (Button) findViewById(R.id.connect_button);
         syncButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -283,11 +289,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                         .addApi(LocationServices.API)
                         .build();
             }
-    }
+    } //End onCreate()
 
 
     //---------LOCATION SECTION--------------------------------------------------------------------------
-
     /**
      * Checks the permissions for access to the user's location and if location is not currently enabled,
      * presents an activity requesting that user enables location on the phone.
@@ -296,17 +301,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         locationSettings = 0;
         try {
             locationSettings = Settings.Secure.getInt(getContentResolver(), Settings.Secure.LOCATION_MODE);
-        } catch (Settings.SettingNotFoundException e) {
-            e.printStackTrace();
-        }
 
-        if (locationSettings == 0) {
-            gpsOptionsIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            startActivityForResult(gpsOptionsIntent, ENABLE_LOCATION);
-        }
-
-        try {
-            locationSettings = Settings.Secure.getInt(getContentResolver(), Settings.Secure.LOCATION_MODE);
+            if (locationSettings == 0) {
+                gpsOptionsIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivityForResult(gpsOptionsIntent, ENABLE_LOCATION);
+            }
         } catch (Settings.SettingNotFoundException e) {
             e.printStackTrace();
         }
@@ -639,23 +638,31 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
      * @param view
      */
     public void startLooking(View view) {
-        syncButton = (Button) findViewById(R.id.connect_button);
-        syncButton.setEnabled(false);
-        syncButton.setClickable(false);
+        discoverButton = (Button) findViewById(R.id.discoverDevices);
+        discoverButton.setEnabled(false);
+        discoverButton.setClickable(false);
+        String originalText = discoverButton.getText().toString();
+        discoverButton.setText("Don't click right now");
 
-        //only start discovery if user has entered a remote hostname
-        if(!raspberryNameEditText.getText().toString().trim().equals("Enter raspberry computer name here")) {
-            if (!raspberryNameEditText.getText().toString().trim().isEmpty()) {
-                raspberryPiName = raspberryNameEditText.getText().toString().trim();
+        //check if bluetooth is enabled before trying to use it
+        if (!bluetoothAdapter.isEnabled()) {
+            new BluetoothAsync().execute();
+        } else {
+            //only start discovery if user has entered a remote hostname
+            if (!raspberryNameEditText.getText().toString().trim().equals("Enter raspberry computer name here")) {
+                if (!raspberryNameEditText.getText().toString().trim().isEmpty()) {
+                    raspberryPiName = raspberryNameEditText.getText().toString().trim();
 
-                //if false, bluetooth off, otherwise start discovery, when results arrive the callback is BroadcastReceiver
-                bluetoothAvailable = bluetoothAdapter.startDiscovery();
-            } else {
-                raspberryNameEditText.setText("Please enter raspberry pi bluetooth name");
+                    //if false, bluetooth off, otherwise start discovery, when results arrive the callback is BroadcastReceiver
+                    bluetoothAvailable = bluetoothAdapter.startDiscovery();
+                } else {
+                    raspberryNameEditText.setText("Please enter raspberry pi bluetooth name");
+                }
             }
         }
-        syncButton.setEnabled(true);
-        syncButton.setClickable(true);
+        discoverButton.setEnabled(true);
+        discoverButton.setClickable(true);
+        discoverButton.setText(originalText);
     }
 
     /**
@@ -734,20 +741,28 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         syncButton = (Button) findViewById(R.id.connect_button);
         syncButton.setEnabled(false);
         syncButton.setClickable(false);
+        String originalText = syncButton.getText().toString();
+        syncButton.setText("Don't click right now");
 
-        //only start discovery if user has entered a remote hostname
-        if(!raspberryNameEditText.getText().toString().trim().equals("Enter raspberry computer name here")) {
-            if (!raspberryNameEditText.getText().toString().trim().isEmpty()) {
-                raspberryPiName = raspberryNameEditText.getText().toString().trim();
+        //check if bluetooth is enabled before trying to use it
+        if (!bluetoothAdapter.isEnabled()) {
+            new BluetoothAsync().execute();
+        } else {
+            //only start discovery if user has entered a remote hostname
+            if (!raspberryNameEditText.getText().toString().trim().equals("Enter raspberry computer name here")) {
+                if (!raspberryNameEditText.getText().toString().trim().isEmpty()) {
+                    raspberryPiName = raspberryNameEditText.getText().toString().trim();
 
-                //call tryToConnect and specify that the app content should be passed
-                tryToConnect(DATA);
-            } else {
-                raspberryNameEditText.setText("Please enter raspberry pi bluetooth name");
+                    //call tryToConnect and specify that the app content should be passed
+                    tryToConnect(DATA);
+                } else {
+                    raspberryNameEditText.setText("Please enter raspberry pi bluetooth name");
+                }
             }
         }
         syncButton.setEnabled(true);
         syncButton.setClickable(true);
+        syncButton.setText(originalText);
     }
 
     /**
@@ -924,17 +939,31 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
      * call tryToConnect with the SLEEP keyword.
      */
     private void makeRaspberrySleep() {
-        //only start discovery if user has entered a remote hostname
-        if(!raspberryNameEditText.getText().toString().trim().equals("Enter raspberry computer name here")) {
-            if (!raspberryNameEditText.getText().toString().trim().isEmpty()) {
-                raspberryPiName = raspberryNameEditText.getText().toString().trim();
+        sleepButton = (Button) findViewById(R.id.sleepButton);
+        sleepButton.setEnabled(false);
+        sleepButton.setClickable(false);
+        String originalText = sleepButton.getText().toString();
+        sleepButton.setText("Don't click right now");
 
-                //call tryToConnect and specify that the SLEEP keyword should be passed
-                tryToConnect(SLEEP);
-            } else {
-                raspberryNameEditText.setText("Please enter raspberry pi bluetooth name");
+        //check if bluetooth is enabled before trying to use it
+        if (!bluetoothAdapter.isEnabled()) {
+            new BluetoothAsync().execute();
+        } else {
+            //only start trying to send sleep message if text passes validation
+            if (!raspberryNameEditText.getText().toString().trim().equals("Enter raspberry computer name here")) {
+                if (!raspberryNameEditText.getText().toString().trim().isEmpty()) {
+                    raspberryPiName = raspberryNameEditText.getText().toString().trim();
+
+                    //call tryToConnect and specify that the SLEEP keyword should be passed
+                    tryToConnect(SLEEP);
+                } else {
+                    raspberryNameEditText.setText("Please enter raspberry pi bluetooth name");
+                }
             }
         }
+        sleepButton.setEnabled(true);
+        sleepButton.setClickable(true);
+        sleepButton.setText(originalText);
     }
 
     /**
