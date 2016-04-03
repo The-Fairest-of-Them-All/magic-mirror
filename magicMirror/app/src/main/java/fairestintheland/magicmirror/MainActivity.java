@@ -817,6 +817,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             //close socket before end of method so every time the sync button is pressed, a new connection is made
             try {
                 clientSocket.close();
+                SaveHostName(); //sae host name after successful connect
             } catch (IOException e) {
                 e.printStackTrace();
             }
