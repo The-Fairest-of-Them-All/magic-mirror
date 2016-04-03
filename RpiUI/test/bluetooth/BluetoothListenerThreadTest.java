@@ -5,6 +5,9 @@
  */
 package bluetooth;
 
+import static bluetooth.BluetoothListenerThread.localDevice;
+import javax.bluetooth.BluetoothStateException;
+import javax.bluetooth.LocalDevice;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -17,6 +20,8 @@ import static org.junit.Assert.*;
  * @author Owner
  */
 public class BluetoothListenerThreadTest {
+    
+    BluetoothListenerThread bt;
     
     public BluetoothListenerThreadTest() {
     }
@@ -31,6 +36,7 @@ public class BluetoothListenerThreadTest {
     
     @Before
     public void setUp() {
+        bt = new BluetoothListenerThread();
     }
     
     @After
@@ -48,5 +54,4 @@ public class BluetoothListenerThreadTest {
         // TODO review the generated test code and remove the default call to fail.
         //fail("The test case is a prototype.");
     }
-    
 }

@@ -123,6 +123,13 @@ public class BluetoothListenerThread implements Runnable {
     }
 
     /**
+     * No arg constructor which sets the reference to the UI thread to null.
+     */
+    public BluetoothListenerThread() {
+        this.mainThread = null;
+    }
+
+    /**
      * Invoked on start of the Runnable BluetoothListenerThread thread. This
      * only calls listen().
      */
@@ -145,22 +152,12 @@ public class BluetoothListenerThread implements Runnable {
      */
     private void listen() {
         //if power is off, do not do any further setting up, just display message
-        if (!LocalDevice.isPowerOn()) { 
+        if (!LocalDevice.isPowerOn()) {
             System.out.println("Bluetooth is turned off.");
         } else {
             try {
-                //The LocalDevice class defines the basic functions of the Bluetooth manager (From API)
-                localDevice = LocalDevice.getLocalDevice();
-                System.out.println("Got a local device");
-                
-                bluetoothAddress = localDevice.getBluetoothAddress();
-                System.out.println("My bluetooth address is " + bluetoothAddress);
-                mainThread.replaceJTextArea(mainThread.getTwitterJTextArea(), "My bluetooth address is " + bluetoothAddress);
-                
-                bluetoothFriendlyName = localDevice.getFriendlyName();
-                System.out.println("Bluetooth friendly name is " + bluetoothFriendlyName + ". This is what you should connect to.");
-                mainThread.appendToJTextAreaNewline(mainThread.getTwitterJTextArea(), "Bluetooth friendly name is " + bluetoothFriendlyName + ". This is what you should connect to.");
-                
+                findLocalDeviceAddressName();
+
                 //check whether device is discoverable, if not set it, if it cannot be set to discoverable, 
                 //discoverable is false
                 discoverable = getOrSetDiscoverableMode(localDevice);
@@ -186,11 +183,11 @@ public class BluetoothListenerThread implements Runnable {
                 System.err.println("BluetoothStateException");
                 e.printStackTrace();
                 return;
-            }catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 return;
             }
-            
+
             /*wait for bluetooth connection from Android app, the program will wait at the acceptAndOpen
                 method call line indefinitely for incoming connections so when the program has started
                 whether it is the first run or any subsequent run, the program runs up to that line
@@ -210,6 +207,28 @@ public class BluetoothListenerThread implements Runnable {
                     e.printStackTrace();
                 }
             }
+        }
+    }
+
+    /**
+     * Tries to locate the local device and if it is found, locates and prints information about the
+     * Bluetooth address of the device and its friendly name.
+     */
+    private void findLocalDeviceAddressName() {
+        try {
+            //The LocalDevice class defines the basic functions of the Bluetooth manager (From API)
+            localDevice = LocalDevice.getLocalDevice();
+            System.out.println("Got a local device");
+
+            bluetoothAddress = localDevice.getBluetoothAddress();
+            System.out.println("My bluetooth address is " + bluetoothAddress);
+            mainThread.replaceJTextArea(mainThread.getTwitterJTextArea(), "My bluetooth address is " + bluetoothAddress);
+
+            bluetoothFriendlyName = localDevice.getFriendlyName();
+            System.out.println("Bluetooth friendly name is " + bluetoothFriendlyName + ". This is what you should connect to.");
+            mainThread.appendToJTextAreaNewline(mainThread.getTwitterJTextArea(), "Bluetooth friendly name is " + bluetoothFriendlyName + ". This is what you should connect to.");
+        } catch (BluetoothStateException e) {
+            e.printStackTrace();
         }
     }
 
@@ -273,7 +292,7 @@ public class BluetoothListenerThread implements Runnable {
                 if (input.regionMatches(0, EXIT_KEYWORD, 0, 4) || result == -1) {
                     inputStream.close();
                     break;
-                //if the SLEEP_KEYWORD is read, hide all JTextArea objects
+                    //if the SLEEP_KEYWORD is read, hide all JTextArea objects
                 } else if (input.regionMatches(0, SLEEP_KEYWORD, 0, 5) || result == -1) {
                     mainThread.toggleDisplay();
                     inputStream.close();
@@ -283,28 +302,25 @@ public class BluetoothListenerThread implements Runnable {
                     mainThread.appendToJTextAreaNewline(mainThread.getTwitterJTextArea(), "I'll try to connect to the network you specified.");
                     inputStream.close();
                     break;
-                }else {
-                    /*check to see if String represents Twitter data by comparing first 3 characters to defined string.
-                        and based on that result, write into the appropriate seciton on the screen*/
-                    if (input.regionMatches(0, TWITTER_KEY, 0, 3)) {
-                        System.out.println("THIS IS TWITTER: " + input);
-                        mainThread.replaceJTextArea(mainThread.getTwitterJTextArea(), input);
-                    } else if (input.regionMatches(0, QUOTE_KEY, 0, 3)) {
-                        System.out.println("THIS IS QUOTE: " + input);
-                        mainThread.replaceJTextArea(mainThread.getQuoteJTextArea(), input);
-                    } else if (input.regionMatches(0, WEATHER_KEY, 0, 3)) {
-                        System.out.println("THIS IS WEATHER: " + input);
-                        mainThread.replaceJTextArea(mainThread.getWeatherJTextArea(), input);
-                    } else if (input.regionMatches(0, CALENDAR_KEY, 0, 3)) {
-                        System.out.println("THIS IS CALENDAR: " + input);
-                        mainThread.replaceJTextArea(mainThread.getCalendarJTextArea(), input);
-                    } else {
-                        //append any "other" data to the Twitter area and print to Sys.out
-                        System.out.println("This: " + input + " isn't twitter, weather, quote, or calendar data");
-                        mainThread.appendToJTextAreaNewline(mainThread.getTwitterJTextArea(), input);
-                    }
-                    //System.out.println("End of input.");
-                }
+                } else /*check to see if String represents Twitter data by comparing first 3 characters to defined string.
+                        and based on that result, write into the appropriate seciton on the screen*/ if (input.regionMatches(0, TWITTER_KEY, 0, 3)) {
+                    System.out.println("THIS IS TWITTER: " + input);
+                    mainThread.replaceJTextArea(mainThread.getTwitterJTextArea(), input);
+                } else if (input.regionMatches(0, QUOTE_KEY, 0, 3)) {
+                    System.out.println("THIS IS QUOTE: " + input);
+                    mainThread.replaceJTextArea(mainThread.getQuoteJTextArea(), input);
+                } else if (input.regionMatches(0, WEATHER_KEY, 0, 3)) {
+                    System.out.println("THIS IS WEATHER: " + input);
+                    mainThread.replaceJTextArea(mainThread.getWeatherJTextArea(), input);
+                } else if (input.regionMatches(0, CALENDAR_KEY, 0, 3)) {
+                    System.out.println("THIS IS CALENDAR: " + input);
+                    //TODO call parse
+                    mainThread.replaceJTextArea(mainThread.getCalendarJTextArea(), input);
+                } else {
+                    //append any "other" data to the Twitter area and print to Sys.out
+                    System.out.println("This: " + input + " isn't twitter, weather, quote, or calendar data");
+                    mainThread.appendToJTextAreaNewline(mainThread.getTwitterJTextArea(), input);
+                } //System.out.println("End of input.");
             }
             System.out.println("End of input.");
         } catch (Exception e) {
