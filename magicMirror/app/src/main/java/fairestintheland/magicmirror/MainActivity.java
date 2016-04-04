@@ -197,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         theSwitches = new ArrayList<Switch>();
         initSwitches();
-        switchStates = LoadSwitchStates(); //Twitter,Email,Weather,Calendar
+        switchStates = LoadSwitchStates(); //Twitter,Quote,Weather,Calendar
 
         context = this;
         sleeping = false;
@@ -913,6 +913,19 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 clientSocketOutputStream.flush();
             }
 
+            //send quote data, rotate through quote array
+            if(switchStates[1]) {
+                StringBuilder output = new StringBuilder(QUOTE_KEY);
+                if (quotePosition == quotes.length)
+                    quotePosition = 0;
+                output.append(quotes[quotePosition]);
+                quotePosition++;
+                buffer = output.toString().getBytes();
+                clientSocketOutputStream.write(buffer);
+                System.out.println("Wrote " + new String(buffer) + " to raspberry.");
+                clientSocketOutputStream.flush();
+            }
+
             //send location data so that Raspberry can request weather data
             if (switchStates[2]) {
                 if (latitude.isEmpty() || longitude.isEmpty()) {
@@ -948,17 +961,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 System.out.println("Wrote " + new String(buffer) + " to raspberry.");
                 clientSocketOutputStream.flush();
             }
-
-            //send quote data, rotate through quote array
-            StringBuilder output = new StringBuilder(QUOTE_KEY);
-            if (quotePosition == quotes.length)
-                quotePosition = 0;
-            output.append(quotes[quotePosition]);
-            quotePosition++;
-            buffer = output.toString().getBytes();
-            clientSocketOutputStream.write(buffer);
-            System.out.println("Wrote " + new String(buffer) + " to raspberry.");
-            clientSocketOutputStream.flush();
 
             //write break keyword to end to socket connection on both sides
             clientSocketOutputStream.write(EXIT_KEYWORD.getBytes());

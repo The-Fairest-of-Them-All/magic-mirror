@@ -140,7 +140,7 @@ public class RpiUITest {
     /**
      * Test of getTimeJTextArea method, of class RpiUI.
      */
-    @Test
+    @Test(timeout=2000)
     public void testGetTimeJTextArea() {
         System.out.println("getTimeJTextArea");
         JTextArea expected = new JTextArea();
@@ -148,26 +148,13 @@ public class RpiUITest {
     }
 
     /**
-     * Test of main method, of class RpiUI.
-     */
-    @Test
-    public void testMain() throws Exception {
-        /*System.out.println("main");
-        String[] args = null;
-        RpiUI.main(args);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");*/
-    }
-
-    /**
      * Test of toggleDisplay method, of class RpiUI.
      */
-    @Test
+    @Test(timeout=2000)
     public void testToggleDisplay() {
         System.out.println("toggleDisplay");
         RpiUI instance = new RpiUI();
         instance.toggleDisplay();
         assert(instance.display == false);
     }
-    
 }

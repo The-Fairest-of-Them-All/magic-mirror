@@ -30,7 +30,7 @@
     <string name="discover">Discover</string>
     <string-array name="settings">
         <item>Twitter</item>
-        <item>Email</item>
+        <item>Quote</item>
         <item>Weather</item>
         <item>Calendar</item>
     </string-array>
