@@ -5,6 +5,8 @@
  */
 package invokecommandline;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -17,6 +19,8 @@ import static org.junit.Assert.*;
  * @author Owner
  */
 public class InvokeCommandLineTest {
+    
+    InvokeCommandLine instance;
     
     public InvokeCommandLineTest() {
     }
@@ -43,10 +47,10 @@ public class InvokeCommandLineTest {
     @Test
     public void testInvokeCommandLine_0args() {
         System.out.println("InvokeCommandLine");
-        InvokeCommandLine instance = new InvokeCommandLine();
-        instance.InvokeCommandLine();
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        instance = new InvokeCommandLine();
+        //TODO  SHOULD USE REFLECTION
+        assertEquals("", instance.getSSID());
+        assertEquals("", instance.getPassword());
     }
 
     /**
@@ -57,8 +61,8 @@ public class InvokeCommandLineTest {
         System.out.println("InvokeCommandLine");
         String SSID = "test";
         String password = "ABCDEFG";
-        InvokeCommandLine instance = new InvokeCommandLine();
-        instance.InvokeCommandLine(SSID, password);
+        instance = new InvokeCommandLine(SSID, password);
+        //TODO  SHOULD USE REFLECTION
         assertEquals(SSID, instance.getSSID());
         assertEquals(password, instance.getPassword());
     }
@@ -70,7 +74,7 @@ public class InvokeCommandLineTest {
     public void testSetSSID() {
         System.out.println("setSSID");
         String SSID = "Test";
-        InvokeCommandLine instance = new InvokeCommandLine();
+        instance = new InvokeCommandLine();
         instance.setSSID(SSID);
         //TODO  SHOULD USE REFLECTION
         assertEquals(SSID, instance.getSSID());
@@ -83,7 +87,7 @@ public class InvokeCommandLineTest {
     public void testSetPassword() {
         System.out.println("setPassword");
         String password = "passwordTest";
-        InvokeCommandLine instance = new InvokeCommandLine();
+        instance = new InvokeCommandLine();
         instance.setPassword(password);
         //TODO SHOULD USE REFLECTION
         assertEquals(password, instance.getPassword());
@@ -95,12 +99,14 @@ public class InvokeCommandLineTest {
     @Test
     public void testInvoke() {
         System.out.println("invoke");
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out));
         String expectedOutput = "ABCDEFG";
         String[] commandAndArgs = {"echo", expectedOutput};
-        InvokeCommandLine instance = new InvokeCommandLine();
+        instance = new InvokeCommandLine();
         instance.invoke(commandAndArgs);
-        //TODO SHOULD CAPTURE SYS.OUT AND COMPARE RESULTS
-        fail("nothing yet");
+        String whatWasWritten = out.toString();
+        assertEquals(expectedOutput, whatWasWritten);
     }
 
     /**
@@ -109,7 +115,7 @@ public class InvokeCommandLineTest {
     @Test
     public void testConnectToNetwork() {
         System.out.println("connectToNetwork");
-        InvokeCommandLine instance = new InvokeCommandLine();
+        instance = new InvokeCommandLine();
         instance.connectToNetwork();
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
