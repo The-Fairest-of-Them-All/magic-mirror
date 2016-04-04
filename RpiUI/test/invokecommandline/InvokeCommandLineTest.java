@@ -105,7 +105,7 @@ public class InvokeCommandLineTest {
         String[] commandAndArgs = {"echo", expectedOutput};
         instance = new InvokeCommandLine();
         instance.invoke(commandAndArgs);
-        String whatWasWritten = out.toString();
+        String whatWasWritten = out.toString().trim();
         assertEquals(expectedOutput, whatWasWritten);
     }
 

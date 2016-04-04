@@ -8,7 +8,7 @@
     <string name="password_textview">Password:</string>
     <string name="connect_button">Sync Setting to Mirror</string>
     <string name="setting_button">Mirror Setting</string>
-    <string name="sleep_button">Sleep Mirror</string>
+    <string name="sleep_button">Toggle Sleep</string>
     <string name="wake_button">Wake Up Mirror</string>
     <string name="font">Font Settings</string>
     <string name="font_format">Font Format</string>

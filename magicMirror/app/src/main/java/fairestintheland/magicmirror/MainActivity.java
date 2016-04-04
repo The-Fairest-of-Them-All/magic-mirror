@@ -213,11 +213,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 sleeping = !sleeping;
                 //setSleepMode();
                 makeRaspberrySleep();
-                if (sleeping) {
+                /*if (sleeping) {
                     sleepButton.setText(R.string.wake_button);
                 } else {
                     sleepButton.setText(R.string.sleep_button);
-                }
+                }*/
             }
         });
 
