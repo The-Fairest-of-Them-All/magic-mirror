@@ -852,7 +852,30 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
      * @param clientSocket an open and connected BluetoothSocket object
      */
     public void writeConnectDataToSocket(BluetoothSocket clientSocket) {
+        try {
+            JSONObject obj = getWIFIAccount();
 
+            if (obj == null) {
+                return;
+            }
+
+            byte[] buffer;  // buffer store for the stream
+            clientSocketOutputStream = clientSocket.getOutputStream();
+
+            //write SSID and password to raspberry pi
+            buffer = obj.toString().getBytes();
+            clientSocketOutputStream.write(buffer);
+            System.out.println("Wrote " + new String(buffer) + " to raspberry.");
+            clientSocketOutputStream.flush();
+
+            //write break keyword to end to socket connection on both sides
+            clientSocketOutputStream.write(EXIT_KEYWORD.getBytes());
+            System.out.println("Wrote " + EXIT_KEYWORD + " to raspberry.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
