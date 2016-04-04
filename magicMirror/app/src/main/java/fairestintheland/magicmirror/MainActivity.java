@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private final int SLEEP = 1;
     private final int CONNECT = 2;
 
-    String   consumerKey = "bUh6sDhIGpN4UdE55litSTD8W";
+    String consumerKey = "bUh6sDhIGpN4UdE55litSTD8W";
     String consumerSecret = "OlByFoaS9lJ8ewZEw9DOPGgVrby9EM6SepllWXrCnraw49r9DC";
     String accessToken = "4889865377-JoGReMh6w6yS2PQQ8hKcVpHlaIKRH1gM4vGf6ui";
     String accessTokenSecret = "qIvONWidLP10yKXsYyHfu1k3yzppUpxhbUc7TucF3bpp6";
@@ -281,14 +281,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         //ask user to turn on location if it is not currently enabled
         getOrSetLocation();
 
-            if (mGoogleApiClient == null) {
-                mGoogleApiClient = new GoogleApiClient.Builder(this)
-                        //.enableAutoManage(this, this)
-                        .addConnectionCallbacks(this)
-                        .addOnConnectionFailedListener(this)
-                        .addApi(LocationServices.API)
-                        .build();
-            }
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+        }
     } //End onCreate()
 
 
@@ -454,6 +453,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     //-----------END LOCATION SECTION---------------------------------------------------------------------
 
     //-----------FILE I/O-------------------------------------------------------------------------------
+
+    /**
+     * Saves the state of the boolean switches which designate user preferences.
+     */
     private void SaveSwitchStates()
     {
         String saveLocation = "switches.ser";
@@ -472,6 +475,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
     }
 
+    /**
+     * Loads in the boolean switches which designate user preferences and returns them as a boolean[].
+     *
+     * @return a boolean[] representing user preferences
+     */
     private boolean[] LoadSwitchStates()
     {
         boolean[] b = new boolean[4];
@@ -494,7 +502,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         return b;
     }
 
-
+    /**
+     * Saves the bluetooth hostname any time a successful connection has been made.
+     */
     private void SaveHostName() {
         String fileName = "hosts.txt";
         FileOutputStream output;
@@ -510,6 +520,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
     }
 
+    /**
+     * Recalls the bluetooth hostname and returns it as a String.
+     *
+     * @return a String representing the saved bluetooth hostname
+     */
     private String LoadHostName() {
         String s = "";
         try {
@@ -573,14 +588,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         bluetoothManager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
         bluetoothAdapter = bluetoothManager.getAdapter();
         if (bluetoothAdapter == null) { //bluetooth not supported
-            bluetoothInfo.setText("Bluetooth unavailable on this device. Sorry.");
+            bluetoothInfo.setText("Bluetooth unavailable on this device.");
         } else {
             if (!bluetoothAdapter.isEnabled()) {
                 //presents activity to ask user to turn on bluetooth, response processed by onActivityResult()
                 Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
             } else {
-                bluetoothInfo.setText("Bluetooth available and on. Great.");
+                bluetoothInfo.setText("Bluetooth available and on.");
             }
 
             //UUID is how the android app finds the raspberry app, this is also defined on the raspberry side
@@ -589,10 +604,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     /**
-     * Respond to a user's interacting with an activity presented to turn on bluetooth capabilities.
+     * Respond to a user's interacting with an activity presented to turn on various capabilities.
+     * It handles twitter, bluetooth, and location requests by examining the requestCode to determine
+     * the request type.
      *
      * @param requestCode Defined in the calling code, allows response to multiple events,
-     *                    REQUEST_ENABLE_BT represents a bluetooth activity request
+     *                    REQUEST_ENABLE_BT represents a bluetooth activity request,
+     *                    TwitterAccount_REQUEST_CODE is a twitter request, and
+     *                    ENABLE_LOCATION is for a location request
      * @param resultCode Results of user's interaction with the activity
      * @param data
      */
@@ -613,7 +632,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             if (resultCode == RESULT_OK) {
                 String accountState = data.getStringExtra("accountState");
                 if(accountState.equals("true")){
-
                     System.out.println("!!!!!!!!!!1success change the aaccount!!!!!!!!!!!!!!!!!!!!!!!!!!");
                 }
                 else{ System.out.println("!!!!!!!!!!1false change the aaccount!!!!!!!!!!!1!!!!");}
@@ -641,8 +659,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         discoverButton = (Button) findViewById(R.id.discoverDevices);
         discoverButton.setEnabled(false);
         discoverButton.setClickable(false);
-        String originalText = discoverButton.getText().toString();
-        discoverButton.setText("Don't click right now");
+        //String originalText = discoverButton.getText().toString();
+        //discoverButton.setText("Don't click right now");
 
         //check if bluetooth is enabled before trying to use it
         if (!bluetoothAdapter.isEnabled()) {
@@ -662,7 +680,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
         discoverButton.setEnabled(true);
         discoverButton.setClickable(true);
-        discoverButton.setText(originalText);
+        //discoverButton.setText(originalText);
     }
 
     /**
@@ -741,8 +759,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         syncButton = (Button) findViewById(R.id.connect_button);
         syncButton.setEnabled(false);
         syncButton.setClickable(false);
-        String originalText = syncButton.getText().toString();
-        syncButton.setText("Don't click right now");
+        //String originalText = syncButton.getText().toString();
+        //syncButton.setText("Don't click right now");
 
         //check if bluetooth is enabled before trying to use it
         if (!bluetoothAdapter.isEnabled()) {
@@ -762,16 +780,20 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
         syncButton.setEnabled(true);
         syncButton.setClickable(true);
-        syncButton.setText(originalText);
+        //syncButton.setText(originalText);
     }
 
     /**
      * Attempt a bluetooth connection to a device whose name is known from the list of bonded devices.
      * The device hostname is input by the user and this method compares the user input hostname to the
-     * names of bonded devices and proceeds to deliver content if a match is foundThis method establishes a
+     * names of bonded devices and proceeds to deliver content if a match is foundT. his method establishes a
      * BluetoothSocket using createRfcommSocketToServiceRecord() and tries to connect to a listening
      * BluetoothServerSocket that uses the same UUID. Before the method completes, the BluetoothSocket is
-     * closed so that on another button press to sync data, a new connection is established.
+     * closed so that on another button press to sync data, a new connection is established. It takes an
+     * int argument which represents whether the user wants to pass data or connection infor to the raspberry
+     * pi or wants to command the raspberry pi to sleep.
+     *
+     * @param dataOrSleepORConnect and int that takes once of 3 defined values, DATA, SLEEP, or CONNECT
      */
     private void tryToConnect(int dataOrSleepORConnect) {
         BluetoothDevice btDevice = null;
@@ -825,7 +847,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     /**
-     * Writes the SSID and password to the raspberry pi.
+     * Writes the SSID and password to the raspberry pi for programmatic connection to the user's network.
      *
      * @param clientSocket an open and connected BluetoothSocket object
      */
@@ -943,8 +965,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         sleepButton = (Button) findViewById(R.id.sleepButton);
         sleepButton.setEnabled(false);
         sleepButton.setClickable(false);
-        String originalText = sleepButton.getText().toString();
-        sleepButton.setText("Don't click right now");
+        //String originalText = sleepButton.getText().toString();
+        //sleepButton.setText("Don't click right now");
 
         //check if bluetooth is enabled before trying to use it
         if (!bluetoothAdapter.isEnabled()) {
@@ -964,7 +986,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
         sleepButton.setEnabled(true);
         sleepButton.setClickable(true);
-        sleepButton.setText(originalText);
+        //sleepButton.setText(originalText);
     }
 
     /**
@@ -995,7 +1017,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
 
 	/** set  Raspberry Pi screen sleep*/
-    private void setSleepMode() {
+    /*private void setSleepMode() {
         if (hasValidConnection()) {
             Thread t = new Thread() {
                 public void run() {
@@ -1021,17 +1043,17 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         } else {
             Toast.makeText(context, "Please Connect to Internet network", Toast.LENGTH_LONG).show();
         }
-    }
+    }*/
 
 	/**check if the Android OS has network connection*/
-    private boolean hasValidConnection() {
+    /*private boolean hasValidConnection() {
         cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (cm != null) {
             NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
             return (activeNetwork != null) && (activeNetwork.isConnectedOrConnecting());
         }
         return false;
-    }
+    }*/
 
 	/**initialize the switches*/
     private void initSwitches() {
