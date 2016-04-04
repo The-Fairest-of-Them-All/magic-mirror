@@ -81,7 +81,8 @@ public class RpiUI extends JFrame {
      * Sets up the java Frame for the mirror screen. Adds placeholder text to each area. Divides the screen into
      * a grid system to specify where each designated area is located. Sets design specifications for the layout.
      */
-    private void framer() {
+    public void framer() {
+        //private void framer() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         
         frame = new JFrame("Raspberry Pi App");

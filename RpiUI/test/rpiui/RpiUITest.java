@@ -18,6 +18,8 @@ import static org.junit.Assert.*;
  * @author Owner
  */
 public class RpiUITest {
+    RpiUI uiThread;
+    Runnable mainUiThread;
     
     public RpiUITest() {
     }
@@ -32,6 +34,7 @@ public class RpiUITest {
     
     @Before
     public void setUp() {
+        
     }
     
     @After
@@ -41,28 +44,37 @@ public class RpiUITest {
     /**
      * Test of appendToJTextArea method, of class RpiUI.
      */
-    @Test
+    @Test(timeout=2000)
     public void testAppendToJTextArea() {
         System.out.println("appendToJTextArea");
-        JTextArea area = new JTextArea("ORIGINAL", 6, 20);
+        uiThread = new RpiUI();
+        mainUiThread = new Runnable() {
+            public void run() {uiThread.framer();}
+        };
+        mainUiThread.run();
         String newText = "NEW";
-        RpiUI instance = new RpiUI();
-        instance.appendToJTextArea(area, newText);
-        assertEquals("ORIGINALNEW", area.getText());
+        String quote = "I'm ready - Spongebob Squarepants";
+        
+        uiThread.appendToJTextArea(uiThread.getQuoteJTextArea(), newText);
+        assertEquals("I'm ready - Spongebob SquarepantsNEW", uiThread.getQuoteJTextArea().getText());
     }
 
     /**
      * Test of appendToJTextAreaNewline method, of class RpiUI.
      */
-    @Test
+    @Test(timeout=2000)
     public void testAppendToJTextAreaNewline() {
         System.out.println("appendToJTextAreaNewline");
-        JTextArea area = null;
-        String newText = "";
-        RpiUI instance = new RpiUI();
-        instance.appendToJTextAreaNewline(area, newText);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        uiThread = new RpiUI();
+        mainUiThread = new Runnable() {
+            public void run() {uiThread.framer();}
+        };
+        mainUiThread.run();
+        String newText = "NEW";
+        String quote = "I'm ready - Spongebob Squarepants";
+        
+        uiThread.appendToJTextAreaNewline(uiThread.getQuoteJTextArea(), newText);
+        assertEquals("I'm ready - Spongebob Squarepants\nNEW", uiThread.getQuoteJTextArea().getText());
     }
 
     /**
@@ -168,11 +180,11 @@ public class RpiUITest {
      */
     @Test
     public void testMain() throws Exception {
-        System.out.println("main");
+        /*System.out.println("main");
         String[] args = null;
         RpiUI.main(args);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        fail("The test case is a prototype.");*/
     }
 
     /**
