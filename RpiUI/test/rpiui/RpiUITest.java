@@ -34,7 +34,11 @@ public class RpiUITest {
     
     @Before
     public void setUp() {
-        
+        uiThread = new RpiUI();
+        mainUiThread = new Runnable() {
+            public void run() {uiThread.framer();}
+        };
+        mainUiThread.run();
     }
     
     @After
@@ -47,11 +51,6 @@ public class RpiUITest {
     @Test(timeout=2000)
     public void testAppendToJTextArea() {
         System.out.println("appendToJTextArea");
-        uiThread = new RpiUI();
-        mainUiThread = new Runnable() {
-            public void run() {uiThread.framer();}
-        };
-        mainUiThread.run();
         String newText = "NEW";
         String quote = "I'm ready - Spongebob Squarepants";
         
@@ -65,11 +64,6 @@ public class RpiUITest {
     @Test(timeout=2000)
     public void testAppendToJTextAreaNewline() {
         System.out.println("appendToJTextAreaNewline");
-        uiThread = new RpiUI();
-        mainUiThread = new Runnable() {
-            public void run() {uiThread.framer();}
-        };
-        mainUiThread.run();
         String newText = "NEW";
         String quote = "I'm ready - Spongebob Squarepants";
         
@@ -80,85 +74,67 @@ public class RpiUITest {
     /**
      * Test of insertIntoBeginningJTextArea method, of class RpiUI.
      */
-    @Test
+    @Test(timeout=2000)
     public void testInsertIntoBeginningJTextArea() {
         System.out.println("insertIntoBeginningJTextArea");
-        JTextArea area = null;
-        String newText = "";
-        RpiUI instance = new RpiUI();
-        instance.insertIntoBeginningJTextArea(area, newText);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        String newText = "NEW";
+        String quote = "I'm ready - Spongebob Squarepants";
+        
+        uiThread.insertIntoBeginningJTextArea(uiThread.getQuoteJTextArea(), newText);
+        assertEquals("NEWI'm ready - Spongebob Squarepants", uiThread.getQuoteJTextArea().getText());
     }
 
     /**
      * Test of replaceJTextArea method, of class RpiUI.
      */
-    @Test
+    @Test(timeout=2000)
     public void testReplaceJTextArea() {
         System.out.println("replaceJTextArea");
-        JTextArea area = null;
-        String newText = "";
-        RpiUI instance = new RpiUI();
-        instance.replaceJTextArea(area, newText);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        String newText = "NEW";
+        String quote = "I'm ready - Spongebob Squarepants";
+        
+        uiThread.replaceJTextArea(uiThread.getQuoteJTextArea(), newText);
+        assertEquals(newText, uiThread.getQuoteJTextArea().getText());
     }
 
     /**
      * Test of getTwitterJTextArea method, of class RpiUI.
      */
-    @Test
+    @Test(timeout=2000)
     public void testGetTwitterJTextArea() {
         System.out.println("getTwitterJTextArea");
-        RpiUI instance = new RpiUI();
-        JTextArea expResult = null;
-        JTextArea result = instance.getTwitterJTextArea();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        JTextArea expected = new JTextArea();
+        assertEquals(expected.getClass(), uiThread.getTwitterJTextArea().getClass());
     }
 
     /**
      * Test of getQuoteJTextArea method, of class RpiUI.
      */
-    @Test
+    @Test(timeout=2000)
     public void testGetQuoteJTextArea() {
         System.out.println("getQuoteJTextArea");
-        RpiUI instance = new RpiUI();
-        JTextArea expResult = null;
-        JTextArea result = instance.getQuoteJTextArea();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        JTextArea expected = new JTextArea();
+        assertEquals(expected.getClass(), uiThread.getQuoteJTextArea().getClass());
     }
 
     /**
      * Test of getCalendarJTextArea method, of class RpiUI.
      */
-    @Test
+    @Test(timeout=2000)
     public void testGetCalendarJTextArea() {
         System.out.println("getCalendarJTextArea");
-        RpiUI instance = new RpiUI();
-        JTextArea expResult = null;
-        JTextArea result = instance.getCalendarJTextArea();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        JTextArea expected = new JTextArea();
+        assertEquals(expected.getClass(), uiThread.getCalendarJTextArea().getClass());
     }
 
     /**
      * Test of getWeatherJTextArea method, of class RpiUI.
      */
-    @Test
+    @Test(timeout=2000)
     public void testGetWeatherJTextArea() {
         System.out.println("getWeatherJTextArea");
-        RpiUI instance = new RpiUI();
-        JTextArea expResult = null;
-        JTextArea result = instance.getWeatherJTextArea();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        JTextArea expected = new JTextArea();
+        assertEquals(expected.getClass(), uiThread.getCalendarJTextArea().getClass());
     }
 
     /**
@@ -167,12 +143,8 @@ public class RpiUITest {
     @Test
     public void testGetTimeJTextArea() {
         System.out.println("getTimeJTextArea");
-        RpiUI instance = new RpiUI();
-        JTextArea expResult = null;
-        JTextArea result = instance.getTimeJTextArea();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        JTextArea expected = new JTextArea();
+        assertEquals(expected.getClass(), uiThread.getTimeJTextArea().getClass());
     }
 
     /**
