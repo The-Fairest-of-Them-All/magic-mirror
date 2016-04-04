@@ -31,11 +31,14 @@ public class Weather {
                    conditions = "",
                    precipitation = "";
     private Gson data;
-    ForecastIO fio;
-    FIOCurrently current;
-    FIODaily daily;
+    private ForecastIO fio;
+    private FIOCurrently current;
+    private FIODaily daily;
     private String apiKey = "b7b8655200fa16e0ad22c7dd6604dce5";
-        
+    
+    /**
+     * @author Chris
+     */
     public Weather(){
         fio = new ForecastIO(apiKey);
         setupFIO();
@@ -44,6 +47,10 @@ public class Weather {
         setWeather();
     }
     
+    /**
+     * 
+     * @param data, a Gson object containing the location information.
+     */
     public Weather(Gson data){
         this.data = data;
         location = new Location(this.data);
@@ -91,7 +98,7 @@ public class Weather {
         conditions = daily.getDay(0).getByKey("summary");       //This works
         hiTemp = daily.getDay(0).getByKey("temperatureMax");
         loTemp = daily.getDay(0).getByKey("temperatureMin");
-        precipitation = Double.toString(daily.getDay(0).precipProbability() * 100) + "%";
+        precipitation = Double.toString(daily.getDay(0).precipProbability() * 100);
     }
     /**
      * Keys in Daily:
@@ -121,32 +128,54 @@ public class Weather {
      * visibility
      * windBearing
      * windSpeed
+     * @author Chris
+     * 
      */
     public void printCurrently(){
         System.out.print("Current Conditions: " + conditions);
         System.out.print("\nCurrent Temp: " + currentTemp);
         System.out.print("\nHi temp: " + hiTemp);
         System.out.print("\nLo Temp: " + loTemp);
-        System.out.print("\nPrecipitation: " + precipitation);
+        System.out.print("\nPrecipitation: " + precipitation + "%");
     }
     
+    /**
+     * 
+     * @return String containing the high temp for the day.
+     */
     public String getHiTemp(){
         return hiTemp;
     }
     
+    /**
+     * 
+     * @return String containing the low temperature for the day.
+     */
     public String getLoTemp(){
         return loTemp;
     }
     
+    /**
+     * 
+     * @return String containing the current temperature.
+     */
     public String getCurrentTemp(){
         return currentTemp;
     }
     
+    /**
+     * 
+     * @return String containing the conditions for the day.
+     */
     public String getConditions(){
         return conditions;
     }
     
-    public String precipitation(){
+    /**
+     * 
+     * @return String containing the precipitation percentage.
+     */
+    public String getPrecipitation(){
         return precipitation;
     }
 }

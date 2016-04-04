@@ -88,7 +88,7 @@ public class WeatherIT {
     public void testPrecipitation() {
         System.out.println("precipitation");
         Weather instance = new Weather();
-        String result = instance.precipitation();
+        String result = instance.getPrecipitation();
         assertNotEquals(null, result);
     }
     

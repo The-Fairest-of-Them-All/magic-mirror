@@ -20,6 +20,9 @@ public class Location {
                    testLong = -75.1529; //This is used for test purposes
     private Gson data;
     
+    /**
+     * @author Chris
+     */
     public Location(){
         //-----TEST CODE--------------------------------------------------------
         longitude = Double.toString(testLong);
@@ -27,6 +30,11 @@ public class Location {
         //-----END TEST CODE----------------------------------------------------
     }
     
+    /**
+     * 
+     * @param data, a Gson object containing the longitude and latitude.
+     * @author Chris
+     */
     public Location(Gson data){
         this.data = data;
         setLongitude();
@@ -43,12 +51,18 @@ public class Location {
         //TODO Parse GSON OBJ
     }
     
-	/**return Longitude*/
+	/**
+         * 
+         * @return Longitude
+         */
     public String getLongitude(){
         return longitude;
     }
     
-	/**return latitude*/
+	/**
+         * 
+         * @return Latitude
+         */
     public String getLattitude(){
         return latitude;
     }
