@@ -35,6 +35,7 @@ public class CalendarEvent {
 	
 	/**access into the google calendar and get all events  */
     public static ArrayList<String> readCalendarEvent(Context context) {
+        currentEvent.clear();
         cursor = context.getContentResolver().query(
                         Uri.parse("content://com.android.calendar/events"),
                         new String[] { "title", "description", "dtstart", "dtend", "eventLocation" }, null,
