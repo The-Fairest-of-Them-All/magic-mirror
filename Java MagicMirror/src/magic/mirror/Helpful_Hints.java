@@ -56,6 +56,9 @@ public class Helpful_Hints {
         else if (tempHi < 40){
             help = "Bundle up, it's a bit chilly!";            
         }
+        else if(tempHi < 20){
+            help = "Just stay in, it's too cold";
+        }
         return help;
     }
     
