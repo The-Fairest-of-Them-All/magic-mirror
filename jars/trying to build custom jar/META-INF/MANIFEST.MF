@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.9.4
+Created-By: 1.8.0_65-b17 (Oracle Corporation)
+Description: BlueCove JSR-82 implementation, runtime module for Linux 
+ BlueZ
+License: GNU General Public License (GPL)
+Built-By: pi
+Implementation-Version: 2.1.1-SNAPSHOT
+Build-Date: 2016-04-01 11:21:08
+Build-Jdk: 1.8.0_65-b17
+Build-Platform: arm Linux 4.1.19-v7+
+
