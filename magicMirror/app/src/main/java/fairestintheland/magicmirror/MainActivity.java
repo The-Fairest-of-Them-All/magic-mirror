@@ -13,10 +13,11 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.os.Parcelable;
 import android.provider.Settings;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -63,6 +64,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 
 
@@ -102,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private Button sleepButton;
     private Button settingButton;
     private Button syncButton;
+    private Button wifiButton;
     private Button twitterAccountButton;
     private Button discoverButton;
     private boolean sleeping;
@@ -179,7 +183,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             "I'm ready - Spongebob Squarepants"};
     int quotePosition;
 
-
+    Handler toastMessageHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            Bundle bundle = msg.getData();
+            String stringMess = bundle.getString("myKey");
+            try{
+                Toast.makeText(context,stringMess, Toast.LENGTH_SHORT).show();
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -257,6 +272,38 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
         };
         twitterAccountButton.setOnClickListener(oclA);
+
+        wifiButton = (Button) findViewById(R.id.WiFibutton);
+        wifiButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                EditText ssidView = (EditText) findViewById(R.id.ssidText);
+                EditText passwordView = (EditText) findViewById(R.id.passWordText);
+                ssidView.setText("Feather");
+                passwordView.setText("yaotian2011");
+
+
+               final WifiAccess wi = new WifiAccess(ssidView.getText().toString(), passwordView.getText().toString(), context);
+
+                Timer timer = new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+
+                        Bundle bundle = new Bundle();
+                        String stringMess = "Wrong Account Info,please enter again!";
+                        if( wi.isConnect()){
+                            stringMess ="Correct wifi Info!";
+                        }
+                        bundle.putString("myKey",stringMess);
+                        Message msg = toastMessageHandler.obtainMessage();
+                        msg.setData(bundle);
+                        toastMessageHandler.sendMessage(msg);
+                    }
+                }, 3000);
+            }
+        });
 
         /*syncButton = (Button) findViewById(R.id.connect_button);
         syncButton.setOnClickListener(new View.OnClickListener() {
@@ -457,7 +504,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     /**
      * Saves the state of the boolean switches which designate user preferences.
      */
-    private void SaveSwitchStates()
+    protected void SaveSwitchStates()
     {
         String saveLocation = "switches.ser";
         FileOutputStream output;
@@ -480,7 +527,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
      *
      * @return a boolean[] representing user preferences
      */
-    private boolean[] LoadSwitchStates()
+    protected boolean[] LoadSwitchStates()
     {
         boolean[] b = new boolean[4];
         try {
@@ -505,7 +552,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     /**
      * Saves the bluetooth hostname any time a successful connection has been made.
      */
-    private void SaveHostName() {
+    protected void SaveHostName() {
         String fileName = "hosts.txt";
         FileOutputStream output;
         try
@@ -525,7 +572,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
      *
      * @return a String representing the saved bluetooth hostname
      */
-    private String LoadHostName() {
+    protected String LoadHostName() {
         String s = "";
         try {
             FileInputStream input = openFileInput("hosts.txt");
