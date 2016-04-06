@@ -725,6 +725,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
      * that uses the same UUID. Before the method completes, the BluetoothSocket is closed so that on another
      * button press to sync data, a new connection is established.
      */
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     private void initialConnect() {
         BluetoothDevice btDevice = device;
         System.out.println("Trying to establish initial connection to " + raspberryPiName);
@@ -732,6 +733,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         btDevice = bluetoothAdapter.getRemoteDevice(btDevice.getAddress());
 
         try {
+            boolean bonded = btDevice.createBond(); //TODO test this
             clientSocket = btDevice.createRfcommSocketToServiceRecord(uuid);
             clientSocket.connect();
             System.out.println("Connected to raspberry pi.");
@@ -819,6 +821,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             System.out.println("Trying to connect to bonded device " + raspberryPiName);
             try {
                 clientSocket = btDevice.createRfcommSocketToServiceRecord(uuid);
+                //TODO try this for no auth clientSocket = btDevice.createInsecureRfcommSocketToServiceRecord(uuid);
                 clientSocket.connect();
                 System.out.println("Connected to raspberry pi.");
             } catch (IOException e) {
