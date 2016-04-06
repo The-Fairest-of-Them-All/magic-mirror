@@ -24,7 +24,7 @@ public class CalendarEvent {
 	*/
 	
     public static ArrayList<String> currentEvent = new ArrayList<String>();
-    public static ArrayList<String> eventID = new ArrayList<String>();
+    public static ArrayList<String> eventName = new ArrayList<String>();
     public static ArrayList<String> nameOfEvent = new ArrayList<String>();
     public static ArrayList<String> startDates = new ArrayList<String>();
     public static ArrayList<String> endDates = new ArrayList<String>();
@@ -49,7 +49,7 @@ public class CalendarEvent {
         startDates.clear();
         endDates.clear();
         descriptions.clear();
-
+        eventName.clear();
         //add events that occur on the same day the user is accessing the calendar to currentEvent
         for (int i = 0; i < CNames.length; i++) {
             SimpleDateFormat formatter = new SimpleDateFormat(
@@ -59,9 +59,10 @@ public class CalendarEvent {
             String str =getDate(Long.parseLong(cursor.getString(2)));
             if(str.indexOf(strSpit[0])!=-1) {
                 currentEvent.add("Event:"+cursor.getString(0));
+                eventName.add("Event:"+cursor.getString(0));
                 // currentEvent.add(str);
                 // currentEvent.add(getDate(Long.parseLong(cursor.getString(3))));
-                currentEvent.add(" Description:"+cursor.getString(1)+"; ");
+                currentEvent.add("Description:"+cursor.getString(1).toString());
 
                // System.out.println("you got a event!!!!!!!!!!!!!! "+currentEvent.toString());
                 //      nameOfEvent.add(cursor.getString(0));
@@ -76,6 +77,10 @@ public class CalendarEvent {
 
         cursor.close();
         return currentEvent;
+    }
+
+    public ArrayList<String> parseCalendarName(){
+        return eventName;
     }
 
     public String[] getCNames() {

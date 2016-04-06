@@ -1,28 +1,22 @@
 package fairestintheland.magicmirror;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+//import org.mockito.Mock;
+//import org.mockito.MockitoAnnotations;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-
+/*
 import static org.mockito.Matchers.anyCollectionOf;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
+*/
 /**
  * Created by Raymond on 4/6/2016.
  */
 
 public class FileIOTest
-{
+{/*
     @Mock
     MainActivity activity;
 
@@ -63,5 +57,5 @@ public class FileIOTest
     @Test
     public void testLoadHostName()
     {}
-
+*/
 }
