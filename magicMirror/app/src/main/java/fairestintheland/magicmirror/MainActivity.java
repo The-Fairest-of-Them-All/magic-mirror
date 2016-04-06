@@ -110,6 +110,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private Button discoverButton;
     private boolean sleeping;
     private boolean[] switchStates;
+      EditText ssidView ;
+      EditText passwordView ;
     EditText ipBar;
 
     //connection variables
@@ -273,16 +275,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         };
         twitterAccountButton.setOnClickListener(oclA);
 
+      ssidView = (EditText) findViewById(R.id.ssidText);
+         passwordView = (EditText) findViewById(R.id.passWordText);
+        ssidView.setText("Feather");
+        passwordView.setText("privatekey");
+
         wifiButton = (Button) findViewById(R.id.WiFibutton);
         wifiButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                EditText ssidView = (EditText) findViewById(R.id.ssidText);
-                EditText passwordView = (EditText) findViewById(R.id.passWordText);
-                ssidView.setText("Feather");
-                passwordView.setText("yaotian2011");
-
 
                final WifiAccess wi = new WifiAccess(ssidView.getText().toString(), passwordView.getText().toString(), context);
 
