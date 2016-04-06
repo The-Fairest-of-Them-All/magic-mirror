@@ -99,7 +99,6 @@
             android:id="@+id/raspberryName"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            tart="true"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/textView"
             android:layout_toEndOf="@+id/textView" />
@@ -123,7 +122,14 @@
             android:layout_centerVertical="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
-
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Test Wifi"
+            android:id="@+id/WiFibutton"
+            android:layout_below="@+id/passWordText"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
     </RelativeLayout>
 
     <ListView
