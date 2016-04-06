@@ -5,8 +5,9 @@ package magic.mirror;
  * @author chris
  */
 public class Helpful_Hints {
-    int rainChance, tempHi, tempLo, currentTemp;
+    double rainChance, tempHi, tempLo, currentTemp;
     boolean rainBool = false;
+    boolean snowBool = false;
     String conditions = "";
     Weather weather;
     
@@ -37,12 +38,18 @@ public class Helpful_Hints {
         if(conditions.contains("rain") || conditions.contains("Rain")){
             rainBool = true;
         }
+        if(conditions.contains("snow") || conditions.contains("Snow")){
+            snowBool = true;
+        }
     }
     
     private String chooseStatement(){
         String help = "";
         if(rainBool){
             help = "Bring an umbrella today :/)";
+        }
+        else if(snowBool){
+            help = "Don't even bother :( ";
         }
         else if(rainChance > 40){
             help = "Think about wearing a raincoat :/)";
@@ -62,8 +69,8 @@ public class Helpful_Hints {
         return help;
     }
     
-    private int toInt(String s){
-        int ans = Integer.parseInt(s);
+    private double toInt(String s){
+        double ans = Double.parseDouble(s);
         return ans;
     }
     
