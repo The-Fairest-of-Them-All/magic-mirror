@@ -426,3 +426,4 @@ public class RpiUI extends JFrame {
         weatArea.setVisible(display);
         quoteArea.setVisible(display);
     }
+}

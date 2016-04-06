@@ -354,8 +354,8 @@ public class BluetoothListenerThread implements Runnable {
                     mainThread.replaceJTextArea(mainThread.getQuoteJTextArea(), quote);
                 } else if (input.regionMatches(0, WEATHER_KEY, 0, 3)) {
                     System.out.println("THIS IS WEATHER: " + input);
-                    String weather = parser.parseWeather(input);
-                    mainThread.replaceJTextArea(mainThread.getWeatherJTextArea(), weather);
+                    String[] weather = parser.parseWeather(input);
+                    mainThread.replaceJTextArea(mainThread.getWeatherJTextArea(), weather[0] + weather[1]);
                 } else if (input.regionMatches(0, CALENDAR_KEY, 0, 3)) {
                     System.out.println("THIS IS CALENDAR: " + input);
                     String cal = parser.parseCalendar(input);
