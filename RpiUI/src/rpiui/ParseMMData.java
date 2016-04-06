@@ -90,4 +90,11 @@ public class ParseMMData {
         temp = temp.replaceAll(EXIT_KEYWORD, "").trim();
         return temp;
     }
+    
+    public String[] parseConnectionData(String input) {
+        String[] splitInput = null;
+        String temp;
+        //temp = input.replaceFirst("SSID", "").trim();
+        return splitInput;
+    }
 }
