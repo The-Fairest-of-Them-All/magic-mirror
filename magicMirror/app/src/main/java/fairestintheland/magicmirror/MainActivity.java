@@ -780,16 +780,20 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         btDevice = bluetoothAdapter.getRemoteDevice(btDevice.getAddress());
 
         try {
-            boolean bonded = btDevice.createBond(); //TODO test this
-            clientSocket = btDevice.createRfcommSocketToServiceRecord(uuid);
+            boolean bonded = btDevice.createBond();
+            if (bonded) {
+                System.out.println("Paired with raspberry pi.");
+            }
+            /*clientSocket = btDevice.createInsecureRfcommSocketToServiceRecord(uuid);
+            //clientSocket = btDevice.createRfcommSocketToServiceRecord(uuid);
             clientSocket.connect();
             System.out.println("Connected to raspberry pi.");
             //close socket after initial connection is made
             clientSocket.close();
-            System.out.println("Socket successfully closed. Now paired.");
+            System.out.println("Socket successfully closed. Now paired.");*/
             SaveHostName();
             System.out.println("Saved the hostname " + raspberryPiName);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return;
         }
