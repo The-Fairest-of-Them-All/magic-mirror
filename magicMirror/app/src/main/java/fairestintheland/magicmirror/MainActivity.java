@@ -966,6 +966,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 System.out.println("Wrote " + new String(buffer) + " to raspberry.");
                 clientSocketOutputStream.flush();
             }
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException ex) {
+                Log.d("Sleep", "Issue sleeping.");
+            }
 
             //send quote data, rotate through quote array
             if(switchStates[1]) {
@@ -978,6 +983,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 clientSocketOutputStream.write(buffer);
                 System.out.println("Wrote " + new String(buffer) + " to raspberry.");
                 clientSocketOutputStream.flush();
+            }
+
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException ex) {
+                Log.d("Sleep", "Issue sleeping.");
             }
 
             //send location data so that Raspberry can request weather data
@@ -1004,6 +1015,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 }
             }
 
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException ex) {
+                Log.d("Sleep", "Issue sleeping.");
+            }
+
             //send calendar events if true
             if  (switchStates[3]) {
                 currentEvent = cEvent.readCalendarEvent(this);
@@ -1014,6 +1031,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 clientSocketOutputStream.write(buffer);
                 System.out.println("Wrote " + new String(buffer) + " to raspberry.");
                 clientSocketOutputStream.flush();
+            }
+
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException ex) {
+                Log.d("Sleep", "Issue sleeping.");
             }
 
             //write break keyword to end to socket connection on both sides

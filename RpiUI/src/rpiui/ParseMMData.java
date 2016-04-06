@@ -24,6 +24,42 @@ public class ParseMMData {
     }
     
     /**
+     * Removes the leading "T: " from the input string and if there is a trailing "DONE" it removes that
+     * as well.
+     * 
+     * @param input the unformatted String
+     * @return the formatted String
+     */
+    public String parseTwitter(String input) {
+        String[] splitInput;
+        String parsed;
+        String temp;
+        temp = input.replaceFirst(TWITTER_KEY, "").trim();
+        temp = temp.replaceAll(EXIT_KEYWORD, "").trim();
+        //check whether other data got read along with the Twitter data
+        /*if (temp.contains(QUOTE_KEY)) {
+            int begins = temp.indexOf(QUOTE_KEY);
+        }*/
+        return temp;
+    }
+    
+    /**
+     * Removes the leading "Q: " from the input string and if there is a trailing "DONE" it removes that
+     * as well.
+     * 
+     * @param input the unformatted String
+     * @return the formatted String
+     */
+    public String parseQuote(String input) {
+        String[] splitInput;
+        String parsed;
+        String temp;
+        temp = input.replaceFirst(QUOTE_KEY, "").trim();
+        temp = temp.replaceAll(EXIT_KEYWORD, "").trim();
+        return temp;
+    }
+    
+    /**
      * Removes the leading "W: " from the input string and if there is a trailing "DONE" it removes that
      * as well.
      * 
@@ -40,22 +76,6 @@ public class ParseMMData {
     }
     
     /**
-     * Removes the leading "T: " from the input string and if there is a trailing "DONE" it removes that
-     * as well.
-     * 
-     * @param input the unformatted String
-     * @return the formatted String
-     */
-    public String parseTwitter(String input) {
-        String[] splitInput;
-        String parsed;
-        String temp;
-        temp = input.replaceFirst(TWITTER_KEY, "").trim();
-        temp = temp.replaceAll(EXIT_KEYWORD, "").trim();
-        return temp;
-    }
-    
-    /**
      * Removes the leading "C: " from the input string and if there is a trailing "DONE" it removes that
      * as well.
      * 
@@ -67,22 +87,6 @@ public class ParseMMData {
         String parsed;
         String temp;
         temp = input.replaceFirst(CALENDAR_KEY, "").trim();
-        temp = temp.replaceAll(EXIT_KEYWORD, "").trim();
-        return temp;
-    }
-    
-    /**
-     * Removes the leading "Q: " from the input string and if there is a trailing "DONE" it removes that
-     * as well.
-     * 
-     * @param input the unformatted String
-     * @return the formatted String
-     */
-    public String parseQuote(String input) {
-        String[] splitInput;
-        String parsed;
-        String temp;
-        temp = input.replaceFirst(QUOTE_KEY, "").trim();
         temp = temp.replaceAll(EXIT_KEYWORD, "").trim();
         return temp;
     }
