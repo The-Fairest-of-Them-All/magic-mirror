@@ -71,16 +71,16 @@ public class ParseMMData {
      * @param input the unformatted String
      * @return the formatted String
      */
-    public String[] parseWeather(String input) {
+    public String parseWeather(String input) {
         Location loc = new Location();
         String parsed;
         String temp;
         temp = input.replaceFirst(WEATHER_KEY, "").trim();
         temp = temp.replaceAll(EXIT_KEYWORD, "").trim();
-        Gson gson = new Gson();
+        /*Gson gson = new Gson();
         gson.fromJson(temp, Location.class);
-        String[] splitInput = {loc.getLongitude(), loc.getLattitude()};
-        return splitInput;
+        String[] splitInput = {loc.getLongitude(), loc.getLattitude()};*/
+        return temp;
     }
     
     /**
@@ -104,14 +104,14 @@ public class ParseMMData {
      * @param input
      * @return 
      */
-    public String[] parseConnectionData(String input) {
+    public String parseConnectionData(String input) {
         ConnectionDetails con = new ConnectionDetails();
         String temp;
         temp = input.replaceFirst(MAKE_CONNECTION_KEYWORD, "").trim();
-        Gson gson = new Gson();
+        /*Gson gson = new Gson();
         gson.fromJson(temp, ConnectionDetails.class);
-        String[] splitInput = {con.getSSID(), con.getPassword()};
+        String[] splitInput = {con.getSSID(), con.getPassword()};*/
        
-        return splitInput;
+        return temp;
     }
 }

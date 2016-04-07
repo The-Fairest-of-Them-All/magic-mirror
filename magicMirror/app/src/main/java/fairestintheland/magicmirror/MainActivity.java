@@ -754,7 +754,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 //try a connection based on device name
                 try {
                     if (device.getName().equals(raspberryPiName)) {
+                        BluetoothDevice btDevice = device;
+                        //TODO initialConnect is the original, insecureConnectAndSend is attempt at no user input
                         initialConnect();
+                        //insecureConnectAndSend();
                         return;
                     }
                 } catch (NullPointerException e) {
@@ -797,6 +800,31 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         } catch (Exception e) {
             e.printStackTrace();
             return;
+        }
+    }
+
+    public void insecureConnectAndSend() {
+        BluetoothDevice btDevice = device;
+        System.out.println("Trying to establish insecure connection to " + raspberryPiName);
+
+        try {
+            //clientSocket = btDevice.createRfcommSocketToServiceRecord(uuid);
+            clientSocket = btDevice.createInsecureRfcommSocketToServiceRecord(uuid);
+            clientSocket.connect();
+            System.out.println("Connected to raspberry pi.");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        writeContentToSocket(clientSocket);
+
+        //close socket before end of method so every time the sync button is pressed, a new connection is made
+        try {
+            clientSocket.close();
+            SaveHostName(); //sae host name after successful connect
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
