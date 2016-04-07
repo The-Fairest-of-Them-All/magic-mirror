@@ -48,7 +48,7 @@ public class ParseMMDataTest {
         System.out.println("parseWeather");
         String input = "W: aaaDONE";
         String expResult = "aaa";
-        String result = instance.parseWeather(input);
+        String[] result = instance.parseWeather(input);
         assertEquals(expResult, result);
     }
 
