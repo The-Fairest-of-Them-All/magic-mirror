@@ -16,6 +16,7 @@ import javax.microedition.io.StreamConnection;
 import javax.microedition.io.StreamConnectionNotifier;
 import javax.bluetooth.RemoteDevice;
 import com.intel.bluetooth.*;
+import invokecommandline.InvokeCommandLine;
 import rpiui.ParseMMData;
 
 import rpiui.RpiUI;
@@ -226,6 +227,11 @@ public class BluetoothListenerThread implements Runnable {
                 e.printStackTrace();
                 return;
             }
+            
+            //invoke the script to turn on Bluetooth functionality using the bluetoothctl terminal tool
+            InvokeCommandLine test = new InvokeCommandLine();
+            String[] commandAndArgs = {"sudo", "../scripts/bluetooth-initial-connect-script.sh"};
+            test.invoke(commandAndArgs);
 
             /*wait for bluetooth connection from Android app, the program will wait at the acceptAndOpen
                 method call line indefinitely for incoming connections so when the program has started
