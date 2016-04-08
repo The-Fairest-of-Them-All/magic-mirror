@@ -3,7 +3,10 @@
 /Twitter/dist/
 /RpiUI/nbproject/private/
 /RpiUI/nbproject/private/*
+/RpiUP/nbproject/private/private.xml
 /Java MagicMirror/nbproject/private/private.xml
+/Java MagicMirror/nbproject/private/
+/Java MagicMirror/nbproject/private/*
 /RpiUI/build/
 /RpiUI/dist/
 /Test_Connection/raspServer/rasp_version_of_android_server/raspberryPiServer/nbproject/private/
