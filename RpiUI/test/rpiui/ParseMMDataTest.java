@@ -46,10 +46,11 @@ public class ParseMMDataTest {
     @Test
     public void testParseWeather() {
         System.out.println("parseWeather");
-        String input = "W: aaaDONE";
-        String expResult = "aaa";
+        String input = "W: {\"latitude\":\"40.3012814\",\"longitude\":\"-75.1267708\"}DONE";
+        String expResult = "{\"latitude\":\"40.3012814\",\"longitude\":\"-75.1267708\"}";
         String result = instance.parseWeather(input);
-        assertEquals(expResult, result);
+        //assertEquals(expResult, result);
+        fail("Needs mocking");
     }
 
     /**
