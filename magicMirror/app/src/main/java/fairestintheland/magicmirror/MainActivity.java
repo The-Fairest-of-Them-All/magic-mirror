@@ -1037,6 +1037,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     latitude = getLatitude();
                     longitude = getLongitude();
                     StringBuilder output = new StringBuilder(WEATHER_KEY);
+                    //append the JSON form of the lat and long data
                     output.append(makeLocationIntoObject());
                     buffer = output.toString().getBytes();
                     clientSocketOutputStream.write(buffer);
@@ -1316,6 +1317,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         return newMessage;
     }
 
+    /**
+     * Compiles the latitude and longitude into a JSON object.
+     *
+     * @return a JSON String containing the latitude and longitude of the most recent location
+     */
     public String makeLocationIntoObject() {
         CurrentLocation loc = new CurrentLocation(latitude, longitude);
         Gson gson = new Gson();
