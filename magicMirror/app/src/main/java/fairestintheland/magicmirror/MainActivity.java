@@ -45,6 +45,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -411,14 +412,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLastLocation != null) {
-            Toast.makeText(this, "Location retrieved", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "CurrentLocation retrieved", Toast.LENGTH_LONG).show();
             latitude = (String.valueOf(mLastLocation.getLatitude()));
             longitude = (String.valueOf(mLastLocation.getLongitude()));
             System.out.println("Latitude: " + latitude);
             System.out.println("Longitude: " + longitude);
         } else {
-            Toast.makeText(this, "Location was null", Toast.LENGTH_LONG).show();
-            System.out.println("Location was null");
+            Toast.makeText(this, "CurrentLocation was null", Toast.LENGTH_LONG).show();
+            System.out.println("CurrentLocation was null");
         }
     }
 
@@ -439,14 +440,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLastLocation != null) {
-            Toast.makeText(this, "Location retrieved", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "CurrentLocation retrieved", Toast.LENGTH_LONG).show();
             latitude = (String.valueOf(mLastLocation.getLatitude()));
             longitude = (String.valueOf(mLastLocation.getLongitude()));
             System.out.println("Latitude: " + latitude);
             System.out.println("Longitude: " + longitude);
         } else {
-            Toast.makeText(this, "Location was null", Toast.LENGTH_LONG).show();
-            System.out.println("Location was null");
+            Toast.makeText(this, "CurrentLocation was null", Toast.LENGTH_LONG).show();
+            System.out.println("CurrentLocation was null");
         }
     }
 
@@ -463,11 +464,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             case MY_PERMISSIONS_REQUEST_LOCATION: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED &&
                         grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                    System.out.println("Location permission granted.");
-                    Toast.makeText(this, "Location permission granted", Toast.LENGTH_LONG).show();
+                    System.out.println("CurrentLocation permission granted.");
+                    Toast.makeText(this, "CurrentLocation permission granted", Toast.LENGTH_LONG).show();
                 } else {
-                    System.out.println("Location permission denied.");
-                    Toast.makeText(this, "Location permission denied", Toast.LENGTH_LONG).show();
+                    System.out.println("CurrentLocation permission denied.");
+                    Toast.makeText(this, "CurrentLocation permission denied", Toast.LENGTH_LONG).show();
                 }
                 return;
             }
@@ -1036,7 +1037,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     latitude = getLatitude();
                     longitude = getLongitude();
                     StringBuilder output = new StringBuilder(WEATHER_KEY);
-                    output.append(latitude).append(",").append(longitude);
+                    output.append(makeLocationIntoObject());
                     buffer = output.toString().getBytes();
                     clientSocketOutputStream.write(buffer);
                     System.out.println("Wrote " + new String(buffer) + " to raspberry.");
@@ -1313,6 +1314,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             System.out.println("Ubable to collect all data to JSON!");
         }
         return newMessage;
+    }
+
+    public String makeLocationIntoObject() {
+        CurrentLocation loc = new CurrentLocation(latitude, longitude);
+        Gson gson = new Gson();
+
+        String json = gson.toJson(loc);
+        return json;
     }
 
     /**

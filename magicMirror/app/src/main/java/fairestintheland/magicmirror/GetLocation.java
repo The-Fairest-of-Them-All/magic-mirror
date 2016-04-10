@@ -127,8 +127,8 @@ public class GetLocation extends AppCompatActivity implements GoogleApiClient.Co
             System.out.println("Latitude: " + latitude);
             System.out.println("Longitude: " + longitude);
         } else {
-            //Toast.makeText(this, "Location not allowed", Toast.LENGTH_LONG).show();
-            System.out.println("Location is off.");
+            //Toast.makeText(this, "CurrentLocation not allowed", Toast.LENGTH_LONG).show();
+            System.out.println("CurrentLocation is off.");
         }
     }
 
