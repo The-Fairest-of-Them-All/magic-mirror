@@ -61,6 +61,19 @@ public class Weather {
         setWeather();
     }
     
+    /**
+     * 
+     * @param data, a Gson object containing the location information.
+     */
+    public Weather(Location data){
+        //this.data = data;
+        location = data;
+        fio = new ForecastIO(apiKey);
+        setupFIO();
+        getWeather();
+        setWeather();
+    }
+    
 	/**set up FIO features*/
     private void setupFIO(){
         fio.setLang(ForecastIO.LANG_ENGLISH);
@@ -138,6 +151,15 @@ public class Weather {
         System.out.print("\nHi temp: " + hiTemp);
         System.out.print("\nLo Temp: " + loTemp);
         System.out.print("\nPrecipitation: " + precipitation + "%");
+    }
+   
+    public String returnCurrently() {
+        StringBuilder sb = new StringBuilder("Current Conditions: " ).append(conditions);
+        sb.append("\nCurrent Temp: ").append(currentTemp);
+        sb.append("\nHi temp: ").append(hiTemp);
+        sb.append("\nLo Temp: ").append(loTemp);
+        sb.append("\nPrecipitation: ").append(precipitation).append("%");
+        return(sb.toString());
     }
     
     /**
