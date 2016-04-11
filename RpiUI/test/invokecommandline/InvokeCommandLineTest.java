@@ -7,6 +7,7 @@ package invokecommandline;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.lang.reflect.Field;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -45,52 +46,66 @@ public class InvokeCommandLineTest {
      * Test of InvokeCommandLine method, of class InvokeCommandLine.
      */
     @Test
-    public void testInvokeCommandLine_0args() {
+    public void testInvokeCommandLine_0args() throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
         System.out.println("InvokeCommandLine");
         instance = new InvokeCommandLine();
-        //TODO  SHOULD USE REFLECTION
-        assertEquals("", instance.getSSID());
-        assertEquals("", instance.getPassword());
+        
+        Field field = instance.getClass().getDeclaredField("SSID");
+        field.setAccessible(true);
+        assertEquals("", field.get(instance));
+        
+        Field field2 = instance.getClass().getDeclaredField("password");
+        field2.setAccessible(true);
+        assertEquals("", field2.get(instance));
     }
 
     /**
      * Test of InvokeCommandLine method, of class InvokeCommandLine.
      */
     @Test
-    public void testInvokeCommandLine_String_String() {
+    public void testInvokeCommandLine_String_String() throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException {
         System.out.println("InvokeCommandLine");
         String SSID = "test";
         String password = "ABCDEFG";
         instance = new InvokeCommandLine(SSID, password);
-        //TODO  SHOULD USE REFLECTION
-        assertEquals(SSID, instance.getSSID());
-        assertEquals(password, instance.getPassword());
+        
+        Field field = instance.getClass().getDeclaredField("SSID");
+        field.setAccessible(true);
+        assertEquals(SSID, field.get(instance));
+        
+        Field field2 = instance.getClass().getDeclaredField("password");
+        field2.setAccessible(true);
+        assertEquals(password, field2.get(instance));
     }
 
     /**
      * Test of setSSID method, of class InvokeCommandLine.
      */
     @Test
-    public void testSetSSID() {
+    public void testSetSSID() throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException {
         System.out.println("setSSID");
         String SSID = "Test";
         instance = new InvokeCommandLine();
         instance.setSSID(SSID);
-        //TODO  SHOULD USE REFLECTION
-        assertEquals(SSID, instance.getSSID());
+        
+        Field field = instance.getClass().getDeclaredField("SSID");
+        field.setAccessible(true);
+        assertEquals(SSID, field.get(instance));
     }
 
     /**
      * Test of setPassword method, of class InvokeCommandLine.
      */
     @Test
-    public void testSetPassword() {
+    public void testSetPassword() throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
         System.out.println("setPassword");
         String password = "passwordTest";
         instance = new InvokeCommandLine();
         instance.setPassword(password);
-        //TODO SHOULD USE REFLECTION
-        assertEquals(password, instance.getPassword());
+        
+        Field field2 = instance.getClass().getDeclaredField("password");
+        field2.setAccessible(true);
+        assertEquals(password, field2.get(instance));
     }
 
     /**

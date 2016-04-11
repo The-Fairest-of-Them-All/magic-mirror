@@ -7,6 +7,7 @@ package rpiui;
 
 import JSONClasses.ConnectionDetails;
 import JSONClasses.Location;
+import Weather.Weather;
 import com.google.gson.*;
 
 /**
@@ -72,15 +73,14 @@ public class ParseMMData {
      * @return the formatted String
      */
     public String parseWeather(String input) {
-        Location loc = new Location();
-        String parsed;
         String temp;
         temp = input.replaceFirst(WEATHER_KEY, "").trim();
         temp = temp.replaceAll(EXIT_KEYWORD, "").trim();
-        /*Gson gson = new Gson();
-        gson.fromJson(temp, Location.class);
-        String[] splitInput = {loc.getLongitude(), loc.getLattitude()};*/
-        return temp;
+        Gson gson = new Gson();
+        Location loc = gson.fromJson(temp, Location.class);
+        Weather weat = new Weather(loc);
+        weat.printCurrently();
+        return weat.returnCurrently();
     }
     
     /**
