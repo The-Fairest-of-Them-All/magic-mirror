@@ -7,6 +7,7 @@ package rpiui;
 
 import JSONClasses.ConnectionDetails;
 import JSONClasses.Location;
+import Weather.Helpful_Hints;
 import Weather.Weather;
 import com.google.gson.*;
 
@@ -80,7 +81,10 @@ public class ParseMMData {
         Location loc = gson.fromJson(temp, Location.class);
         Weather weat = new Weather(loc);
         weat.printCurrently();
-        return weat.returnCurrently();
+        StringBuilder weather = new StringBuilder(weat.returnCurrently());
+        Helpful_Hints hh = new Helpful_Hints(weat);
+        weather.append("\n").append(hh.getStatement());
+        return weather.toString();
     }
     
     /**
