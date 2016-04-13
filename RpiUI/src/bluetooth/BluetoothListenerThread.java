@@ -347,6 +347,7 @@ public class BluetoothListenerThread implements Runnable {
                     break;
                 } else if (input.regionMatches(0, MAKE_CONNECTION_KEYWORD, 0, 7) || result == -1) {
                     //TODO call the exec method to write connect details to wpa_supplicant
+                    //TODO FAKE
                     mainThread.appendToJTextAreaNewline(mainThread.getTwitterJTextArea(), "I'll try to connect to the network you specified.");
                     inputStream.close();
                     break;
