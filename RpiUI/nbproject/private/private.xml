@@ -3,11 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+<<<<<<< HEAD
             <file>file:/C:/Users/Owner/Documents/magic-mirror/RpiUI/test/rpiui/RpiUITest.java</file>
             <file>file:/C:/Users/Owner/Documents/magic-mirror/RpiUI/src/rpiui/RpiUI.java</file>
             <file>file:/C:/Users/Owner/Documents/magic-mirror/RpiUI/src/bluetooth/BluetoothListenerThread.java</file>
             <file>file:/C:/Users/Owner/Documents/magic-mirror/RpiUI/test/Weather/WeatherIT.java</file>
             <file>file:/C:/Users/Owner/Documents/magic-mirror/RpiUI/test/bluetooth/BluetoothListenerThreadTest.java</file>
+=======
+            <file>file:/C:/Users/chris/Documents/GitHub/magic-mirror/RpiUI/src/rpiui/RpiUI.java</file>
+>>>>>>> 96e48c5ff6d1f9627dcaf91ddabcdad4d160a210
         </group>
     </open-files>
 </project-private>
