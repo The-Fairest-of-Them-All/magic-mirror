@@ -45,7 +45,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.gson.Gson;
+//import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -757,8 +757,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     if (device.getName().equals(raspberryPiName)) {
                         BluetoothDevice btDevice = device;
                         //TODO initialConnect is the original, insecureConnectAndSend is attempt at no user input
-                        initialConnect();
-                        //insecureConnectAndSend();
+                        //initialConnect();
+                        insecureConnectAndSend();
                         return;
                     }
                 } catch (NullPointerException e) {
@@ -901,6 +901,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         } else {
             System.out.println("Trying to connect to bonded device " + raspberryPiName);
             try {
+                //TODO the following is original
                 clientSocket = btDevice.createRfcommSocketToServiceRecord(uuid);
                 //TODO try this for no auth clientSocket = btDevice.createInsecureRfcommSocketToServiceRecord(uuid);
                 clientSocket.connect();
@@ -1038,7 +1039,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     longitude = getLongitude();
                     StringBuilder output = new StringBuilder(WEATHER_KEY);
                     //append the JSON form of the lat and long data
-                    output.append(makeLocationIntoObject());
+                    //output.append(makeLocationIntoObject());
                     buffer = output.toString().getBytes();
                     clientSocketOutputStream.write(buffer);
                     System.out.println("Wrote " + new String(buffer) + " to raspberry.");
@@ -1322,13 +1323,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
      *
      * @return a JSON String containing the latitude and longitude of the most recent location
      */
-    public String makeLocationIntoObject() {
+    /*public String makeLocationIntoObject() {
         CurrentLocation loc = new CurrentLocation(latitude, longitude);
         Gson gson = new Gson();
 
         String json = gson.toJson(loc);
         return json;
-    }
+    }*/
 
     /**
      * Overridden to unregister the BroadcastReceiver.
