@@ -45,7 +45,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
-//import com.google.gson.Gson;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -804,6 +804,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
     }
 
+    //TODO this is the insecure method, it is called by the BroadcastReciever right now instead of initialConnect
     public void insecureConnectAndSend() {
         BluetoothDevice btDevice = device;
         System.out.println("Trying to establish insecure connection to " + raspberryPiName);
@@ -1039,7 +1040,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     longitude = getLongitude();
                     StringBuilder output = new StringBuilder(WEATHER_KEY);
                     //append the JSON form of the lat and long data
-                    //output.append(makeLocationIntoObject());
+                    output.append(makeLocationIntoObject());
                     buffer = output.toString().getBytes();
                     clientSocketOutputStream.write(buffer);
                     System.out.println("Wrote " + new String(buffer) + " to raspberry.");
@@ -1323,13 +1324,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
      *
      * @return a JSON String containing the latitude and longitude of the most recent location
      */
-    /*public String makeLocationIntoObject() {
+    public String makeLocationIntoObject() {
         CurrentLocation loc = new CurrentLocation(latitude, longitude);
         Gson gson = new Gson();
 
         String json = gson.toJson(loc);
         return json;
-    }*/
+    }
 
     /**
      * Overridden to unregister the BroadcastReceiver.
