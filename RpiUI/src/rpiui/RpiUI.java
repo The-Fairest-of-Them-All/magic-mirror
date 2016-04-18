@@ -363,7 +363,7 @@ public class RpiUI extends JFrame {
         
         InvokeCommandLine test = new InvokeCommandLine();
         //String[] commandAndArgs = {"ls", "-la"};
-        String[] commandAndArgs = {"sudo", "echo", "HEY"};
+        String[] commandAndArgs = {"echo", "HEY"};
         test.invoke(commandAndArgs);
 
         bluetoothListenerThread = null;

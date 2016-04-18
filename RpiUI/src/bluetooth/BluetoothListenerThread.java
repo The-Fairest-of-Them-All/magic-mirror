@@ -44,7 +44,7 @@ public class BluetoothListenerThread implements Runnable {
     private static final String EXIT_KEYWORD = "DONE";
     private static final String SLEEP_KEYWORD = "SLEEP";
     private static final String MAKE_CONNECTION_KEYWORD = "CONNECT";
-    
+
     private BluetoothListenerThread btThread;
 
     /**
@@ -135,40 +135,40 @@ public class BluetoothListenerThread implements Runnable {
 
     /**
      * Returns the keyword that designates a Twitter message.
-     * 
+     *
      * @return a String representing the Twitter message keyword
      */
     public static String getTwitterKey() {
         return TWITTER_KEY;
     }
-    
+
     /**
      * Returns the keyword that designates a Quote message.
-     * 
+     *
      * @return a String representing the Quote message keyword
      */
     public static String getQuoteKey() {
         return QUOTE_KEY;
     }
-    
+
     /**
      * Returns the keyword that designates a Calendar message.
-     * 
+     *
      * @return a String representing the Calendar message keyword
      */
     public static String getCalendarKey() {
         return CALENDAR_KEY;
     }
-    
+
     /**
      * Returns the keyword that designates a Weather message.
-     * 
+     *
      * @return a String representing the Weather message keyword
      */
     public static String getWeatherKey() {
         return WEATHER_KEY;
     }
-    
+
     /**
      * Invoked on start of the Runnable BluetoothListenerThread thread. This
      * only calls listen().
@@ -219,6 +219,31 @@ public class BluetoothListenerThread implements Runnable {
                     //TODO url = "btspp://localhost:" + uuid.toString() + ";name=RaspberryServer";
                     url = "btspp://localhost:" + uuid.toString() + ";name=RaspberryServer;authenticate=false;authorize=false;encrypt=false";
                     notifier = (StreamConnectionNotifier) Connector.open(url);
+
+                    //invoke the script to turn on Bluetooth functionality using the bluetoothctl terminal tool
+                    InvokeCommandLine test = new InvokeCommandLine();
+                    String[] commandAndArgs = {"sudo", "../scripts/bluetooth-initial-connect-script.sh"};
+                    test.invoke(commandAndArgs);
+
+                    /*wait for bluetooth connection from Android app, the program will wait at the acceptAndOpen
+                        method call line indefinitely for incoming connections so when the program has started
+                        whether it is the first run or any subsequent run, the program runs up to that line
+                        before waiting for the conneciton*/
+                    while (true) {
+                        System.out.println("Waiting for bluetooth connection from Android app...");
+                        try {
+                            //listen for client to connect to the url defined by url
+                            connection = notifier.acceptAndOpen();
+                            System.out.println("Connection to Android accepted. Bluetooth socket open.");
+                            processConnection(connection);
+
+                            //close connection at end of every loop iteration
+                            connection.close();
+                            System.out.println("Closed bluetooth socket.");
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             } catch (BluetoothStateException e) {
                 System.err.println("BluetoothStateException");
@@ -228,37 +253,13 @@ public class BluetoothListenerThread implements Runnable {
                 e.printStackTrace();
                 return;
             }
-            
-            //invoke the script to turn on Bluetooth functionality using the bluetoothctl terminal tool
-            InvokeCommandLine test = new InvokeCommandLine();
-            String[] commandAndArgs = {"sudo", "../scripts/bluetooth-initial-connect-script.sh"};
-            test.invoke(commandAndArgs);
-
-            /*wait for bluetooth connection from Android app, the program will wait at the acceptAndOpen
-                method call line indefinitely for incoming connections so when the program has started
-                whether it is the first run or any subsequent run, the program runs up to that line
-                before waiting for the conneciton*/
-            while (true) {
-                System.out.println("Waiting for bluetooth connection from Android app...");
-                try {
-                    //listen for client to connect to the url defined by url
-                    connection = notifier.acceptAndOpen();
-                    System.out.println("Connection to Android accepted. Bluetooth socket open.");
-                    processConnection(connection);
-
-                    //close connection at end of every loop iteration
-                    connection.close();
-                    System.out.println("Closed bluetooth socket.");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
     }
 
     /**
-     * Tries to locate the local device and if it is found, locates and prints information about the
-     * Bluetooth address of the device and its friendly name.
+     * Tries to locate the local device and if it is found, locates and prints
+     * information about the Bluetooth address of the device and its friendly
+     * name.
      */
     private void findLocalDeviceAddressName() {
         try {
@@ -325,7 +326,7 @@ public class BluetoothListenerThread implements Runnable {
         try {
             // prepare to receive data
             InputStream inputStream = connection.openInputStream();
-            
+
             //create instance of ParseMMData class to format the incoming data
             ParseMMData parser = new ParseMMData(getTwitterKey(), getCalendarKey(), getWeatherKey(), getQuoteKey());
 

@@ -37,8 +37,7 @@ public class BluetoothListenerThreadTest {
     @Mock
     LocalDevice localDev;
     
-    public BluetoothListenerThreadTest() {
-    }
+    
     
     @BeforeClass
     public static void setUpClass() {
@@ -60,14 +59,14 @@ public class BluetoothListenerThreadTest {
     /**
      * Test of run method, of class BluetoothListenerThread.
      */
-    @Test
+    /*@Test
     public void testRun() {
         System.out.println("run");
         BluetoothListenerThread instance = null;
         instance.run();
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
-    }
+    }*/
 
     /**
      * Test of getTwitterKey method, of class BluetoothListenerThread.
@@ -124,6 +123,64 @@ public class BluetoothListenerThreadTest {
     
     @Test
     public void testFindLocalDeviceAddressName () {
+        
+    }
+    
+    /**
+     * Mock device power state to off.
+     */
+    @Test
+    public void testRunWithDevicePowerOff() {
+        
+    }
+    
+    /**
+     * Mock device power state to on and discoverable state to off.
+     */
+    @Test
+    public void testRunWithDevicePowerOnDiscoverableOff() {
+        
+    }
+    
+    /**
+     * Test the run method, mock a connection to Android, then timeout to end the infinite loop.
+     */
+    @Test
+    public void testWaitForConnectionWithTimeout() {
+        
+    }
+    
+    /**
+     * Test full run of program but provide no input. Expect socket to be closed immediately and waiting to
+     * resume.
+     */
+    @Test
+    public void testFullRunNoInput() {
+        
+    }
+    
+    @Test
+    public void testFullRunDisplayInput() {
+        
+    }
+    
+    @Test
+    public void testFullRunSleepKeyword() {
+        
+    }
+    
+    @Test
+    public void testFullRunConnectKeyword() {
+        
+    }
+    
+    @Test
+    public void testFullRunExitKeyword() {
+        
+    }
+    
+    @Test
+    public void testFullRunUnlabeledInput() {
         
     }
 }
