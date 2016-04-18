@@ -31,11 +31,11 @@ public class BluetoothListenerThreadTest {
     @TestSubject
     BluetoothListenerThread bt = new BluetoothListenerThread();
     
-    @Mock
+    /*@Mock
     StreamConnection conn;
     
     @Mock
-    LocalDevice localDev;
+    LocalDevice localDev;*/
     
     
     
@@ -115,7 +115,7 @@ public class BluetoothListenerThreadTest {
     @Test
     public void testProcessConnection() throws IOException {
         InputStream input = null;
-        EasyMock.expect(conn.openInputStream()).andReturn(input);
+        //EasyMock.expect(conn.openInputStream()).andReturn(input);
         Assert.assertNotNull(input);
       
         
@@ -123,7 +123,7 @@ public class BluetoothListenerThreadTest {
     
     @Test
     public void testFindLocalDeviceAddressName () {
-        
+        fail("The test case is a prototype.");
     }
     
     /**
@@ -131,7 +131,7 @@ public class BluetoothListenerThreadTest {
      */
     @Test
     public void testRunWithDevicePowerOff() {
-        
+        fail("The test case is a prototype.");
     }
     
     /**
@@ -139,7 +139,7 @@ public class BluetoothListenerThreadTest {
      */
     @Test
     public void testRunWithDevicePowerOnDiscoverableOff() {
-        
+        fail("The test case is a prototype.");
     }
     
     /**
@@ -147,7 +147,7 @@ public class BluetoothListenerThreadTest {
      */
     @Test
     public void testWaitForConnectionWithTimeout() {
-        
+        fail("The test case is a prototype.");
     }
     
     /**
@@ -156,31 +156,31 @@ public class BluetoothListenerThreadTest {
      */
     @Test
     public void testFullRunNoInput() {
-        
+        fail("The test case is a prototype.");
     }
     
     @Test
     public void testFullRunDisplayInput() {
-        
+        fail("The test case is a prototype.");
     }
     
     @Test
     public void testFullRunSleepKeyword() {
-        
+        fail("The test case is a prototype.");
     }
     
     @Test
     public void testFullRunConnectKeyword() {
-        
+        fail("The test case is a prototype.");
     }
     
     @Test
     public void testFullRunExitKeyword() {
-        
+        fail("The test case is a prototype.");
     }
     
     @Test
     public void testFullRunUnlabeledInput() {
-        
+        fail("The test case is a prototype.");
     }
 }
