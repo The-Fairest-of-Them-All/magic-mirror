@@ -940,7 +940,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
      */
     public void writeConnectDataToSocket(BluetoothSocket clientSocket) {
         try {
-            JSONObject obj = getWIFIAccount();
+            //JSONObject obj = getWIFIAccount();
+            String obj = makeConnectionIntoObject();
 
             if (obj == null) {
                 return;
@@ -950,7 +951,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             clientSocketOutputStream = clientSocket.getOutputStream();
 
             //write SSID and password to raspberry pi
-            buffer = obj.toString().getBytes();
+            StringBuilder build = new StringBuilder(MAKE_CONNECTION_KEYWORD);
+            build.append(obj.toString());
+            buffer = build.toString().getBytes();
             clientSocketOutputStream.write(buffer);
             System.out.println("Wrote " + new String(buffer) + " to raspberry.");
             clientSocketOutputStream.flush();
@@ -1318,6 +1321,22 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             System.out.println("Ubable to collect all data to JSON!");
         }
         return newMessage;
+    }
+
+    /**
+     * Compiles the SSID and password into a JSON object.
+     *
+     * @return a JSON String containing the SSID and password entered by the user
+     */
+    public String makeConnectionIntoObject() {
+        EditText ssidView = (EditText) findViewById(R.id.ssidText);
+        EditText passwordView = (EditText) findViewById(R.id.passWordText);
+
+        ConnectionData connection = new ConnectionData(ssidView.getText().toString(), passwordView.getText().toString());
+        Gson gson = new Gson();
+
+        String json = gson.toJson(connection);
+        return json;
     }
 
     /**

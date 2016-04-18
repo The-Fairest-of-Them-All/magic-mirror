@@ -348,8 +348,11 @@ public class BluetoothListenerThread implements Runnable {
                     inputStream.close();
                     break;
                 } else if (input.regionMatches(0, MAKE_CONNECTION_KEYWORD, 0, 7) || result == -1) {
-                    //TODO call parse to get the ssid and pass
-                    //TODO call the exec method to write connect details to wpa_supplicant
+                    System.out.println("THIS IS CONNECTION DATA: " + input);
+                    String[] connect = parser.parseConnectionData(input);
+                    InvokeCommandLine invoke = new InvokeCommandLine(connect[0], connect[1]);
+                    invoke.connectToNetwork();
+                    //TODO in InvokeCommandLine.java, add in the name of the script to connect
                     //TODO show user a real status message
                     mainThread.appendToJTextAreaNewline(mainThread.getTwitterJTextArea(), "I'll try to connect to the network you specified.");
                     inputStream.close();

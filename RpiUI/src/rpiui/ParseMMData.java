@@ -108,14 +108,15 @@ public class ParseMMData {
      * @param input
      * @return 
      */
-    public String parseConnectionData(String input) {
-        ConnectionDetails con = new ConnectionDetails();
+    public String[] parseConnectionData(String input) {
+        ConnectionDetails con;
         String temp;
+        //String[] connectData;
         temp = input.replaceFirst(MAKE_CONNECTION_KEYWORD, "").trim();
-        /*Gson gson = new Gson();
-        gson.fromJson(temp, ConnectionDetails.class);
-        String[] splitInput = {con.getSSID(), con.getPassword()};*/
+        Gson gson = new Gson();
+        con = gson.fromJson(temp, ConnectionDetails.class);
+        String[] splitInput = {con.getSSID(), con.getPassword()};
        
-        return temp;
+        return splitInput;
     }
 }
