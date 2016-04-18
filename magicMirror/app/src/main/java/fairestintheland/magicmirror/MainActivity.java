@@ -295,9 +295,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
                         Bundle bundle = new Bundle();
                         String stringMess = "Wrong Account Info,please enter again!";
-                        if( wi.isConnect()){
+                        //if( wi.isConnect()){
                             stringMess ="Correct wifi Info!";
-                        }
+                            tryToConnect(CONNECT);
+                        //}
                         bundle.putString("myKey",stringMess);
                         Message msg = toastMessageHandler.obtainMessage();
                         msg.setData(bundle);
@@ -757,8 +758,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     if (device.getName().equals(raspberryPiName)) {
                         BluetoothDevice btDevice = device;
                         //TODO initialConnect is the original, insecureConnectAndSend is attempt at no user input
-                        //initialConnect();
-                        insecureConnectAndSend();
+                        initialConnect();
+                        //insecureConnectAndSend();
                         return;
                     }
                 } catch (NullPointerException e) {
@@ -877,7 +878,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
      * int argument which represents whether the user wants to pass data or connection infor to the raspberry
      * pi or wants to command the raspberry pi to sleep.
      *
-     * @param dataOrSleepORConnect and int that takes once of 3 defined values, DATA, SLEEP, or CONNECT
+     * @param dataOrSleepORConnect an int that takes once of 3 defined values, DATA, SLEEP, or CONNECT
      */
     private void tryToConnect(int dataOrSleepORConnect) {
         BluetoothDevice btDevice = null;
