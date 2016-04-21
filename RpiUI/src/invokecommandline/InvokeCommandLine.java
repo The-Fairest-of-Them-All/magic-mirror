@@ -85,22 +85,28 @@ public class InvokeCommandLine {
      * PATH.
      *
      * @param commandAndArgs the command and command line arguments
+     * @return a boolean to indicate whether an exception was thrown
      */
-    public void invoke(String[] commandAndArgs) {
+    public String invoke(String[] commandAndArgs) {
+        String line = "";
+        boolean result;
         try {
             Process p = Runtime.getRuntime().exec(commandAndArgs);
             p.waitFor();
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            String line = "";
             while ((line = reader.readLine()) != null) {
                 System.out.println(line);
             }
+            result = true;
         } catch (IOException ex) {
             Logger.getLogger(InvokeCommandLine.class.getName()).log(Level.SEVERE, null, ex);
+            result = false;
         } catch (InterruptedException ex) {
             Logger.getLogger(InvokeCommandLine.class.getName()).log(Level.SEVERE, null, ex);
+            result = false;
         }
+        return line;
     }
 
     /**
@@ -108,7 +114,9 @@ public class InvokeCommandLine {
      * Pi's wpa.supplicant file to attempt a programmatic connection to the
      * user's home network. Invokes a terminal script defined by scriptName to
      * do this.
+     * @return A string containing the results of execing the command or a message that it wasn't set
      */
+<<<<<<< HEAD
     public void connectToNetwork() throws IOException {
         if (SSID.equals("") || password.equals("")) {
             System.out.println("SSID and password need to be set.");
@@ -134,6 +142,17 @@ public class InvokeCommandLine {
               invoke(script3);
               invoke(script4);
               //TODO ADD APPENDING WPA_SUPPLICANT
+=======
+    public String connectToNetwork() {
+        String res;
+        if (SSID.equals("") || password.equals("")) {
+            System.out.println("SSID and password need to be set.");
+            res = "SSID and password need to be set.";
+        } else {
+            String[] connect = {scriptName, SSID, password};
+            res = invoke(connect);
+>>>>>>> origin/mergeBranch
         }
+        return res;
     }
 }
