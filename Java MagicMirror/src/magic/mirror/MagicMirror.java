@@ -11,10 +11,11 @@ public class MagicMirror {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        Weather weather = new Weather();
-        weather.printCurrently();
-        Helpful_Hints hint = new Helpful_Hints(weather);
-        System.out.println("\n" + hint.getStatement());
+//        Weather weather = new Weather();
+//        weather.printCurrently();
+//        Helpful_Hints hint = new Helpful_Hints(weather);
+//        System.out.println("\n" + hint.getStatement());
+          ScriptBuilder sb = new ScriptBuilder();
     }
     
 }
