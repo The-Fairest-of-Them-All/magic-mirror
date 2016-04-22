@@ -869,8 +869,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
      */
     public void syncContent(View view) {
         syncButton = (Button) findViewById(R.id.connect_button);
-        syncButton.setEnabled(false);
-        syncButton.setClickable(false);
+        //syncButton.setEnabled(false);
+        //syncButton.setClickable(false);
         //String originalText = syncButton.getText().toString();
         //syncButton.setText("Don't click right now");
 
@@ -890,8 +890,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 }
             }
         }
-        syncButton.setEnabled(true);
-        syncButton.setClickable(true);
+        //syncButton.setEnabled(true);
+        //syncButton.setClickable(true);
         //syncButton.setText(originalText);
     }
 
@@ -1147,8 +1147,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
      */
     private void makeRaspberrySleep() {
         sleepButton = (Button) findViewById(R.id.sleepButton);
-        sleepButton.setEnabled(false);
-        sleepButton.setClickable(false);
+        //sleepButton.setEnabled(false);
+        //sleepButton.setClickable(false);
         //String originalText = sleepButton.getText().toString();
         //sleepButton.setText("Don't click right now");
 
@@ -1168,8 +1168,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 }
             }
         }
-        sleepButton.setEnabled(true);
-        sleepButton.setClickable(true);
+        //sleepButton.setEnabled(true);
+        //sleepButton.setClickable(true);
         //sleepButton.setText(originalText);
     }
 
