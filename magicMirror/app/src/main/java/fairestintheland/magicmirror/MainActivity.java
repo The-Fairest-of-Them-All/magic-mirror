@@ -134,10 +134,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private static final String EXIT_KEYWORD = "DONE";
     private static final String SLEEP_KEYWORD = "SLEEP";
     private static final String MAKE_CONNECTION_KEYWORD = "CONNECT";
-    private static final String TWITTER_KEY = "T: ";
-    private static final String CALENDAR_KEY = "C: ";
-    private static final String WEATHER_KEY = "W: ";
-    private static final String QUOTE_KEY = "Q: ";
+    private static final String TWITTER_KEY = "Tw:";
+    private static final String CALENDAR_KEY = "Ca:";
+    private static final String WEATHER_KEY = "Ww:";
+    private static final String QUOTE_KEY = "Qu:";
 
     private final int DATA = 0;
     private final int SLEEP = 1;
@@ -1028,7 +1028,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 clientSocketOutputStream.write(buffer);
                 System.out.println("Wrote " + new String(buffer) + " to raspberry.");
                 clientSocketOutputStream.flush();
+            } else {
+                clientSocketOutputStream.write(TWITTER_KEY.getBytes());
+                System.out.println("Wrote " + TWITTER_KEY + " to raspberry.");
+                clientSocketOutputStream.flush();
             }
+
+
             try {
                 Thread.sleep(100);
             } catch (InterruptedException ex) {
@@ -1045,6 +1051,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 buffer = output.toString().getBytes();
                 clientSocketOutputStream.write(buffer);
                 System.out.println("Wrote " + new String(buffer) + " to raspberry.");
+                clientSocketOutputStream.flush();
+            } else {
+                clientSocketOutputStream.write(QUOTE_KEY.getBytes());
+                System.out.println("Wrote " + QUOTE_KEY + " to raspberry.");
                 clientSocketOutputStream.flush();
             }
 
@@ -1077,6 +1087,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     System.out.println("Wrote " + new String(buffer) + " to raspberry.");
                     clientSocketOutputStream.flush();
                 }
+            } else {
+                clientSocketOutputStream.write(WEATHER_KEY.getBytes());
+                System.out.println("Wrote " + WEATHER_KEY + " to raspberry.");
+                clientSocketOutputStream.flush();
             }
 
             try {
@@ -1094,6 +1108,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 buffer = output.toString().getBytes();
                 clientSocketOutputStream.write(buffer);
                 System.out.println("Wrote " + new String(buffer) + " to raspberry.");
+                clientSocketOutputStream.flush();
+            }  else {
+                clientSocketOutputStream.write(CALENDAR_KEY.getBytes());
+                System.out.println("Wrote " + CALENDAR_KEY + " to raspberry.");
                 clientSocketOutputStream.flush();
             }
 

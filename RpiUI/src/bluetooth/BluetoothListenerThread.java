@@ -37,10 +37,10 @@ public class BluetoothListenerThread implements Runnable {
     private final String UUIDSTRING = "a96d5795f8c34b7a9bad1eefa9e11a94";
 
     //Key strings used to determine what type of data has been received from Android.
-    private static final String TWITTER_KEY = "T: ";
-    private static final String CALENDAR_KEY = "C: ";
-    private static final String WEATHER_KEY = "W: ";
-    private static final String QUOTE_KEY = "Q: ";
+    private static final String TWITTER_KEY = "Tw:";
+    private static final String CALENDAR_KEY = "Ca:";
+    private static final String WEATHER_KEY = "We:";
+    private static final String QUOTE_KEY = "Qu:";
     private static final String EXIT_KEYWORD = "DONE";
     private static final String SLEEP_KEYWORD = "SLEEP";
     private static final String MAKE_CONNECTION_KEYWORD = "CONNECT";
