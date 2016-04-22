@@ -33,10 +33,11 @@ public class ParseMMData {
 
     /**
      * Removes the leading "T: " from the input string and if there is a
-     * trailing "DONE" it removes that as well.
+     * trailing "DONE" it removes that as well. Removes any leading or trailing 
+     * square brackets that may be present.
      *
-     * @param input the unformatted String
-     * @return the formatted String
+     * @param input the unformatted Twitter String
+     * @return the formatted Twitter String
      */
     public String parseTwitter(String input) {
         String[] splitInput;
@@ -56,12 +57,10 @@ public class ParseMMData {
      * Removes the leading "Q: " from the input string and if there is a
      * trailing "DONE" it removes that as well.
      *
-     * @param input the unformatted String
-     * @return the formatted String
+     * @param input the unformatted Quote String
+     * @return the formatted Quote String
      */
     public String parseQuote(String input) {
-        String[] splitInput;
-        String parsed;
         String temp;
         temp = input.replaceFirst(QUOTE_KEY, "").trim();
         temp = temp.replaceAll(EXIT_KEYWORD, "").trim();
@@ -69,11 +68,13 @@ public class ParseMMData {
     }
 
     /**
-     * UNTESTED Removes the leading "W: " from the input string and if there is
-     * a trailing "DONE" it removes that as well.
+     * Removes the leading "W: " from the input string and if there is
+     * a trailing "DONE" it removes that as well. If no location data was passed,
+     * just returns the input String, but if location data was provided, sends that
+     * data to a Weather object to fetch the weather. 
      *
-     * @param input the unformatted String
-     * @return the formatted String
+     * @param input the unformatted Weather String
+     * @return the formatted Weather String or a message that Location is required
      */
     public String parseWeather(String input) {
         String temp;
@@ -95,7 +96,8 @@ public class ParseMMData {
 
     /**
      * Removes the leading "C: " from the input string and if there is a
-     * trailing "DONE" it removes that as well.
+     * trailing "DONE" it removes that as well. Removes any leading or trailing 
+     * square brackets that may be present.
      *
      * @param input the unformatted String
      * @return the formatted String
@@ -115,15 +117,14 @@ public class ParseMMData {
     }
 
     /**
-     * UNTESTED Gets the SSID and password from the JSON string.
+     * Gets the SSID and password from the JSON string.
      *
-     * @param input
-     * @return
+     * @param input a JSON object containing SSID and password parameters
+     * @return a String[] containing the SSID and password
      */
     public String[] parseConnectionData(String input) {
         ConnectionDetails con;
         String temp;
-        //String[] connectData;
         temp = input.replaceFirst(MAKE_CONNECTION_KEYWORD, "").trim();
         Gson gson = new Gson();
         con = gson.fromJson(temp, ConnectionDetails.class);
