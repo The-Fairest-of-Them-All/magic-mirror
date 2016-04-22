@@ -216,8 +216,8 @@ public class BluetoothListenerThread implements Runnable {
                     uuid = new UUID(UUIDSTRING, false);
                     //btspp is the URL scheme for an RFCOMM StreamConnection
                     //url required format is btspp: //hostname: [ CN | UUID ]; parameters for StreamConnectionNotifier
-                    //TODO url = "btspp://localhost:" + uuid.toString() + ";name=RaspberryServer";
-                    url = "btspp://localhost:" + uuid.toString() + ";name=RaspberryServer;authenticate=false;authorize=false;encrypt=false";
+                    url = "btspp://localhost:" + uuid.toString() + ";name=RaspberryServer";
+                    //url = "btspp://localhost:" + uuid.toString() + ";name=RaspberryServer;authenticate=false;authorize=false;encrypt=false";
                     notifier = (StreamConnectionNotifier) Connector.open(url);
 
                     //invoke the script to turn on Bluetooth functionality using the bluetoothctl terminal tool

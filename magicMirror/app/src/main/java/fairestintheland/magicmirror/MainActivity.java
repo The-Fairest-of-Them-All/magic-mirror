@@ -787,8 +787,34 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         try {
             boolean bonded = btDevice.createBond();
+            //return val is false for an immediate bonding error or true to indicate bonding will begin
             if (bonded) {
-                System.out.println("Paired with raspberry pi.");
+                System.out.println("Bonding with raspberry pi will begin");
+                Log.d("Bond", "Bonding with raspberry pi will begin");
+                Toast.makeText(context, "Bonding with raspberry pi will begin", Toast.LENGTH_SHORT).show();
+            }
+            //get current bonding state of remote device (raspberry pi), show user status
+            int bondState = btDevice.getBondState();
+            switch (bondState) {
+                case BluetoothDevice.BOND_NONE:
+                    System.out.println("Bonding failed");
+                    Log.d("Bond", "Bonding failed");
+                    Toast.makeText(context, "Bonding failed", Toast.LENGTH_SHORT).show();
+                    break;
+                case BluetoothDevice.BOND_BONDING:
+                    System.out.println("Bonding in progress");
+                    Log.d("Bond", "Bonding in progress");
+                    Toast.makeText(context, "Bonding in progress", Toast.LENGTH_SHORT).show();
+                    break;
+                case BluetoothDevice.BOND_BONDED:
+                    System.out.println("Bonding succeeded");
+                    Log.d("Bond", "Bonding succeeded");
+                    Toast.makeText(context, "Bonding succeeded", Toast.LENGTH_SHORT).show();
+                    break;
+                default:
+                    System.out.println("No bonding information available");
+                    Log.d("Bond", "No bonding information available");
+                    Toast.makeText(context, "No bonding information available", Toast.LENGTH_SHORT).show();
             }
             /*clientSocket = btDevice.createInsecureRfcommSocketToServiceRecord(uuid);
             //clientSocket = btDevice.createRfcommSocketToServiceRecord(uuid);
@@ -799,13 +825,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             System.out.println("Socket successfully closed. Now paired.");*/
             SaveHostName();
             System.out.println("Saved the hostname " + raspberryPiName);
+            Log.d("Bond", "Saved the hostname " + raspberryPiName);
         } catch (Exception e) {
             e.printStackTrace();
             return;
         }
     }
 
-    //TODO this is the insecure method, it is called by the BroadcastReciever right now instead of initialConnect
+    //TODO this is the insecure method, it can be called by the BroadcastReciever instead of initialConnect
     public void insecureConnectAndSend() {
         BluetoothDevice btDevice = device;
         System.out.println("Trying to establish insecure connection to " + raspberryPiName);
