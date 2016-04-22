@@ -59,9 +59,9 @@ public class ScriptBuilder {
 //            String[] connect = {scriptName, SSID, password};
 //            invoke(connect);
               invoke(script0);
-              WPA = "network={"
-                      + "\n\tssid:\""+SSID+"\""
-                      + "\n\tpsk:\""+password+"\""
+              WPA = "\nnetwork={"
+                      + "\n\tssid=\""+SSID+"\""
+                      + "\n\tpsk=\""+password+"\""
                       + "\n}";
               try{
                 FileWriter fw = new FileWriter(fileName, true);
