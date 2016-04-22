@@ -26,8 +26,10 @@ public class ScriptBuilder {
     final String script4[] = {"sudo", "dhclient", "wlan0"};
     String WPA = "";
     
-    private String SSID = "BigBrother2.4GHz";
-    private String password = "jerry_is_a_manlet";
+    //private String SSID = "BigBrother2.4GHz";
+    //private String password = "jerry_is_a_manlet";
+    private String SSID = "Katherine's iPhone";
+    private String password = "fairest0";
         
     public ScriptBuilder(){
         run();
