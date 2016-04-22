@@ -26,8 +26,10 @@ public class ScriptBuilder {
     final String script4[] = {"sudo", "dhclient", "wlan0"};
     String WPA = "";
     
-    private String SSID = "BigBrother2.4GHz";
-    private String password = "jerry_is_a_manlet";
+    //private String SSID = "BigBrother2.4GHz";
+    //private String password = "jerry_is_a_manlet";
+    private String SSID = "Katherine's iPhone";
+    private String password = "fairest0";
         
     public ScriptBuilder(){
         run();
@@ -57,9 +59,9 @@ public class ScriptBuilder {
 //            String[] connect = {scriptName, SSID, password};
 //            invoke(connect);
               invoke(script0);
-              WPA = "network={"
-                      + "\n\tssid:\""+SSID+"\""
-                      + "\n\tpsk:\""+password+"\""
+              WPA = "\nnetwork={"
+                      + "\n\tssid=\""+SSID+"\""
+                      + "\n\tpsk=\""+password+"\""
                       + "\n}";
               try{
                 FileWriter fw = new FileWriter(fileName, true);
