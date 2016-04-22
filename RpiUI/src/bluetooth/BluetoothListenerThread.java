@@ -351,9 +351,9 @@ public class BluetoothListenerThread implements Runnable {
                     System.out.println("THIS IS CONNECTION DATA: " + input);
                     String[] connect = parser.parseConnectionData(input);
                     InvokeCommandLine invoke = new InvokeCommandLine(connect[0], connect[1]);
-                    String connectResults = invoke.connectToNetwork();
+                    invoke.connectToNetwork();
                     //TODO in InvokeCommandLine.java, add in the name of the script to connect
-                    mainThread.appendToJTextAreaNewline(mainThread.getTwitterJTextArea(), connectResults);
+                    mainThread.appendToJTextAreaNewline(mainThread.getTwitterJTextArea(), input);
                     inputStream.close();
                     break;
                 } else if (input.regionMatches(0, TWITTER_KEY, 0, 3)) {
