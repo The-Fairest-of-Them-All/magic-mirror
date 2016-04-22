@@ -127,13 +127,13 @@ public class InvokeCommandLineTest {
     /**
      * Test of connectToNetwork method, of class InvokeCommandLine.
      */
-    @Test
-    public void testConnectToNetwork() {
-        System.out.println("connectToNetwork");
-        instance = new InvokeCommandLine();
-        instance.connectToNetwork();
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
+//    @Test
+//    public void testConnectToNetwork() {
+//        System.out.println("connectToNetwork");
+//        instance = new InvokeCommandLine();
+//        instance.connectToNetwork();
+//        // TODO review the generated test code and remove the default call to fail.
+//        fail("The test case is a prototype.");
+//    }
     
 }
