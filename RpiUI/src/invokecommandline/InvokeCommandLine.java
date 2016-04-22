@@ -75,6 +75,7 @@ public class InvokeCommandLine {
     public String getSSID() {
         return SSID;
     }
+
     //TODO remove this, it's only added for testing until introspection works
     public String getPassword() {
         return password;
@@ -109,41 +110,43 @@ public class InvokeCommandLine {
         return line;
     }
 
+    
+    public void connectToNetwork() throws IOException {
+        if (SSID.equals("") || password.equals("")) {
+            System.out.println("SSID and password need to be set.");
+        } else {
+//            String[] connect = {scriptName, SSID, password};
+//            invoke(connect);
+            invoke(script0);
+            WPA = "network={"
+                    + "\n\tssid:\"" + SSID + "\""
+                    + "\n\tpsk:\"" + password + "\""
+                    + "\n}";
+            try {
+                FileWriter fw = new FileWriter(fileName, true);
+                fw.write(WPA);
+                fw.close();
+            } catch (IOException io) {
+                System.err.println("IOException: " + io.getMessage());
+            }
+            invoke(script1);
+            invoke(script2);
+            invoke(script3);
+            invoke(script4);
+            //TODO ADD APPENDING WPA_SUPPLICANT
+        }
+    }
+
     /**
      * Used to write the classes SSID and password values into the Raspberry
      * Pi's wpa.supplicant file to attempt a programmatic connection to the
      * user's home network. Invokes a terminal script defined by scriptName to
      * do this.
-     * @return A string containing the results of execing the command or a message that it wasn't set
+     *
+     * @return A string containing the results of execing the command or a
+     * message that it wasn't set
      */
-<<<<<<< HEAD
-    public void connectToNetwork() throws IOException {
-        if (SSID.equals("") || password.equals("")) {
-            System.out.println("SSID and password need to be set.");
-        } 
-        else {
-//            String[] connect = {scriptName, SSID, password};
-//            invoke(connect);
-              invoke(script0);
-              WPA = "network={"
-                      + "\n\tssid:\""+SSID+"\""
-                      + "\n\tpsk:\""+password+"\""
-                      + "\n}";
-              try{
-                FileWriter fw = new FileWriter(fileName, true);
-                fw.write(WPA);
-                fw.close();
-              }
-              catch(IOException io){
-                  System.err.println("IOException: " + io.getMessage());
-              }
-              invoke(script1);
-              invoke(script2);
-              invoke(script3);
-              invoke(script4);
-              //TODO ADD APPENDING WPA_SUPPLICANT
-=======
-    public String connectToNetwork() {
+    public String connectToNetworkOldVersion() {
         String res;
         if (SSID.equals("") || password.equals("")) {
             System.out.println("SSID and password need to be set.");
@@ -151,7 +154,6 @@ public class InvokeCommandLine {
         } else {
             String[] connect = {scriptName, SSID, password};
             res = invoke(connect);
->>>>>>> origin/mergeBranch
         }
         return res;
     }
