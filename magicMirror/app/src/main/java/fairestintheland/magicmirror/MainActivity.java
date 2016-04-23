@@ -142,6 +142,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private final int DATA = 0;
     private final int SLEEP = 1;
     private final int CONNECT = 2;
+    private boolean secureConnectTrueOrFalse; //used to determine whether secure or insecure is desired
 
     String consumerKey = "bUh6sDhIGpN4UdE55litSTD8W";
     String consumerSecret = "OlByFoaS9lJ8ewZEw9DOPGgVrby9EM6SepllWXrCnraw49r9DC";
@@ -172,6 +173,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     String longitude = "";
     public String eventMessage;
     Set<BluetoothDevice> bondedDevices;
+    Button insecureSyncButton;
 
     LocationRequest mLocationRequest;
     LocationSettingsRequest.Builder mLocationSettingsRequestBuilder;
@@ -597,6 +599,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
         return s;
     }
+
     //-----------END FILE I/O---------------------------------------------------------------------------
 
     //----------BLUETOOTH SECTION-------------------------------------------------------------------------
@@ -707,8 +710,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
      */
     public void startLooking(View view) {
         discoverButton = (Button) findViewById(R.id.discoverDevices);
-        discoverButton.setEnabled(false);
-        discoverButton.setClickable(false);
+        //discoverButton.setEnabled(false);
+        //discoverButton.setClickable(false);
         //String originalText = discoverButton.getText().toString();
         //discoverButton.setText("Don't click right now");
 
@@ -721,6 +724,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 if (!raspberryNameEditText.getText().toString().trim().isEmpty()) {
                     raspberryPiName = raspberryNameEditText.getText().toString().trim();
 
+                    secureConnectTrueOrFalse = true; //true for secure
                     //if false, bluetooth off, otherwise start discovery, when results arrive the callback is BroadcastReceiver
                     bluetoothAvailable = bluetoothAdapter.startDiscovery();
                 } else {
@@ -728,8 +732,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 }
             }
         }
-        discoverButton.setEnabled(true);
-        discoverButton.setClickable(true);
+        //discoverButton.setEnabled(true);
+        //discoverButton.setClickable(true);
         //discoverButton.setText(originalText);
     }
 
@@ -758,8 +762,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     if (device.getName().equals(raspberryPiName)) {
                         BluetoothDevice btDevice = device;
                         //TODO initialConnect is the original, insecureConnectAndSend is attempt at no user input
-                        initialConnect();
-                        //insecureConnectAndSend();
+                        if (secureConnectTrueOrFalse) {
+                            initialConnect();
+                        }
+                        else {
+                            insecureConnectAndSend();
+                        }
                         return;
                     }
                 } catch (NullPointerException e) {
@@ -829,6 +837,35 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         } catch (Exception e) {
             e.printStackTrace();
             return;
+        }
+    }
+
+    /**
+     * Responds to insecure sync button press, starts discovery of remote bluetooth devices that are set to
+     * discoverable. If the default string was not changed, the user is prompted to input a valid
+     * hostname.
+     *
+     * @param view
+     */
+    public void syncInsecure(View view) {
+        insecureSyncButton = (Button) findViewById(R.id.insecureSyncButton);
+
+        //check if bluetooth is enabled before trying to use it
+        if (!bluetoothAdapter.isEnabled()) {
+            new BluetoothAsync().execute();
+        } else {
+            //only start discovery if user has entered a remote hostname
+            if (!raspberryNameEditText.getText().toString().trim().equals("Enter raspberry computer name here")) {
+                if (!raspberryNameEditText.getText().toString().trim().isEmpty()) {
+                    raspberryPiName = raspberryNameEditText.getText().toString().trim();
+
+                    secureConnectTrueOrFalse = false; //false for insecure
+                    //if false, bluetooth off, otherwise start discovery, when results arrive the callback is BroadcastReceiver
+                    bluetoothAvailable = bluetoothAdapter.startDiscovery();
+                } else {
+                    raspberryNameEditText.setText("Please enter raspberry pi bluetooth name");
+                }
+            }
         }
     }
 

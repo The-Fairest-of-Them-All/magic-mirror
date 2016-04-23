@@ -28,6 +28,7 @@
     <string name="drawer_open" />
     <string name="drawer_close" />
     <string name="discover">Discover</string>
+    <string name="InsecureSync">Insecure Sync (No Bonding)</string>
     <string-array name="settings">
         <item>Twitter</item>
         <item>Quote</item>

@@ -130,6 +130,16 @@
             android:layout_below="@+id/passWordText"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/InsecureSync"
+            android:id="@+id/insecureSyncButton"
+            android:layout_alignBottom="@+id/WiFibutton"
+            android:layout_alignRight="@+id/passWordText"
+            android:layout_alignEnd="@+id/passWordText"
+            android:onClick="syncInsecure"/>
     </RelativeLayout>
 
     <ListView
