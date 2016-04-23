@@ -14,19 +14,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/connect_button"
-            android:layout_above="@+id/sleepButton"
+            android:onClick="syncContent"
+            android:layout_below="@+id/raspberryName"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="39dp"
-            android:onClick="syncContent"/>
+            android:layout_marginTop="29dp" />
 
         <Button
             android:id="@+id/sleepButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/sleep_button"
-            android:layout_marginBottom="83dp"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true" />
+            android:layout_above="@+id/discoverDevices"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
 
 
 
@@ -140,6 +140,16 @@
             android:layout_alignRight="@+id/passWordText"
             android:layout_alignEnd="@+id/passWordText"
             android:onClick="syncInsecure"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/SleepInsecure"
+            android:id="@+id/sleepInsecure"
+            android:layout_alignBottom="@+id/sleepButton"
+            android:layout_alignRight="@+id/raspberryName"
+            android:layout_alignEnd="@+id/raspberryName"
+            android:onClick="sleepInsecure"/>
     </RelativeLayout>
 
     <ListView

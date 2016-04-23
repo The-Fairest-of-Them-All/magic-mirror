@@ -232,6 +232,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             public void onClick(View v) {
                 sleeping = !sleeping;
                 //setSleepMode();
+                secureConnectTrueOrFalse = true; //true for insecure
                 makeRaspberrySleep();
                 /*if (sleeping) {
                     sleepButton.setText(R.string.wake_button);
@@ -265,6 +266,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         settingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                secureConnectTrueOrFalse = true; //true for insecure
                 mDrawerLayout.openDrawer(Gravity.LEFT);
             }
         });
@@ -272,6 +274,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         twitterAccountButton = (Button)findViewById(R.id.TwitterAccountButton_main);
         View.OnClickListener oclA = new View.OnClickListener(){
             public void onClick(View v){
+                secureConnectTrueOrFalse = true; //true for insecure
                 Intent activityAIntent = new Intent (MainActivity.this,TwitterLogActivity.class);
                 startActivityForResult(activityAIntent, TwitterAccount_REQUEST_CODE);
             }
@@ -287,6 +290,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         wifiButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                secureConnectTrueOrFalse = true; //true for insecure
 
                final WifiAccess wi = new WifiAccess(ssidView.getText().toString(), passwordView.getText().toString(), context);
 
@@ -761,7 +766,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 try {
                     if (device.getName().equals(raspberryPiName)) {
                         BluetoothDevice btDevice = device;
-                        //TODO initialConnect is the original, insecureConnectAndSend is attempt at no user input
+                        //initialConnect is the original secure verison,
+                        //insecureConnectAndSend is unauthenticated and unencrypted
                         if (secureConnectTrueOrFalse) {
                             initialConnect();
                         }
@@ -1216,6 +1222,77 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
      * @param clientSocket open and connected BluetoothSocket
      */
     public void writeSleepToSocket(BluetoothSocket clientSocket) {
+        try {
+            byte[] buffer;  // buffer store for the stream
+            clientSocketOutputStream = clientSocket.getOutputStream();
+
+            buffer = SLEEP_KEYWORD.getBytes();
+            clientSocketOutputStream.write(buffer);
+            System.out.println("Wrote " + new String(buffer) + " to raspberry.");
+            clientSocketOutputStream.flush();
+
+            //write break keyword to end to socket connection on both sides
+            clientSocketOutputStream.write(EXIT_KEYWORD.getBytes());
+            System.out.println("Wrote " + EXIT_KEYWORD + " to raspberry.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void sleepInsecure(View view) {
+        sleepButton = (Button) findViewById(R.id.sleepInsecure);
+
+        //check if bluetooth is enabled before trying to use it
+        if (!bluetoothAdapter.isEnabled()) {
+            new BluetoothAsync().execute();
+        } else {
+            //only start trying to send sleep message if text passes validation
+            if (!raspberryNameEditText.getText().toString().trim().equals("Enter raspberry computer name here")) {
+                if (!raspberryNameEditText.getText().toString().trim().isEmpty()) {
+                    raspberryPiName = raspberryNameEditText.getText().toString().trim();
+
+                    secureConnectTrueOrFalse = false; //false for insecure
+                    //call tryToConnect and specify that the SLEEP keyword should be passed
+                    insecureConnectAndSleep();;
+                } else {
+                    raspberryNameEditText.setText("Please enter raspberry pi bluetooth name");
+                }
+            }
+        }
+    }
+
+    public void insecureConnectAndSleep() {
+        BluetoothDevice btDevice = device;
+        System.out.println("Trying to establish insecure connection to " + raspberryPiName);
+
+        try {
+            //clientSocket = btDevice.createRfcommSocketToServiceRecord(uuid);
+            clientSocket = btDevice.createInsecureRfcommSocketToServiceRecord(uuid);
+            clientSocket.connect();
+            System.out.println("Connected to raspberry pi.");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        writeSleepToSocketInsecure(clientSocket);
+
+        //close socket before end of method so every time the sync button is pressed, a new connection is made
+        try {
+            clientSocket.close();
+            SaveHostName(); //sae host name after successful connect
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Write the SLEEP_KEYWORD to raspberry pi to cause it to stop displaying all JTextAreas.
+     *
+     * @param clientSocket open and connected BluetoothSocket
+     */
+    public void writeSleepToSocketInsecure(BluetoothSocket clientSocket) {
         try {
             byte[] buffer;  // buffer store for the stream
             clientSocketOutputStream = clientSocket.getOutputStream();
