@@ -19,6 +19,7 @@ import com.intel.bluetooth.*;
 import invokecommandline.InvokeCommandLine;
 import rpiui.ParseMMData;
 import ScriptBuilder.ScriptBuilder;
+import javax.bluetooth.ServiceRecord;
 
 import rpiui.RpiUI;
 
@@ -221,6 +222,11 @@ public class BluetoothListenerThread implements Runnable {
                     url = "btspp://localhost:" + uuid.toString() + ";name=RaspberryServer;authenticate=false;authorize=false;encrypt=false";
                     notifier = (StreamConnectionNotifier) Connector.open(url);
 
+                    /*String inserureUrl = discoveryAgent.selectService(uuid, ServiceRecord.NOAUTHENTICATE_NOENCRYPT, false);
+                    notifier = (StreamConnectionNotifier) Connector.open(inserureUrl);*/
+                    
+                    ServiceRecord record = localDevice.getRecord(notifier);
+                    
                     //invoke the script to turn on Bluetooth functionality using the bluetoothctl terminal tool
                     InvokeCommandLine test = new InvokeCommandLine();
                     String[] commandAndArgs = {"sudo", "../scripts/bluetooth-initial-connect-script.sh"};
@@ -241,6 +247,7 @@ public class BluetoothListenerThread implements Runnable {
                             //close connection at end of every loop iteration
                             connection.close();
                             System.out.println("Closed bluetooth socket.");
+                            localDevice.updateRecord(record);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
