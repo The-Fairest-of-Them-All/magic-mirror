@@ -15,7 +15,6 @@ public class MagicMirror {
 //        weather.printCurrently();
 //        Helpful_Hints hint = new Helpful_Hints(weather);
 //        System.out.println("\n" + hint.getStatement());
-          ScriptBuilder sb = new ScriptBuilder();
     }
     
 }

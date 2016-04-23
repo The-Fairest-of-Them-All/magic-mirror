@@ -18,6 +18,7 @@ import javax.bluetooth.RemoteDevice;
 import com.intel.bluetooth.*;
 import invokecommandline.InvokeCommandLine;
 import rpiui.ParseMMData;
+import ScriptBuilder.ScriptBuilder;
 
 import rpiui.RpiUI;
 
@@ -350,8 +351,13 @@ public class BluetoothListenerThread implements Runnable {
                 } else if (input.regionMatches(0, MAKE_CONNECTION_KEYWORD, 0, 7) || result == -1) {
                     System.out.println("THIS IS CONNECTION DATA: " + input);
                     String[] connect = parser.parseConnectionData(input);
-                    InvokeCommandLine invoke = new InvokeCommandLine(connect[0], connect[1]);
-                    invoke.connectToNetwork();
+                    String ssid = connect[0];
+                    String password = connect[1];
+                    ScriptBuilder sb = new ScriptBuilder(ssid, password);
+                    //InvokeCommandLine invoke = new InvokeCommandLine(connect[0], connect[1]);
+                    //invoke.connectToNetwork();
+                    
+                    
                     //TODO in InvokeCommandLine.java, add in the name of the script to connect
                     mainThread.appendToJTextAreaNewline(mainThread.getTwitterJTextArea(), input);
                     inputStream.close();
