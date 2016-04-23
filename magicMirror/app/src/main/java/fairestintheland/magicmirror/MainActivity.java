@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private static final String MAKE_CONNECTION_KEYWORD = "CONNECT";
     private static final String TWITTER_KEY = "Tw:";
     private static final String CALENDAR_KEY = "Ca:";
-    private static final String WEATHER_KEY = "Ww:";
+    private static final String WEATHER_KEY = "We:";
     private static final String QUOTE_KEY = "Qu:";
 
     private final int DATA = 0;
