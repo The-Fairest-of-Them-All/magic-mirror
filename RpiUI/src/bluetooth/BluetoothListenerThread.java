@@ -19,6 +19,8 @@ import com.intel.bluetooth.*;
 import invokecommandline.InvokeCommandLine;
 import rpiui.ParseMMData;
 import ScriptBuilder.ScriptBuilder;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.bluetooth.ServiceRecord;
 
 import rpiui.RpiUI;
@@ -224,9 +226,8 @@ public class BluetoothListenerThread implements Runnable {
 
                     /*String inserureUrl = discoveryAgent.selectService(uuid, ServiceRecord.NOAUTHENTICATE_NOENCRYPT, false);
                     notifier = (StreamConnectionNotifier) Connector.open(inserureUrl);*/
-                    
                     ServiceRecord record = localDevice.getRecord(notifier);
-                    
+
                     //invoke the script to turn on Bluetooth functionality using the bluetoothctl terminal tool
                     InvokeCommandLine test = new InvokeCommandLine();
                     String[] commandAndArgs = {"sudo", "../scripts/bluetooth-initial-connect-script.sh"};
@@ -242,7 +243,19 @@ public class BluetoothListenerThread implements Runnable {
                             //listen for client to connect to the url defined by url
                             connection = notifier.acceptAndOpen();
                             System.out.println("Connection to Android accepted. Bluetooth socket open.");
-                            processConnection(connection);
+
+                            RemoteDevice androidDevice = RemoteDevice.getRemoteDevice(connection);
+                            boolean authenticated = false;
+                            if (androidDevice.isAuthenticated()) {
+                                processConnection(connection);
+                            } else {
+                                //this brings up the authenticate screen on both sides, not what we need
+                                authenticated = androidDevice.authenticate();
+                            }
+                            
+                            if (!authenticated) {
+                                authenticated = RemoteDeviceHelper.authenticate(androidDevice, "0000");
+                            }
 
                             //close connection at end of every loop iteration
                             connection.close();
@@ -363,8 +376,7 @@ public class BluetoothListenerThread implements Runnable {
                     ScriptBuilder sb = new ScriptBuilder(ssid, password);
                     //InvokeCommandLine invoke = new InvokeCommandLine(connect[0], connect[1]);
                     //invoke.connectToNetwork();
-                    
-                    
+
                     //TODO in InvokeCommandLine.java, add in the name of the script to connect
                     mainThread.appendToJTextAreaNewline(mainThread.getTwitterJTextArea(), input);
                     inputStream.close();
