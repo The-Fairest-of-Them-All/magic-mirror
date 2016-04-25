@@ -39,6 +39,9 @@ public class BluetoothListenerThread implements Runnable {
 
     //this is the UUID that is used to create a socket between android and raspberry via bluetooth
     private final String UUIDSTRING = "a96d5795f8c34b7a9bad1eefa9e11a94";
+    
+    private static boolean weatherBool = false;
+    private static boolean wifiBool = false;
 
     //Key strings used to determine what type of data has been received from Android.
     private static final String TWITTER_KEY = "Tw:";
@@ -374,12 +377,17 @@ public class BluetoothListenerThread implements Runnable {
                     String ssid = connect[0];
                     String password = connect[1];
                     ScriptBuilder sb = new ScriptBuilder(ssid, password);
+                    wifiBool = true;
                     //InvokeCommandLine invoke = new InvokeCommandLine(connect[0], connect[1]);
                     //invoke.connectToNetwork();
 
                     //TODO in InvokeCommandLine.java, add in the name of the script to connect
                     mainThread.appendToJTextAreaNewline(mainThread.getTwitterJTextArea(), input);
                     inputStream.close();
+                    if(weatherBool && wifiBool){
+                        String weather = parser.parseWeather(input);
+                        mainThread.replaceJTextArea(mainThread.getWeatherJTextArea(), weather);
+                    }
                     break;
                 } else if (input.regionMatches(0, TWITTER_KEY, 0, 3)) {
                     System.out.println("THIS IS TWITTER: " + input);
@@ -391,8 +399,9 @@ public class BluetoothListenerThread implements Runnable {
                     mainThread.replaceJTextArea(mainThread.getQuoteJTextArea(), quote);
                 } else if (input.regionMatches(0, WEATHER_KEY, 0, 3)) {
                     System.out.println("THIS IS WEATHER: " + input);
-                    String weather = parser.parseWeather(input);
-                    mainThread.replaceJTextArea(mainThread.getWeatherJTextArea(), weather);
+                    //String weather = parser.parseWeather(input);
+                    //mainThread.replaceJTextArea(mainThread.getWeatherJTextArea(), weather);
+                    weatherBool = true;
                 } else if (input.regionMatches(0, CALENDAR_KEY, 0, 3)) {
                     System.out.println("THIS IS CALENDAR: " + input);
                     String cal = parser.parseCalendar(input);
