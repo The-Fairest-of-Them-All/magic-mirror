@@ -245,12 +245,19 @@ public class BluetoothListenerThread implements Runnable {
                             System.out.println("Connection to Android accepted. Bluetooth socket open.");
 
                             RemoteDevice androidDevice = RemoteDevice.getRemoteDevice(connection);
+                            boolean encrypted = false;
+                            
+                            if (!androidDevice.isEncrypted()) {
+                                encrypted = androidDevice.encrypt(connection, true);
+                            }
+                            
                             boolean authenticated = false;
                             if (androidDevice.isAuthenticated()) {
                                 processConnection(connection);
                             } else {
                                 //this brings up the authenticate screen on both sides, not what we need
                                 authenticated = androidDevice.authenticate();
+                                processConnection(connection); //TODO connect anyway 
                             }
                             
                             if (!authenticated) {

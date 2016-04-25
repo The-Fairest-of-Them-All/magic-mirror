@@ -800,7 +800,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         btDevice = bluetoothAdapter.getRemoteDevice(btDevice.getAddress());
         byte[] pin = {0,0,0,0};
         btDevice.setPin(pin);
-        btDevice.setPairingConfirmation(false);
+        //btDevice.setPairingConfirmation(false);
 
         try {
             /*boolean bonded = btDevice.createBond();
