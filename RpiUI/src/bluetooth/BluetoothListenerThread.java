@@ -378,10 +378,6 @@ public class BluetoothListenerThread implements Runnable {
                     String password = connect[1];
                     ScriptBuilder sb = new ScriptBuilder(ssid, password);
                     wifiBool = true;
-                    //InvokeCommandLine invoke = new InvokeCommandLine(connect[0], connect[1]);
-                    //invoke.connectToNetwork();
-
-                    //TODO in InvokeCommandLine.java, add in the name of the script to connect
                     mainThread.appendToJTextAreaNewline(mainThread.getTwitterJTextArea(), input);
                     inputStream.close();
                     if(weatherBool && wifiBool){
