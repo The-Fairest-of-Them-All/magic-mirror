@@ -256,12 +256,12 @@ public class BluetoothListenerThread implements Runnable {
                                 processConnection(connection);
                             } else {
                                 //this brings up the authenticate screen on both sides, not what we need
-                                authenticated = androidDevice.authenticate();
+                                //authenticated = androidDevice.authenticate();
                                 processConnection(connection); //TODO connect anyway 
                             }
                             
                             if (!authenticated) {
-                                authenticated = RemoteDeviceHelper.authenticate(androidDevice, "0000");
+                                //authenticated = RemoteDeviceHelper.authenticate(androidDevice, "0000");
                             }
 
                             //close connection at end of every loop iteration

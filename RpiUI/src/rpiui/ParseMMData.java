@@ -10,6 +10,13 @@ import JSONClasses.Location;
 import Weather.Helpful_Hints;
 import Weather.Weather;
 import com.google.gson.*;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -23,6 +30,7 @@ public class ParseMMData {
     private final String QUOTE_KEY;
     private final String EXIT_KEYWORD = "DONE";
     private final String MAKE_CONNECTION_KEYWORD = "CONNECT";
+    private boolean reachable = false;
 
     public ParseMMData(String t, String c, String w, String q) {
         TWITTER_KEY = t;
@@ -33,7 +41,7 @@ public class ParseMMData {
 
     /**
      * Removes the leading "T: " from the input string and if there is a
-     * trailing "DONE" it removes that as well. Removes any leading or trailing 
+     * trailing "DONE" it removes that as well. Removes any leading or trailing
      * square brackets that may be present.
      *
      * @param input the unformatted Twitter String
@@ -68,13 +76,14 @@ public class ParseMMData {
     }
 
     /**
-     * Removes the leading "W: " from the input string and if there is
-     * a trailing "DONE" it removes that as well. If no location data was passed,
-     * just returns the input String, but if location data was provided, sends that
-     * data to a Weather object to fetch the weather. 
+     * Removes the leading "W: " from the input string and if there is a
+     * trailing "DONE" it removes that as well. If no location data was passed,
+     * just returns the input String, but if location data was provided, sends
+     * that data to a Weather object to fetch the weather.
      *
      * @param input the unformatted Weather String
-     * @return the formatted Weather String or a message that Location is required
+     * @return the formatted Weather String or a message that Location is
+     * required
      */
     public String parseWeather(String input) {
         String temp;
@@ -83,20 +92,34 @@ public class ParseMMData {
         if (temp.contains("I need your location to get the weather.")) {
             return temp;
         } else {
-            Gson gson = new Gson();
-            Location loc = gson.fromJson(temp, Location.class);
-            Weather weat = new Weather(loc);
-            weat.printCurrently();
-            StringBuilder weather = new StringBuilder(weat.returnCurrently());
-            Helpful_Hints hh = new Helpful_Hints(weat);
-            weather.append("\n").append(hh.getStatement());
+            //check if google is reachable to test whether network connectivity is available
+            //try {
+                //reachable = InetAddress.getByName("www.google.com").isReachable(5000);
+                reachable = pingHost("www.google.com", 80, 5000);
+            /*} catch (UnknownHostException ex) {
+                Logger.getLogger(ParseMMData.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(ParseMMData.class.getName()).log(Level.SEVERE, null, ex);
+            }*/
+            StringBuilder weather = new StringBuilder();
+            if (reachable) {
+                Gson gson = new Gson();
+                Location loc = gson.fromJson(temp, Location.class);
+                Weather weat = new Weather(loc);
+                weat.printCurrently();
+                weather.append(weat.returnCurrently());
+                Helpful_Hints hh = new Helpful_Hints(weat);
+                weather.append("\n").append(hh.getStatement());
+            } else {
+                weather.append("Internet connectivity needed to access the weather.");
+            }
             return weather.toString();
         }
     }
 
     /**
      * Removes the leading "C: " from the input string and if there is a
-     * trailing "DONE" it removes that as well. Removes any leading or trailing 
+     * trailing "DONE" it removes that as well. Removes any leading or trailing
      * square brackets that may be present.
      *
      * @param input the unformatted String
@@ -132,15 +155,18 @@ public class ParseMMData {
 
         return splitInput;
     }
-    
+
     /**
-     * Removes any leading or trailing square brackets present in the String argument.
-     * 
-     * @param withBrackets a String that may or may not have square brackets surrounding it 
-     * @return the same String that was passed in with the square brackets removed if they were present
+     * Removes any leading or trailing square brackets present in the String
+     * argument.
+     *
+     * @param withBrackets a String that may or may not have square brackets
+     * surrounding it
+     * @return the same String that was passed in with the square brackets
+     * removed if they were present
      */
     private String removeSquareBrackets(String withBrackets) {
-        if (withBrackets.startsWith("[")) {      
+        if (withBrackets.startsWith("[")) {
             if (withBrackets.endsWith("]")) { //leading and trailing square brackets present
                 withBrackets = withBrackets.substring(1, withBrackets.length() - 2);
             } else { //only leading square bracket present
@@ -150,5 +176,14 @@ public class ParseMMData {
             withBrackets = withBrackets.substring(0, withBrackets.length() - 2);
         }
         return withBrackets;
+    }
+
+    public static boolean pingHost(String host, int port, int timeout) {
+        try (Socket socket = new Socket()) {
+            socket.connect(new InetSocketAddress(host, port), timeout);
+            return true;
+        } catch (IOException e) {
+            return false; // Either timeout or unreachable or failed DNS lookup.
+        }
     }
 }

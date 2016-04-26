@@ -81,13 +81,19 @@ public class Weather {
      * update the weather information
      */
     private void getWeather() {
-        fio.getForecast(location.latitude, location.longitude);
         try {
+            fio.getForecast(location.latitude, location.longitude);
+        } catch (NullPointerException e) {
+            System.out.println("Latitude or Longitude not set");
+            e.printStackTrace();
+        }
+        try {
+
             current = new FIOCurrently(fio);
             daily = new FIODaily(fio);
         } catch (Exception e) {
-            e.printStackTrace();
             System.out.println("NULL PROBABLY NO INTERNET CONNECTION ON THIS DEVICE");
+            e.printStackTrace();
         }
     }
 
@@ -129,7 +135,7 @@ public class Weather {
         sb.append("\nCurrent Temp: ").append(currentTemp);
         sb.append("\nHi temp: ").append(hiTemp);
         sb.append("\nLo Temp: ").append(loTemp);
-        sb.append("\nPrecipitation: ").append(precipitation).append("%");
+        sb.append("\nPrecipitation: ").append(precipitation).append("%\n");
         return (sb.toString());
     }
 
