@@ -244,30 +244,30 @@ public class BluetoothListenerThread implements Runnable {
                             connection = notifier.acceptAndOpen();
                             System.out.println("Connection to Android accepted. Bluetooth socket open.");
 
-                            RemoteDevice androidDevice = RemoteDevice.getRemoteDevice(connection);
+                            /*RemoteDevice androidDevice = RemoteDevice.getRemoteDevice(connection);
                             boolean encrypted = false;
                             
                             if (!androidDevice.isEncrypted()) {
                                 encrypted = androidDevice.encrypt(connection, true);
-                            }
+                            }*/
                             
-                            boolean authenticated = false;
+                            /*boolean authenticated = false;
                             if (androidDevice.isAuthenticated()) {
                                 processConnection(connection);
-                            } else {
+                            } else {*/
                                 //this brings up the authenticate screen on both sides, not what we need
                                 //authenticated = androidDevice.authenticate();
                                 processConnection(connection); //TODO connect anyway 
-                            }
+                            //}
                             
-                            if (!authenticated) {
+                            //if (!authenticated) {
                                 //authenticated = RemoteDeviceHelper.authenticate(androidDevice, "0000");
-                            }
+                            //}
 
                             //close connection at end of every loop iteration
                             connection.close();
                             System.out.println("Closed bluetooth socket.");
-                            localDevice.updateRecord(record);
+                            //localDevice.updateRecord(record);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }

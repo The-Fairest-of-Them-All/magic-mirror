@@ -798,12 +798,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         System.out.println("Trying to establish initial connection to " + raspberryPiName);
 
         btDevice = bluetoothAdapter.getRemoteDevice(btDevice.getAddress());
-        byte[] pin = {0,0,0,0};
-        btDevice.setPin(pin);
+        //byte[] pin = {0,0,0,0};
+        //btDevice.setPin(pin);
         //btDevice.setPairingConfirmation(false);
 
         try {
-            /*boolean bonded = btDevice.createBond();
+            boolean bonded = btDevice.createBond();
             //return val is false for an immediate bonding error or true to indicate bonding will begin
             if (bonded) {
                 System.out.println("Bonding with raspberry pi will begin");
@@ -832,14 +832,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     System.out.println("No bonding information available");
                     Log.d("Bond", "No bonding information available");
                     Toast.makeText(context, "No bonding information available", Toast.LENGTH_SHORT).show();
-            }*/
-            clientSocket = btDevice.createInsecureRfcommSocketToServiceRecord(uuid);
+            }
+
+            /*clientSocket = btDevice.createInsecureRfcommSocketToServiceRecord(uuid);
             //clientSocket = btDevice.createRfcommSocketToServiceRecord(uuid);
-            clientSocket.connect();
-            System.out.println("Connected to raspberry pi.");
+            clientSocket.connect();*/
+            /*System.out.println("Connected to raspberry pi.");
             //close socket after initial connection is made
             clientSocket.close();
-            System.out.println("Socket successfully closed. Now paired.");
+            System.out.println("Socket successfully closed. Now paired.");*/
+
             SaveHostName();
             System.out.println("Saved the hostname " + raspberryPiName);
             Log.d("Bond", "Saved the hostname " + raspberryPiName);
