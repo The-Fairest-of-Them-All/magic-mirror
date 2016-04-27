@@ -230,8 +230,9 @@ public class BluetoothListenerThread implements Runnable {
 
                     //invoke the script to turn on Bluetooth functionality using the bluetoothctl terminal tool
                     InvokeCommandLine test = new InvokeCommandLine();
-                    String[] commandAndArgs = {"sudo", "../scripts/bluetooth-initial-connect-script.sh"};
-                    test.invoke(commandAndArgs);
+                    String[] commandAndArgs = {"sudo", "sh", "../scripts/bluetooth-initial-connect-script.sh"};
+                    String invokeResults = test.invoke(commandAndArgs);
+                    System.out.println("Invoked bluetooth script. Results follow: " + invokeResults);
 
                     /*wait for bluetooth connection from Android app, the program will wait at the acceptAndOpen
                         method call line indefinitely for incoming connections so when the program has started
