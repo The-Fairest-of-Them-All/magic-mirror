@@ -284,10 +284,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
                         Bundle bundle = new Bundle();
                         String stringMess = "Wrong Account Info,please enter again!";
-                        if( wi.isConnect()){
+                        //if( wi.isConnect()){
                             stringMess ="Correct wifi Info!";
                             tryToConnect(CONNECT);
-                        }
+                        //}
                         bundle.putString("myKey",stringMess);
                         Message msg = toastMessageHandler.obtainMessage();
                         msg.setData(bundle);
