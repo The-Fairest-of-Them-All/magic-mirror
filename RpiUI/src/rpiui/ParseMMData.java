@@ -94,8 +94,8 @@ public class ParseMMData {
         if (temp.contains("I need your location to get the weather.")) { 
             return temp;
         } 
-        //Location should not be displayed
-        else if (temp.equals("")) {
+        //Location should not be displayed if temp is empty string
+        else if (temp.trim().equals("")) {
             return temp;
         } 
         //error checking passed

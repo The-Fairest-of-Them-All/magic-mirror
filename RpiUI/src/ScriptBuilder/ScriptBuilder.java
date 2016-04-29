@@ -62,7 +62,7 @@ public class ScriptBuilder {
               WPA = "\nnetwork={"
                       + "\n\tssid=\""+SSID+"\""
                       + "\n\tpsk=\""+password+"\""
-                      + "\nkey_mgmt=WPA-PSK" //Keith added this line to test
+                      + "\n\tkey_mgmt=WPA-PSK" //Keith added this line to test
                       + "\n}";
               try{
                 FileWriter fw = new FileWriter(fileName, true);
