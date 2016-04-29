@@ -111,17 +111,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private Button discoverButton;
     private boolean sleeping;
     private boolean[] switchStates;
-      EditText ssidView ;
-      EditText passwordView ;
-    EditText ipBar;
+    EditText ssidView ;
+    EditText passwordView ;
 
     //connection variables
-    private Socket client;
-    private PrintWriter writer;
-    String ipAddress;
-    JSONArray parcel;
+
     Context context;
-    ConnectivityManager cm;
+
 
     BluetoothSocketConnection bluetoothSocketConnection;
 
@@ -159,7 +155,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     ArrayList<Parcelable> devices = new ArrayList<>(); //hostname and MAC address of every device that is discoverable
     BluetoothSocket clientSocket = null;
     UUID uuid;
-    InputStream clientSocketInputStream;
     OutputStream clientSocketOutputStream;
     EditText raspberryNameEditText;
     ArrayList<String> currentEvent;
@@ -168,7 +163,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     TwitterMessage tMess;
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
-    //GetLocation myLocation;
     String latitude = "";
     String longitude = "";
     public String eventMessage;
@@ -234,11 +228,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 //setSleepMode();
                 secureConnectTrueOrFalse = true; //true for insecure
                 makeRaspberrySleep();
-                /*if (sleeping) {
-                    sleepButton.setText(R.string.wake_button);
-                } else {
-                    sleepButton.setText(R.string.sleep_button);
-                }*/
             }
         });
 
@@ -314,18 +303,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 }, 3000);
             }
         });
-
-        /*syncButton = (Button) findViewById(R.id.connect_button);
-        syncButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getJSONMessage();
-
-                //syncWithPi();
-                //callSync();
-                new MyClientTask().execute();
-            }
-        });*/
 
         //start bluetooth services
         bluetoothInfo = (TextView) findViewById(R.id.bluetoothInfo);
@@ -494,19 +471,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         Log.i("LOC", "Connection failed: ConnectionResult.getErrorCode() = " + connectionResult.getErrorCode());
     }
 
-
-    /*protected void onStart() {
-        //mGoogleApiClient.connect();
-        super.onStart();
-    }
-
-    protected void onStop() {
-        //mGoogleApiClient.disconnect();
-        SaveSwitchStates();
-        SaveHostName();
-        myLocation.stopLocationServices();
-        super.onStop();
-    }*/
     //-----------END LOCATION SECTION---------------------------------------------------------------------
 
     //-----------FILE I/O-------------------------------------------------------------------------------
@@ -715,10 +679,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
      */
     public void startLooking(View view) {
         discoverButton = (Button) findViewById(R.id.discoverDevices);
-        //discoverButton.setEnabled(false);
-        //discoverButton.setClickable(false);
-        //String originalText = discoverButton.getText().toString();
-        //discoverButton.setText("Don't click right now");
 
         //check if bluetooth is enabled before trying to use it
         if (!bluetoothAdapter.isEnabled()) {
@@ -737,9 +697,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 }
             }
         }
-        //discoverButton.setEnabled(true);
-        //discoverButton.setClickable(true);
-        //discoverButton.setText(originalText);
     }
 
     /**
@@ -798,9 +755,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         System.out.println("Trying to establish initial connection to " + raspberryPiName);
 
         btDevice = bluetoothAdapter.getRemoteDevice(btDevice.getAddress());
-        //byte[] pin = {0,0,0,0};
-        //btDevice.setPin(pin);
-        //btDevice.setPairingConfirmation(false);
 
         try {
             boolean bonded = btDevice.createBond();
@@ -833,14 +787,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     Log.d("Bond", "No bonding information available");
                     Toast.makeText(context, "No bonding information available", Toast.LENGTH_SHORT).show();
             }
-
-            /*clientSocket = btDevice.createInsecureRfcommSocketToServiceRecord(uuid);
-            //clientSocket = btDevice.createRfcommSocketToServiceRecord(uuid);
-            clientSocket.connect();*/
-            /*System.out.println("Connected to raspberry pi.");
-            //close socket after initial connection is made
-            clientSocket.close();
-            System.out.println("Socket successfully closed. Now paired.");*/
 
             SaveHostName();
             System.out.println("Saved the hostname " + raspberryPiName);
@@ -917,10 +863,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
      */
     public void syncContent(View view) {
         syncButton = (Button) findViewById(R.id.connect_button);
-        //syncButton.setEnabled(false);
-        //syncButton.setClickable(false);
-        //String originalText = syncButton.getText().toString();
-        //syncButton.setText("Don't click right now");
 
         //check if bluetooth is enabled before trying to use it
         if (!bluetoothAdapter.isEnabled()) {
@@ -938,9 +880,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 }
             }
         }
-        //syncButton.setEnabled(true);
-        //syncButton.setClickable(true);
-        //syncButton.setText(originalText);
     }
 
     /**
@@ -1195,10 +1134,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
      */
     private void makeRaspberrySleep() {
         sleepButton = (Button) findViewById(R.id.sleepButton);
-        //sleepButton.setEnabled(false);
-        //sleepButton.setClickable(false);
-        //String originalText = sleepButton.getText().toString();
-        //sleepButton.setText("Don't click right now");
 
         //check if bluetooth is enabled before trying to use it
         if (!bluetoothAdapter.isEnabled()) {
@@ -1216,9 +1151,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 }
             }
         }
-        //sleepButton.setEnabled(true);
-        //sleepButton.setClickable(true);
-        //sleepButton.setText(originalText);
     }
 
     /**
@@ -1315,48 +1247,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
     }
     //-----------------END BLUETOOTH SECTION-----------------------------------------------------------------
-
-
-
-
-	/** set  Raspberry Pi screen sleep*/
-    /*private void setSleepMode() {
-        if (hasValidConnection()) {
-            Thread t = new Thread() {
-                public void run() {
-                    try {
-                        JSONObject sleep = new JSONObject();
-                        sleep.put("sleep_mode", sleeping);
-                        client = new Socket(ipAddress, 6685);
-                        writer = new PrintWriter(client.getOutputStream(), true);
-                        writer.write(sleep.toString());
-                        writer.flush();
-                        writer.close();
-                        client.close();
-
-                    } catch (IOException e) {
-                        Toast.makeText(context, "Unable to connect to server", Toast.LENGTH_SHORT).show();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            };
-            t.start();
-
-        } else {
-            Toast.makeText(context, "Please Connect to Internet network", Toast.LENGTH_LONG).show();
-        }
-    }*/
-
-	/**check if the Android OS has network connection*/
-    /*private boolean hasValidConnection() {
-        cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (cm != null) {
-            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-            return (activeNetwork != null) && (activeNetwork.isConnectedOrConnecting());
-        }
-        return false;
-    }*/
 
 	/**initialize the switches*/
     private void initSwitches() {
@@ -1515,220 +1405,4 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         String json = gson.toJson(loc);
         return json;
     }
-
-    /**
-     * Overridden to unregister the BroadcastReceiver.
-     */
-    /*@Override
-    protected void onDestroy() {
-        unregisterReceiver(bluetoothSocketConnection.getmReceiver());
-        super.onDestroy();
-    }*/
-
-
-    /**
-     * Respond to a user's interacting with an activity presented to turn on bluetooth capabilities.
-     * This will alert the user as to whether they did or did not successfully enable bluetooth when
-     * called with requestCode == bluetoothSocketConnection.getREQUEST_ENABLE_BT()
-     *
-     * @param requestCode Defined in the calling code, allows response to multiple events,
-     *                    REQUEST_ENABLE_BT represents a bluetooth activity request
-     * @param resultCode Results of user's interaction with the activity
-     * @param data
-     */
-    /*@Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        //responds to the user's response to the bluetooth enable prompt if it was presented
-        if (requestCode == bluetoothSocketConnection.getREQUEST_ENABLE_BT()) {
-            if (resultCode == RESULT_OK) {
-                //TODO change ref - bluetoothInfo.setText("You enabled bluetooth. Thanks.");
-            } else {
-                //TODO cheange ref - bluetoothInfo.setText("Bluetooth disabled.");
-            }
-        }
-    }*/
-
-    /*
-    //-----------------IP SECTION----------------------------------------------------------------------------
-    public class MyClientTask extends AsyncTask<Void, Void, Void> {
-
-
-        MyClientTask() {
-
-        }
-
-        public int unsignedToBytes(byte b) {
-            return b & 0xFF;
-        }
-
-        @Override
-        protected Void doInBackground(Void... arg0) {
-
-            Socket socket = null;
-            DataOutputStream dataOutputStream = null;
-            DataInputStream dataInputStream = null;
-
-            //byte a = unsignedToBytes((byte)-64);
-            //byte b = (byte)-64 & 0xFF;
-
-            InetAddress addr = null;
-            byte[] ipAddr = new byte[]{-64,-88,43,69};
-            ipAddr = new byte[]{-64,-88,43,-93};
-            ipAddr = new byte[]{-64,-88,1,-104}; //1.152
-            ipAddr = new byte[]{-64,-88,1,-93}; //1.163
-            try {
-                addr = InetAddress.getByAddress(ipAddr);
-            } catch (UnknownHostException e) {
-                e.printStackTrace();
-            }
-
-            try {
-                //socket = new Socket("192.168.43.69",60000);
-                //socket = new Socket(addr, 60000);
-                socket = new Socket(addr, 55555);
-                dataOutputStream = new DataOutputStream(
-                        socket.getOutputStream());
-                dataInputStream = new DataInputStream(socket.getInputStream());
-
-                /*if (msgToServer != null) {
-                    dataOutputStream.writeUTF(msgToServer);
-                }
-
-                response = dataInputStream.readUTF();****END COMMENT
-
-            } catch (UnknownHostException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-                //response = "UnknownHostException: " + e.toString();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-                //response = "IOException: " + e.toString();
-            } finally {
-                if (socket != null) {
-                    try {
-                        socket.close();
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
-
-                if (dataOutputStream != null) {
-                    try {
-                        dataOutputStream.close();
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
-
-                if (dataInputStream != null) {
-                    try {
-                        dataInputStream.close();
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            //textResponse.setText(response);
-            super.onPostExecute(result);
-        }
-
-    }
-
-    public void callSync() {
-        new Sync().execute();
-    }
-
-    public class Sync extends AsyncTask<Void, Void, Void> {
-
-        Sync() {}
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            try {
-                //EditText ipView = (EditText) findViewById(R.id.ipAddressTextInput);
-                //ipAddress = ipView.getText().toString();
-                Log.d("Sync", "Past getting IP. It is " + ipAddress);
-                parcel = new JSONArray();
-                for (boolean b : switchStates) {
-                    //{
-                    parcel.put(b);
-                }
-                Log.d("Sync", "Parcel created" + parcel.toString());
-                client = new Socket("192.168.1.152", 55555);
-
-                Log.d("Sync", "Connected to raspberry pi");
-                System.out.println("Connected to raspberry pi.");
-
-                writer = new PrintWriter(client.getOutputStream(), true);
-                Log.d("Sync", "About to write to the socket.");
-                writer.write(parcel.toString());
-                Log.d("Sync", "Wrote to socket");
-                writer.flush();
-                writer.close();
-                client.close();
-                //}
-            } catch (IOException e) {
-                Toast.makeText(context, "Unable to connect to server", Toast.LENGTH_SHORT).show();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            EditText ipView = (EditText) findViewById(R.id.ipAddressTextInput);
-            ipView.setText("Connected");
-            super.onPostExecute(aVoid);
-        }
-    }
-//--------------------END IP SECTION------------------------------------------------------------------------------
-
-
-
-    private void syncWithPi() {
-        if (hasValidConnection()) {
-            Thread t = new Thread() {
-                public void run() {
-                    try {
-                        EditText ipView = (EditText) findViewById(R.id.ipAddressTextInput);
-                        ipAddress = ipView.getText().toString();
-                        Log.d("Sync", "Past getting IP. It is " + ipAddress);
-                        parcel = new JSONArray();
-                        for (boolean b : switchStates) {
-                            //{
-                            parcel.put(b);
-                        }
-                        Log.d("Sync", "Parcel created" + parcel.toString());
-                        client = new Socket(ipAddress, 60000);
-
-                        Log.d("Sync", "Connected to raspberry pi");
-                        System.out.println("Connected to raspberry pi.");
-
-                        writer = new PrintWriter(client.getOutputStream(), true);
-                        Log.d("Sync", "About to write to the socket.");
-                        writer.write(parcel.toString());
-                        Log.d("Sync", "Wrote to socket");
-                        writer.flush();
-                        writer.close();
-                        client.close();
-                        //}
-                    } catch (IOException e) {
-                        Toast.makeText(context, "Unable to connect to server", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            };
-            t.start();
-
-        } else {
-            Toast.makeText(context, "Please Connect to Internet network", Toast.LENGTH_LONG).show();
-        }
-    }*/
 }

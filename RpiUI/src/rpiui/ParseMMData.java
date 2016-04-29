@@ -89,18 +89,18 @@ public class ParseMMData {
         String temp;
         temp = input.replaceFirst(WEATHER_KEY, "").trim();
         temp = temp.replaceAll(EXIT_KEYWORD, "").trim();
-        if (temp.contains("I need your location to get the weather.")) {
+        
+        //Location was off on phone
+        if (temp.contains("I need your location to get the weather.")) { 
             return temp;
-        } else {
+        } 
+        //Location should not be displayed
+        else if (temp.equals("")) {
+            return temp;
+        } else{
             //check if google is reachable to test whether network connectivity is available
-            //try {
-                //reachable = InetAddress.getByName("www.google.com").isReachable(5000);
-                reachable = pingHost("www.google.com", 80, 5000);
-            /*} catch (UnknownHostException ex) {
-                Logger.getLogger(ParseMMData.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(ParseMMData.class.getName()).log(Level.SEVERE, null, ex);
-            }*/
+            reachable = pingHost("www.google.com", 80, 5000);
+           
             StringBuilder weather = new StringBuilder();
             if (reachable) {
                 Gson gson = new Gson();
