@@ -70,7 +70,7 @@ public class RpiUI extends JFrame {
             + " in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur "
             + "sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit "
             + "anim id est laborum.";
-    static String quote = "I'm ready - Spongebob Squarepants";
+    static String quote = "I'm ready!\n-Spongebob Squarepants";
 
     /**
      * No arg constructor.

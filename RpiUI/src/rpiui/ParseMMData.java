@@ -97,7 +97,9 @@ public class ParseMMData {
         //Location should not be displayed
         else if (temp.equals("")) {
             return temp;
-        } else{
+        } 
+        //error checking passed
+        else{
             //check if google is reachable to test whether network connectivity is available
             reachable = pingHost("www.google.com", 80, 5000);
            

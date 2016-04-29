@@ -118,9 +118,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     Context context;
 
-
-    BluetoothSocketConnection bluetoothSocketConnection;
-
     //bluetooth vars
     //int used to determine what activity was presented in the onActivityResult() method
     private static final int REQUEST_ENABLE_BT = 100;
@@ -148,7 +145,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     BluetoothManager bluetoothManager;
     BluetoothAdapter bluetoothAdapter;
     TextView bluetoothInfo;
-    ListView discoverableList;
     boolean bluetoothAvailable;
     IntentFilter filter;
     BluetoothDevice device;
@@ -169,17 +165,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     Set<BluetoothDevice> bondedDevices;
     Button insecureSyncButton;
 
-    LocationRequest mLocationRequest;
-    LocationSettingsRequest.Builder mLocationSettingsRequestBuilder;
     final int MY_PERMISSIONS_REQUEST_LOCATION = 1001;
     Intent gpsOptionsIntent;
     final int ENABLE_LOCATION = 900;
     int locationSettings;
 
-    String[] quotes = {"Strive not to be a success, but rather to be of value. -Albert Einstein",
-            "Every strike brings me closer to the next home run. -Babe Ruth",
-            "Life is what happens to you while you're busy making other plans. -John Lennon",
-            "I'm ready - Spongebob Squarepants"};
+    String[] quotes = {"Strive not to be a success, but rather to be of value.\n-Albert Einstein",
+            "Every strike brings me closer to the next home run.\n-Babe Ruth",
+            "Life is what happens to you while you're busy making other plans.\n-John Lennon",
+            "I'm ready!\n-Spongebob Squarepants"};
     int quotePosition;
 
     Handler toastMessageHandler = new Handler() {
@@ -270,8 +264,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         };
         twitterAccountButton.setOnClickListener(oclA);
 
-      ssidView = (EditText) findViewById(R.id.ssidText);
-         passwordView = (EditText) findViewById(R.id.passWordText);
+        ssidView = (EditText) findViewById(R.id.ssidText);
+        passwordView = (EditText) findViewById(R.id.passWordText);
         ssidView.setText("Feather");
         passwordView.setText("privatekey");
 
@@ -279,10 +273,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         wifiButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 secureConnectTrueOrFalse = true; //true for insecure
 
-               final WifiAccess wi = new WifiAccess(ssidView.getText().toString(), passwordView.getText().toString(), context);
+                final WifiAccess wi = new WifiAccess(ssidView.getText().toString(), passwordView.getText().toString(), context);
 
                 Timer timer = new Timer();
                 timer.schedule(new TimerTask() {
@@ -291,10 +284,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
                         Bundle bundle = new Bundle();
                         String stringMess = "Wrong Account Info,please enter again!";
-                        //if( wi.isConnect()){
+                        if( wi.isConnect()){
                             stringMess ="Correct wifi Info!";
                             tryToConnect(CONNECT);
-                        //}
+                        }
                         bundle.putString("myKey",stringMess);
                         Message msg = toastMessageHandler.obtainMessage();
                         msg.setData(bundle);
