@@ -24,6 +24,7 @@ public class ScriptBuilder {
     final String script2[] = {"sudo", "wpa_supplicant", "-B", "-i", "wlan0", "-c", "/etc/wpa_supplicant/wpa_supplicant.conf"};
     final String script3[] = {"sudo", "iwconfig", "wlan0"};
     final String script4[] = {"sudo", "dhclient", "wlan0"};
+    final String script5[] = {"sudo reboot"};
     String WPA = "";
     
     //private String SSID = "BigBrother2.4GHz";
@@ -62,6 +63,7 @@ public class ScriptBuilder {
               WPA = "\nnetwork={"
                       + "\n\tssid=\""+SSID+"\""
                       + "\n\tpsk=\""+password+"\""
+                      + "\n\tkey_mgmt=WPA-PSK"
                       + "\n}";
               try{
                 FileWriter fw = new FileWriter(fileName, true);
@@ -75,6 +77,7 @@ public class ScriptBuilder {
               invoke(script2);
               invoke(script3);
               invoke(script4);
+              invoke(script5);
               //TODO ADD APPENDING WPA_SUPPLICANT
         }
     }
