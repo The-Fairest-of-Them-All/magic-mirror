@@ -82,151 +82,165 @@ public class RpiUI extends JFrame {
      * a grid system to specify where each designated area is located. Sets design specifications for the layout.
      */
     public void framer() {
-        //private void framer() {
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        
-        frame = new JFrame("Raspberry Pi App");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        frame.setUndecorated(true);
-        frame.setPreferredSize(screenSize);
+        try {
+            //private void framer() {
+            
+            
+            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            
+            //72 pixels per inch 72 * 2.75 = 198
+            int width = (int) (screenSize.getWidth() - 198);
+            int height = (int) screenSize.getHeight();
+            screenSize.setSize(width, height);
+            
+            
+            frame = new JFrame("Raspberry Pi App");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setExtendedState(JFrame.MAXIMIZED_VERT);
+            frame.setUndecorated(true);
+            frame.setPreferredSize(screenSize);
 //        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 //        GraphicsDevice gd = ge.getDefaultScreenDevice();
 //        gd.setFullScreenWindow(frame);
-
-        p = new JPanel(new GridBagLayout());
-        p.setBackground(Color.black);
-        p.setOpaque(true);
-        p.setPreferredSize(screenSize);
-
-        twitArea = new JTextArea(
-                sample + sample, 6, 20);
-        twitArea.setFont(new Font("Roman", Font.BOLD, 20));
-        twitArea.setLineWrap(true);
-        twitArea.setWrapStyleWord(true);
-        twitArea.setOpaque(false);
-        twitArea.setEditable(false);
-        twitArea.setForeground(Color.white);
-        twitc = new GridBagConstraints();
-        twitc.gridy = 0;
-        twitc.gridx = 2;
-        twitc.gridheight = 3;
-
-        twitc.fill = GridBagConstraints.VERTICAL;
-        twitc.anchor = GridBagConstraints.FIRST_LINE_END;
-
-        JLabel blank = new JLabel();
-        //     blank.setForeground(Color.red);
-        JLabel blank2 = new JLabel();
-        //   blank2.setForeground(Color.red);
-        JLabel blank3 = new JLabel();
-        //    blank3.setForeground(Color.red);
-        JLabel blank4 = new JLabel();
-        //  blank4.setForeground(Color.red);
-        JLabel blank5 = new JLabel();
-        //  blank5.setForeground(Color.red);
-        JLabel blank6 = new JLabel();
-        //      blank6.setForeground(Color.red);
-
-        GridBagConstraints topmiddlec = new GridBagConstraints();
-        topmiddlec.gridy = 0;
-        topmiddlec.gridx = 1;
-        topmiddlec.weightx = 60;
-        topmiddlec.ipadx = 45;
-
-        calArea = new JTextArea(
-                sample, 6, 20);
-        calArea.setFont(new Font("Roman", Font.BOLD, 20));
-        calArea.setLineWrap(true);
-        calArea.setWrapStyleWord(true);
-        calArea.setOpaque(false);
-        calArea.setEditable(false);
-        calArea.setForeground(Color.white);
-        GridBagConstraints calc = new GridBagConstraints();
-        calc.gridy = 0;
-        calc.gridx = 0;
-        calc.weightx = 30;
-        calc.anchor = GridBagConstraints.FIRST_LINE_START;
-
-        GridBagConstraints row2left = new GridBagConstraints();
-        row2left.gridy = 1;
-        row2left.gridx = 0;
-        row2left.weightx = 60;
-        row2left.weighty = 30;
-
-        GridBagConstraints row2mid = new GridBagConstraints();
-        row2mid.gridy = 1;
-        row2mid.gridx = 1;
-        row2mid.weightx = 60;
-        row2mid.weighty = 30;
-
-        weatArea = new JTextArea(
-                sample, 6, 20);
-        weatArea.setFont(new Font("Roman", Font.BOLD, 20));
-        weatArea.setLineWrap(true);
-        weatArea.setWrapStyleWord(true);
-        weatArea.setOpaque(false);
-        weatArea.setEditable(false);
-        weatArea.setForeground(Color.white);
-        GridBagConstraints weatc = new GridBagConstraints();
-        weatc.gridy = 2;
-        weatc.gridx = 0;
-        weatc.gridheight = 2;
-        weatc.fill = GridBagConstraints.VERTICAL;
-        weatc.anchor = GridBagConstraints.FIRST_LINE_START;
-
-        GridBagConstraints row3mid = new GridBagConstraints();
-        row3mid.gridx = 1;
-        row3mid.gridy = 2;
-
-        GridBagConstraints row3r = new GridBagConstraints();
-        row3r.gridx = 2;
-        row3r.gridy = 2;
-
-        quoteArea = new JTextArea(
-                quote, 6, 20);
-        quoteArea.setFont(new Font("Roman", Font.BOLD, 20));
-        quoteArea.setLineWrap(true);
-        quoteArea.setWrapStyleWord(true);
-        quoteArea.setOpaque(false);
-        quoteArea.setEditable(false);
-        quoteArea.setForeground(Color.white);
-        GridBagConstraints quotec = new GridBagConstraints();
-        quotec.gridx = 1;
-        quotec.gridy = 3;
-        quotec.anchor = GridBagConstraints.PAGE_END;
-
-        timeArea = new JTextArea("", 6, 20);
-        timeArea.setFont(new Font("Roman", Font.BOLD, 30));
-        timeArea.setLineWrap(false);
-        timeArea.setWrapStyleWord(true);
-        timeArea.setOpaque(false);
-        timeArea.setEditable(false);
-        timeArea.setForeground(Color.white);
-        GridBagConstraints quotet = new GridBagConstraints();
-        quotet.gridx = 1;
-        quotet.gridy = 1;
-        quotet.anchor = GridBagConstraints.PAGE_START;
-
-        GridBagConstraints lastblank = new GridBagConstraints();
-        lastblank.gridx = 2;
-        lastblank.gridy = 3;
-
-        p.add(twitArea, twitc);
-        //p.add(blank, topmiddlec);
-        p.add(timeArea, topmiddlec);
-        p.add(calArea, calc);
-        p.add(blank2, row2left);
-        p.add(blank3, row2mid);
-        p.add(weatArea, weatc);
-        p.add(blank4, row3mid);
-        p.add(blank5, row3r);
-        p.add(quoteArea, quotec);
-        frame.add(p);
-
-        frame.pack();
-
-        frame.setVisible(display);
+            
+            p = new JPanel(new GridBagLayout());
+            p.setBackground(Color.black);
+            p.setOpaque(true);
+            p.setPreferredSize(screenSize);
+            
+            twitArea = new JTextArea(
+                    sample + sample, 6, 20);
+            twitArea.setFont(new Font("Roman", Font.BOLD, 20));
+            twitArea.setLineWrap(true);
+            twitArea.setWrapStyleWord(true);
+            twitArea.setOpaque(false);
+            twitArea.setEditable(false);
+            twitArea.setForeground(Color.white);
+            twitc = new GridBagConstraints();
+            twitc.gridy = 0;
+            twitc.gridx = 2;
+            twitc.gridheight = 3;
+            
+            twitc.fill = GridBagConstraints.VERTICAL;
+            twitc.anchor = GridBagConstraints.FIRST_LINE_END;
+            
+            JLabel blank = new JLabel();
+            //     blank.setForeground(Color.red);
+            JLabel blank2 = new JLabel();
+            //   blank2.setForeground(Color.red);
+            JLabel blank3 = new JLabel();
+            //    blank3.setForeground(Color.red);
+            JLabel blank4 = new JLabel();
+            //  blank4.setForeground(Color.red);
+            JLabel blank5 = new JLabel();
+            //  blank5.setForeground(Color.red);
+            JLabel blank6 = new JLabel();
+            //      blank6.setForeground(Color.red);
+            
+            GridBagConstraints topmiddlec = new GridBagConstraints();
+            topmiddlec.gridy = 0;
+            topmiddlec.gridx = 1;
+            topmiddlec.weightx = 60;
+            topmiddlec.ipadx = 45;
+            
+            calArea = new JTextArea(
+                    sample, 6, 20);
+            calArea.setFont(new Font("Roman", Font.BOLD, 20));
+            calArea.setLineWrap(true);
+            calArea.setWrapStyleWord(true);
+            calArea.setOpaque(false);
+            calArea.setEditable(false);
+            calArea.setForeground(Color.white);
+            GridBagConstraints calc = new GridBagConstraints();
+            calc.gridy = 0;
+            calc.gridx = 0;
+            calc.weightx = 30;
+            calc.anchor = GridBagConstraints.FIRST_LINE_START;
+            
+            GridBagConstraints row2left = new GridBagConstraints();
+            row2left.gridy = 1;
+            row2left.gridx = 0;
+            row2left.weightx = 60;
+            row2left.weighty = 30;
+            
+            GridBagConstraints row2mid = new GridBagConstraints();
+            row2mid.gridy = 1;
+            row2mid.gridx = 1;
+            row2mid.weightx = 60;
+            row2mid.weighty = 30;
+            
+            weatArea = new JTextArea(
+                    sample, 6, 20);
+            weatArea.setFont(new Font("Roman", Font.BOLD, 20));
+            weatArea.setLineWrap(true);
+            weatArea.setWrapStyleWord(true);
+            weatArea.setOpaque(false);
+            weatArea.setEditable(false);
+            weatArea.setForeground(Color.white);
+            GridBagConstraints weatc = new GridBagConstraints();
+            weatc.gridy = 2;
+            weatc.gridx = 0;
+            weatc.gridheight = 2;
+            weatc.fill = GridBagConstraints.VERTICAL;
+            weatc.anchor = GridBagConstraints.FIRST_LINE_START;
+            
+            GridBagConstraints row3mid = new GridBagConstraints();
+            row3mid.gridx = 1;
+            row3mid.gridy = 2;
+            
+            GridBagConstraints row3r = new GridBagConstraints();
+            row3r.gridx = 2;
+            row3r.gridy = 2;
+            
+            quoteArea = new JTextArea(
+                    quote, 6, 20);
+            quoteArea.setFont(new Font("Roman", Font.BOLD, 20));
+            quoteArea.setLineWrap(true);
+            quoteArea.setWrapStyleWord(true);
+            quoteArea.setOpaque(false);
+            quoteArea.setEditable(false);
+            quoteArea.setForeground(Color.white);
+            GridBagConstraints quotec = new GridBagConstraints();
+            quotec.gridx = 1;
+            quotec.gridy = 3;
+            quotec.anchor = GridBagConstraints.PAGE_END;
+            
+            timeArea = new JTextArea("", 6, 20);
+            timeArea.setFont(new Font("Roman", Font.BOLD, 30));
+            timeArea.setLineWrap(false);
+            timeArea.setWrapStyleWord(true);
+            timeArea.setOpaque(false);
+            timeArea.setEditable(false);
+            timeArea.setForeground(Color.white);
+            GridBagConstraints quotet = new GridBagConstraints();
+            quotet.gridx = 1;
+            quotet.gridy = 1;
+            quotet.anchor = GridBagConstraints.PAGE_START;
+            
+            GridBagConstraints lastblank = new GridBagConstraints();
+            lastblank.gridx = 2;
+            lastblank.gridy = 3;
+            
+            p.add(twitArea, twitc);
+            //p.add(blank, topmiddlec);
+            p.add(timeArea, topmiddlec);
+            p.add(calArea, calc);
+            p.add(blank2, row2left);
+            p.add(blank3, row2mid);
+            p.add(weatArea, weatc);
+            p.add(blank4, row3mid);
+            p.add(blank5, row3r);
+            p.add(quoteArea, quotec);
+            frame.add(p);
+            
+            frame.pack();
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(display);
+        } catch (FontFormatException ex) {
+            Logger.getLogger(RpiUI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(RpiUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
