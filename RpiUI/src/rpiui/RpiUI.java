@@ -82,7 +82,7 @@ public class RpiUI extends JFrame {
      * a grid system to specify where each designated area is located. Sets design specifications for the layout.
      */
     public void framer() {
-        try {
+
             //private void framer() {
             
             
@@ -236,10 +236,6 @@ public class RpiUI extends JFrame {
             frame.pack();
             frame.setLocationRelativeTo(null);
             frame.setVisible(display);
-        } catch (FontFormatException ex) {
-            Logger.getLogger(RpiUI.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(RpiUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
