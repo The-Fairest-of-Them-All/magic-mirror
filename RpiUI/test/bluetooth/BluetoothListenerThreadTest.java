@@ -74,7 +74,7 @@ public class BluetoothListenerThreadTest {
     @Test
     public void testGetTwitterKey() {
         System.out.println("getTwitterKey");
-        String expResult = "T: ";
+        String expResult = "Tw:";
         String result = BluetoothListenerThread.getTwitterKey();
         assertEquals(expResult, result);
     }
@@ -85,7 +85,7 @@ public class BluetoothListenerThreadTest {
     @Test
     public void testGetQuoteKey() {
         System.out.println("getQuoteKey");
-        String expResult = "Q: ";
+        String expResult = "Qu:";
         String result = BluetoothListenerThread.getQuoteKey();
         assertEquals(expResult, result);
     }
@@ -96,7 +96,7 @@ public class BluetoothListenerThreadTest {
     @Test
     public void testGetCalendarKey() {
         System.out.println("getCalendarKey");
-        String expResult = "C: ";
+        String expResult = "Ca:";
         String result = BluetoothListenerThread.getCalendarKey();
         assertEquals(expResult, result);
     }
@@ -107,80 +107,80 @@ public class BluetoothListenerThreadTest {
     @Test
     public void testGetWeatherKey() {
         System.out.println("getWeatherKey");
-        String expResult = "W: ";
+        String expResult = "We:";
         String result = BluetoothListenerThread.getWeatherKey();
         assertEquals(expResult, result);
     }
     
-    @Test
-    public void testProcessConnection() throws IOException {
-        InputStream input = null;
-        //EasyMock.expect(conn.openInputStream()).andReturn(input);
-        Assert.assertNotNull(input);
-      
-        
-    }
-    
-    @Test
-    public void testFindLocalDeviceAddressName () {
-        fail("The test case is a prototype.");
-    }
-    
-    /**
-     * Mock device power state to off.
-     */
-    @Test
-    public void testRunWithDevicePowerOff() {
-        fail("The test case is a prototype.");
-    }
-    
-    /**
-     * Mock device power state to on and discoverable state to off.
-     */
-    @Test
-    public void testRunWithDevicePowerOnDiscoverableOff() {
-        fail("The test case is a prototype.");
-    }
-    
-    /**
-     * Test the run method, mock a connection to Android, then timeout to end the infinite loop.
-     */
-    @Test
-    public void testWaitForConnectionWithTimeout() {
-        fail("The test case is a prototype.");
-    }
-    
-    /**
-     * Test full run of program but provide no input. Expect socket to be closed immediately and waiting to
-     * resume.
-     */
-    @Test
-    public void testFullRunNoInput() {
-        fail("The test case is a prototype.");
-    }
-    
-    @Test
-    public void testFullRunDisplayInput() {
-        fail("The test case is a prototype.");
-    }
-    
-    @Test
-    public void testFullRunSleepKeyword() {
-        fail("The test case is a prototype.");
-    }
-    
-    @Test
-    public void testFullRunConnectKeyword() {
-        fail("The test case is a prototype.");
-    }
-    
-    @Test
-    public void testFullRunExitKeyword() {
-        fail("The test case is a prototype.");
-    }
-    
-    @Test
-    public void testFullRunUnlabeledInput() {
-        fail("The test case is a prototype.");
-    }
+//    @Test
+//    public void testProcessConnection() throws IOException {
+//        InputStream input = null;
+//        //EasyMock.expect(conn.openInputStream()).andReturn(input);
+//        Assert.assertNotNull(input);
+//      
+//        
+//    }
+//    
+//    @Test
+//    public void testFindLocalDeviceAddressName () {
+//        fail("The test case is a prototype.");
+//    }
+//    
+//    /**
+//     * Mock device power state to off.
+//     */
+//    @Test
+//    public void testRunWithDevicePowerOff() {
+//        fail("The test case is a prototype.");
+//    }
+//    
+//    /**
+//     * Mock device power state to on and discoverable state to off.
+//     */
+//    @Test
+//    public void testRunWithDevicePowerOnDiscoverableOff() {
+//        fail("The test case is a prototype.");
+//    }
+//    
+//    /**
+//     * Test the run method, mock a connection to Android, then timeout to end the infinite loop.
+//     */
+//    @Test
+//    public void testWaitForConnectionWithTimeout() {
+//        fail("The test case is a prototype.");
+//    }
+//    
+//    /**
+//     * Test full run of program but provide no input. Expect socket to be closed immediately and waiting to
+//     * resume.
+//     */
+//    @Test
+//    public void testFullRunNoInput() {
+//        fail("The test case is a prototype.");
+//    }
+//    
+//    @Test
+//    public void testFullRunDisplayInput() {
+//        fail("The test case is a prototype.");
+//    }
+//    
+//    @Test
+//    public void testFullRunSleepKeyword() {
+//        fail("The test case is a prototype.");
+//    }
+//    
+//    @Test
+//    public void testFullRunConnectKeyword() {
+//        fail("The test case is a prototype.");
+//    }
+//    
+//    @Test
+//    public void testFullRunExitKeyword() {
+//        fail("The test case is a prototype.");
+//    }
+//    
+//    @Test
+//    public void testFullRunUnlabeledInput() {
+//        fail("The test case is a prototype.");
+//    }
 }

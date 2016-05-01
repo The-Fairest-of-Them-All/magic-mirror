@@ -52,10 +52,10 @@ public class RpiUITest {
     public void testAppendToJTextArea() {
         System.out.println("appendToJTextArea");
         String newText = "NEW";
-        String quote = "I'm ready - Spongebob Squarepants";
+        String quote = "I'm ready!\n-Spongebob Squarepants";
         
         uiThread.appendToJTextArea(uiThread.getQuoteJTextArea(), newText);
-        assertEquals("I'm ready - Spongebob SquarepantsNEW", uiThread.getQuoteJTextArea().getText());
+        assertEquals(quote + newText, uiThread.getQuoteJTextArea().getText());
     }
 
     /**
@@ -65,10 +65,10 @@ public class RpiUITest {
     public void testAppendToJTextAreaNewline() {
         System.out.println("appendToJTextAreaNewline");
         String newText = "NEW";
-        String quote = "I'm ready - Spongebob Squarepants";
+        String quote = "I'm ready!\n-Spongebob Squarepants";
         
         uiThread.appendToJTextAreaNewline(uiThread.getQuoteJTextArea(), newText);
-        assertEquals("I'm ready - Spongebob Squarepants\nNEW", uiThread.getQuoteJTextArea().getText());
+        assertEquals(quote + "\n" + newText, uiThread.getQuoteJTextArea().getText());
     }
 
     /**
@@ -78,10 +78,10 @@ public class RpiUITest {
     public void testInsertIntoBeginningJTextArea() {
         System.out.println("insertIntoBeginningJTextArea");
         String newText = "NEW";
-        String quote = "I'm ready - Spongebob Squarepants";
+        String quote = "I'm ready!\n-Spongebob Squarepants";
         
         uiThread.insertIntoBeginningJTextArea(uiThread.getQuoteJTextArea(), newText);
-        assertEquals("NEWI'm ready - Spongebob Squarepants", uiThread.getQuoteJTextArea().getText());
+        assertEquals(newText + quote, uiThread.getQuoteJTextArea().getText());
     }
 
     /**
@@ -91,7 +91,6 @@ public class RpiUITest {
     public void testReplaceJTextArea() {
         System.out.println("replaceJTextArea");
         String newText = "NEW";
-        String quote = "I'm ready - Spongebob Squarepants";
         
         uiThread.replaceJTextArea(uiThread.getQuoteJTextArea(), newText);
         assertEquals(newText, uiThread.getQuoteJTextArea().getText());
