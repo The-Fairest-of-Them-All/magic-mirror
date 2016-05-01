@@ -6,7 +6,7 @@
     <string name="IP_textview">Sever IP:</string>
     <string name="ssid_textview">SSID:</string>
     <string name="password_textview">Password:</string>
-    <string name="connect_button">Sync Setting to Mirror</string>
+    <string name="connect_button">Sync</string>
     <string name="setting_button">Mirror Setting</string>
     <string name="sleep_button">Toggle Sleep</string>
     <string name="wake_button">Wake Up Mirror</string>
@@ -29,7 +29,7 @@
     <string name="drawer_close" />
     <string name="discover">Discover</string>
     <string name="InsecureSync">Insecure Sync</string>
-    <string name="SleepInsecure">Toggle Sleep</string>
+    <string name="SleepInsecure">Insecure Toggle Sleep</string>
     <string-array name="settings">
         <item>Twitter</item>
         <item>Quote</item>

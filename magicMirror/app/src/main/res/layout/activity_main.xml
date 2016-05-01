@@ -15,20 +15,18 @@
             android:layout_height="wrap_content"
             android:text="@string/connect_button"
             android:onClick="syncContent"
-            android:layout_below="@+id/raspberryName"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="29dp" />
+            android:layout_below="@+id/insecureWifi"
+            android:layout_alignRight="@+id/sleepButton"
+            android:layout_alignEnd="@+id/sleepButton" />
 
         <Button
             android:id="@+id/sleepButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/sleep_button"
-            android:layout_above="@+id/discoverDevices"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
-
-
+            android:layout_alignTop="@+id/sleepInsecure"
+            android:layout_alignRight="@+id/raspberryName"
+            android:layout_alignEnd="@+id/raspberryName" />
 
 
         <TextView
@@ -84,7 +82,7 @@
             android:layout_height="wrap_content"
             android:text="@string/TwitterAccount"
             android:id="@+id/TwitterAccountButton_main"
-            android:layout_alignBottom="@+id/settingButton"
+            android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true" />
 
@@ -92,8 +90,10 @@
             android:id="@+id/bluetoothInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="Bluetooth info"
             android:layout_below="@+id/sleepButton"
-            android:text="Bluetooth info"/>
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
 
         <EditText
             android:id="@+id/raspberryName"
@@ -108,10 +108,10 @@
             android:layout_height="wrap_content"
             android:text="@string/discover"
             android:id="@+id/discoverDevices"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="30dp"
-            android:onClick="startLooking"/>
+            android:onClick="startLooking"
+            android:layout_above="@+id/textView"
+            android:layout_alignLeft="@+id/insecureSyncButton"
+            android:layout_alignStart="@+id/insecureSyncButton" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -125,31 +125,41 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Test Wifi"
+            android:text="Send Wifi"
             android:id="@+id/WiFibutton"
-            android:layout_below="@+id/passWordText"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:layout_above="@+id/connect_button"
+            android:layout_alignRight="@+id/raspberryName"
+            android:layout_alignEnd="@+id/raspberryName" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/InsecureSync"
             android:id="@+id/insecureSyncButton"
-            android:layout_alignBottom="@+id/WiFibutton"
-            android:layout_alignRight="@+id/passWordText"
-            android:layout_alignEnd="@+id/passWordText"
-            android:onClick="syncInsecure"/>
+            android:onClick="syncInsecure"
+            android:layout_above="@+id/sleepInsecure"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/SleepInsecure"
             android:id="@+id/sleepInsecure"
-            android:layout_alignBottom="@+id/sleepButton"
-            android:layout_alignRight="@+id/raspberryName"
-            android:layout_alignEnd="@+id/raspberryName"
-            android:onClick="sleepInsecure"/>
+            android:onClick="sleepInsecure"
+            android:layout_marginBottom="60dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Insecure Send Wifi"
+            android:id="@+id/insecureWifi"
+            android:layout_above="@+id/insecureSyncButton"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
     </RelativeLayout>
 
     <ListView
