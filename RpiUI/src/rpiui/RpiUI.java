@@ -84,10 +84,14 @@ public class RpiUI extends JFrame {
     public void framer() {
         //private void framer() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        //72 pixels per inch, 72 * 2.75 = 198
+        int width = (int) (screenSize.getWidth() - 198);
+        int height = (int) screenSize.getHeight();
+        screenSize.setSize(width, height);
         
         frame = new JFrame("Raspberry Pi App");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        frame.setExtendedState(JFrame.MAXIMIZED_VERT);
         frame.setUndecorated(true);
         frame.setPreferredSize(screenSize);
 //        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -225,7 +229,7 @@ public class RpiUI extends JFrame {
         frame.add(p);
 
         frame.pack();
-
+        frame.setLocationRelativeTo(null);
         frame.setVisible(display);
     }
 
