@@ -30,6 +30,7 @@
     <string name="discover">Discover</string>
     <string name="InsecureSync">Insecure Sync</string>
     <string name="SleepInsecure">Insecure Toggle Sleep</string>
+    <string name="showSecureToggle">Show Secure</string>
     <string-array name="settings">
         <item>Twitter</item>
         <item>Quote</item>

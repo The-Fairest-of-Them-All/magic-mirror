@@ -110,8 +110,8 @@
             android:id="@+id/discoverDevices"
             android:onClick="startLooking"
             android:layout_above="@+id/textView"
-            android:layout_alignLeft="@+id/insecureSyncButton"
-            android:layout_alignStart="@+id/insecureSyncButton" />
+            android:layout_alignLeft="@+id/WiFibutton"
+            android:layout_alignStart="@+id/WiFibutton" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -160,6 +160,17 @@
             android:layout_above="@+id/insecureSyncButton"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
+
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/showSecureToggle"
+            android:id="@+id/showSecureSwitch"
+            android:onClick="toggleShowSecure"
+            android:layout_above="@+id/raspberryName"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:checked="true" />
     </RelativeLayout>
 
     <ListView

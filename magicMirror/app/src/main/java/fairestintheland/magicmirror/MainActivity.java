@@ -562,7 +562,28 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         return s;
     }
 
+
+
     //-----------END FILE I/O---------------------------------------------------------------------------
+
+    public void toggleShowSecure(View view) {
+        Switch secureToggle = (Switch) findViewById(R.id.showSecureSwitch);
+        Button sendWifiButton = (Button) findViewById(R.id.WiFibutton);
+        Button syncButton = (Button) findViewById(R.id.connect_button);
+        Button sleepButton = (Button) findViewById(R.id.sleepButton);
+        Button discoverButton = (Button) findViewById(R.id.discoverDevices);
+        if (secureToggle.isChecked()) {
+            sendWifiButton.setVisibility(View.VISIBLE);
+            syncButton.setVisibility(View.VISIBLE);
+            sleepButton.setVisibility(View.VISIBLE);
+            discoverButton.setVisibility(View.VISIBLE);
+        } else {
+            sendWifiButton.setVisibility(View.INVISIBLE);
+            syncButton.setVisibility(View.INVISIBLE);
+            sleepButton.setVisibility(View.INVISIBLE);
+            discoverButton.setVisibility(View.INVISIBLE);
+        }
+    }
 
     //----------BLUETOOTH SECTION-------------------------------------------------------------------------
     /**
