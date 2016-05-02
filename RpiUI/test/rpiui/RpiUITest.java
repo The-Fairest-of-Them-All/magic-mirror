@@ -53,6 +53,7 @@ public class RpiUITest {
         System.out.println("appendToJTextArea");
         String newText = "NEW";
         String quote = "I'm ready!\n-Spongebob Squarepants";
+        uiThread.replaceJTextArea(uiThread.getQuoteJTextArea(), quote);
         
         uiThread.appendToJTextArea(uiThread.getQuoteJTextArea(), newText);
         assertEquals(quote + newText, uiThread.getQuoteJTextArea().getText());
@@ -66,6 +67,7 @@ public class RpiUITest {
         System.out.println("appendToJTextAreaNewline");
         String newText = "NEW";
         String quote = "I'm ready!\n-Spongebob Squarepants";
+        uiThread.replaceJTextArea(uiThread.getQuoteJTextArea(), quote);
         
         uiThread.appendToJTextAreaNewline(uiThread.getQuoteJTextArea(), newText);
         assertEquals(quote + "\n" + newText, uiThread.getQuoteJTextArea().getText());
@@ -79,6 +81,7 @@ public class RpiUITest {
         System.out.println("insertIntoBeginningJTextArea");
         String newText = "NEW";
         String quote = "I'm ready!\n-Spongebob Squarepants";
+        uiThread.replaceJTextArea(uiThread.getQuoteJTextArea(), quote);
         
         uiThread.insertIntoBeginningJTextArea(uiThread.getQuoteJTextArea(), newText);
         assertEquals(newText + quote, uiThread.getQuoteJTextArea().getText());

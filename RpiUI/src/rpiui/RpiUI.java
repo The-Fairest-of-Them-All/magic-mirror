@@ -100,7 +100,7 @@ public class RpiUI extends JFrame {
         p.setPreferredSize(screenSize);
 
         twitArea = new JTextArea(
-                sample + sample, 6, 20);
+                /*sample + sample*/"", 6, 20);
         twitArea.setFont(new Font("Roman", Font.BOLD, 20));
         twitArea.setLineWrap(true);
         twitArea.setWrapStyleWord(true);
@@ -135,7 +135,7 @@ public class RpiUI extends JFrame {
         topmiddlec.ipadx = 45;
 
         calArea = new JTextArea(
-                sample, 6, 20);
+                /*sample*/"", 6, 20);
         calArea.setFont(new Font("Roman", Font.BOLD, 20));
         calArea.setLineWrap(true);
         calArea.setWrapStyleWord(true);
@@ -161,7 +161,7 @@ public class RpiUI extends JFrame {
         row2mid.weighty = 30;
 
         weatArea = new JTextArea(
-                sample, 6, 20);
+                /*sample*/"", 6, 20);
         weatArea.setFont(new Font("Roman", Font.BOLD, 20));
         weatArea.setLineWrap(true);
         weatArea.setWrapStyleWord(true);
@@ -184,7 +184,7 @@ public class RpiUI extends JFrame {
         row3r.gridy = 2;
 
         quoteArea = new JTextArea(
-                quote, 6, 20);
+                /*quote*/"", 6, 20);
         quoteArea.setFont(new Font("Roman", Font.BOLD, 20));
         quoteArea.setLineWrap(true);
         quoteArea.setWrapStyleWord(true);
