@@ -5,6 +5,12 @@ import com.google.gson.*;
 /*
  * location object which used for getting the current Location
  */
+
+/**
+ * Used to hold the user's latitude and longitude which are passed by the Android device.
+ * @author Owner
+ */
+
 public class Location {
 	
 	/**
@@ -21,6 +27,7 @@ public class Location {
     private Gson data;
     
     /**
+     * No arg constructor which initializes lat and long to default values.
      * @author Chris
      */
     public Location(){
@@ -31,6 +38,7 @@ public class Location {
     }
     
     /**
+     * Constructor which takes Gson data representing the lat and long.
      * 
      * @param data, a Gson object containing the longitude and latitude.
      * @author Chris
@@ -51,10 +59,18 @@ public class Location {
         //TODO Parse GSON OBJ
     }
     
+    /**
+     *
+     * @param lat
+     */
     public void setLatitudeUsingString(String lat) {
         this.latitude = lat;
     }
     
+    /**
+     *
+     * @param longi
+     */
     public void setLongitudeUsingString(String longi) {
         this.longitude = longi;
     }
