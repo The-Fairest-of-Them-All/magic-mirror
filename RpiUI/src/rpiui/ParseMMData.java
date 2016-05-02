@@ -31,6 +31,7 @@ public class ParseMMData {
     private final String EXIT_KEYWORD = "DONE";
     private final String MAKE_CONNECTION_KEYWORD = "CONNECT";
     private boolean reachable = false;
+    private Location loc;
 
     public ParseMMData(String t, String c, String w, String q) {
         TWITTER_KEY = t;
@@ -106,7 +107,7 @@ public class ParseMMData {
             StringBuilder weather = new StringBuilder();
             if (reachable) {
                 Gson gson = new Gson();
-                Location loc = gson.fromJson(temp, Location.class);
+                loc = gson.fromJson(temp, Location.class);
                 Weather weat = new Weather(loc);
                 weat.printCurrently();
                 weather.append(weat.returnCurrently());

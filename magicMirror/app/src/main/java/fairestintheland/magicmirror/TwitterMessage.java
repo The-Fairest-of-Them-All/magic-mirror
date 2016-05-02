@@ -100,7 +100,7 @@ public class TwitterMessage {
                             String str = statue.getText()+ " ";
                             str = str.replaceAll("https:.*?\\s", " ");
                             str = statue.getUser().getName() + ":   " + str;
-                            list.add(str);
+                            list.add(str + "\n");
                         };
 
                         bundle.putString("myKey", list.toString());

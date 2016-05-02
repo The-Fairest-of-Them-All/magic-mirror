@@ -51,6 +51,14 @@ public class Location {
         //TODO Parse GSON OBJ
     }
     
+    public void setLatitudeUsingString(String lat) {
+        this.latitude = lat;
+    }
+    
+    public void setLongitudeUsingString(String longi) {
+        this.longitude = longi;
+    }
+    
 	/**
          * 
          * @return Longitude

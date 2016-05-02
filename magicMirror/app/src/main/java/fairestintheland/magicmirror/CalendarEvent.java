@@ -58,11 +58,11 @@ public class CalendarEvent {
             String[] strSpit =formatter.format(date.getTime()).split(" ");
             String str =getDate(Long.parseLong(cursor.getString(2)));
             if(str.indexOf(strSpit[0])!=-1) {
-                currentEvent.add("Event:"+cursor.getString(0));
-                eventName.add("Event:"+cursor.getString(0));
+                currentEvent.add("Event:"+cursor.getString(0) + "\n");
+                eventName.add("Event:"+cursor.getString(0) + "\n");
                 // currentEvent.add(str);
                 // currentEvent.add(getDate(Long.parseLong(cursor.getString(3))));
-                currentEvent.add("Description:"+cursor.getString(1).toString());
+                currentEvent.add("Description:"+cursor.getString(1).toString() + "\n");
 
                // System.out.println("you got a event!!!!!!!!!!!!!! "+currentEvent.toString());
                 //      nameOfEvent.add(cursor.getString(0));

@@ -5,6 +5,8 @@
  */
 package rpiui;
 
+import JSONClasses.Location;
+import java.lang.reflect.Field;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -33,7 +35,7 @@ public class ParseMMDataTest {
     
     @Before
     public void setUp() {
-        instance = new ParseMMData("T: ", "C: ", "W: ", "Q: ");
+        instance = new ParseMMData("Tw:", "Ca:", "We:", "Qu:");
     }
     
     @After
@@ -43,15 +45,32 @@ public class ParseMMDataTest {
     /**
      * Test of parseWeather method, of class ParseMMData.
      */
-//    @Test
-//    public void testParseWeather() {
-//        System.out.println("parseWeather");
-//        String input = "W: {\"latitude\":\"40.3012814\",\"longitude\":\"-75.1267708\"}DONE";
-//        String expResult = "{\"latitude\":\"40.3012814\",\"longitude\":\"-75.1267708\"}";
-//        String result = instance.parseWeather(input);
-//        //assertEquals(expResult, result);
-//        fail("Needs mocking");
-//    }
+    @Test
+    public void testParseWeather() throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
+        System.out.println("parseWeather");
+        String input = "We:{\"latitude\":\"40.3012814\",\"longitude\":\"-75.1267708\"}DONE";
+        String testLong = "-75.1267708";
+        String testLat = "40.3012814";
+        Location expLoc = new Location();
+        expLoc.setLatitudeUsingString(testLat);
+        expLoc.setLongitudeUsingString(testLong);
+        instance.parseWeather(input);
+        
+        Field field = instance.getClass().getDeclaredField("loc");
+        field.setAccessible(true);
+        assertEquals(expLoc, field.get(instance));
+    }
+    
+    /**
+     * Test of parseWeather method, of class ParseMMData with String indicating no location data was sent.
+     */
+    @Test
+    public void testParseWeatherNoLocationInput() {
+        System.out.println("parseWeather");
+        String input = "I need your location to get the weather.";
+        String result = instance.parseWeather(input);
+        assertEquals(input, result);
+    }
 
     /**
      * Test of parseTwitter method, of class ParseMMData.
@@ -59,7 +78,7 @@ public class ParseMMDataTest {
     @Test
     public void testParseTwitter() {
         System.out.println("parseTwitter");
-        String input = "T: bbbDONE";
+        String input = "Tw:bbbDONE";
         String expResult = "bbb";
         String result = instance.parseTwitter(input);
         assertEquals(expResult, result);
@@ -71,7 +90,7 @@ public class ParseMMDataTest {
     @Test
     public void testParseCalendar() {
         System.out.println("parseCalendar");
-        String input = "C: cccDONE";
+        String input = "Ca:cccDONE";
         String expResult = "ccc";
         String result = instance.parseCalendar(input);
         assertEquals(expResult, result);
@@ -83,7 +102,7 @@ public class ParseMMDataTest {
     @Test
     public void testParseQuote() {
         System.out.println("parseQuote");
-        String input = "Q: dddDONE";
+        String input = "Qu:dddDONE";
         String expResult = "ddd";
         String result = instance.parseQuote(input);
         assertEquals(expResult, result);
