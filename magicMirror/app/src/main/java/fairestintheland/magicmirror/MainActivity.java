@@ -12,7 +12,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -42,12 +41,9 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.gson.Gson;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -55,12 +51,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -568,6 +561,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     //-----------END FILE I/O---------------------------------------------------------------------------
 
+    /**
+     * Shows or hides the secure sync controls based on its boolean value. Called by toggling the show secure switch.
+     *
+     * @param view
+     */
     public void toggleShowSecure(View view) {
         Switch secureToggle = (Switch) findViewById(R.id.showSecureSwitch);
         Button sendWifiButton = (Button) findViewById(R.id.WiFibutton);
@@ -735,7 +733,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 //discoverableList.add(device.getName() + "\n" + device.getAddress());
                 System.out.println(devices);
 
-                //try a connection based on device name
+                //try a connection based on device name, calling different methods for secure or insecure data transfer
                 try {
                     if (device.getName().equals(raspberryPiName)) {
                         BluetoothDevice btDevice = device;
@@ -775,6 +773,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         try {
             boolean bonded = btDevice.createBond();
             //return val is false for an immediate bonding error or true to indicate bonding will begin
+
+            try {
+                Thread.sleep(150);
+            } catch (InterruptedException ex) {
+                Log.d("Bluetooth Bond", "Issue sleeping.");
+            }
+
             if (bonded) {
                 System.out.println("Bonding with raspberry pi will begin");
                 Log.d("Bond", "Bonding with raspberry pi will begin");
@@ -833,7 +838,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     raspberryPiName = raspberryNameEditText.getText().toString().trim();
 
                     secureConnectTrueOrFalse = false; //false for insecure
-                    insecureDataToSend = 2;
+                    insecureDataToSend = 2; //2 for normal data to display
                     //if false, bluetooth off, otherwise start discovery, when results arrive the callback is BroadcastReceiver
                     bluetoothAvailable = bluetoothAdapter.startDiscovery();
                 } else {
@@ -843,7 +848,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
     }
 
-    //TODO this is the insecure method, it can be called by the BroadcastReciever instead of initialConnect
+    /**
+     * Method to initiate the insecure transfer of data from Android to Raspberry Pi. Based on the current value of
+     * insecureDataToSend, it calls either writeNetworkDataToSocket, writeContentToSocket, or writeSleepToSocketInsecure.
+     * It passes the open connection that it has created to whichever method it calls.
+     */
     public void insecureConnectAndSend() {
         BluetoothDevice btDevice = device;
         System.out.println("Trying to establish insecure connection to " + raspberryPiName);
@@ -860,18 +869,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         switch(insecureDataToSend) {
             case 1:
-                //insecureConnectAndSendNetworkData();
-                writeConnectDataToSocket(clientSocket);
+                writeNetworkDataToSocket(clientSocket);
                 break;
             case 2:
                 writeContentToSocket(clientSocket);
                 break;
             case 3:
-                //insecureConnectAndSleep();
                 writeSleepToSocketInsecure(clientSocket);
                 break;
             default:
-                System.out.println("Error. What type of data should I send");
+                System.out.println("Error. What type of data should I send insecure");
         }
 
         //close socket before end of method so every time the sync button is pressed, a new connection is made
@@ -950,9 +957,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         } else {
             System.out.println("Trying to connect to bonded device " + raspberryPiName);
             try {
-                //TODO the following is original
                 clientSocket = btDevice.createRfcommSocketToServiceRecord(uuid);
-                //TODO try this for no auth clientSocket = btDevice.createInsecureRfcommSocketToServiceRecord(uuid);
                 clientSocket.connect();
                 System.out.println("Connected to raspberry pi.");
             } catch (IOException e) {
@@ -967,7 +972,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }else if (dataOrSleepORConnect == SLEEP){
                 writeSleepToSocket(clientSocket);
             } else if (dataOrSleepORConnect == CONNECT) {
-                writeConnectDataToSocket(clientSocket);
+                writeNetworkDataToSocket(clientSocket);
             }
 
             //close socket before end of method so every time the sync button is pressed, a new connection is made
@@ -985,7 +990,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
      *
      * @param clientSocket an open and connected BluetoothSocket object
      */
-    public void writeConnectDataToSocket(BluetoothSocket clientSocket) {
+    public void writeNetworkDataToSocket(BluetoothSocket clientSocket) {
         try {
             //JSONObject obj = getWIFIAccount();
             String obj = makeConnectionIntoObject();
@@ -1056,9 +1061,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
 
             try {
-                Thread.sleep(100);
+                Thread.sleep(150);
             } catch (InterruptedException ex) {
-                Log.d("Sleep", "Issue sleeping.");
+                Log.d("Thread.sleep", "Issue sleeping.");
             }
 
             //send quote data, rotate through quote array
@@ -1079,9 +1084,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
 
             try {
-                Thread.sleep(100);
+                Thread.sleep(150);
             } catch (InterruptedException ex) {
-                Log.d("Sleep", "Issue sleeping.");
+                Log.d("Thread.sleep", "Issue sleeping.");
             }
 
             //send location data so that Raspberry can request weather data
@@ -1114,9 +1119,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
 
             try {
-                Thread.sleep(100);
+                Thread.sleep(150);
             } catch (InterruptedException ex) {
-                Log.d("Sleep", "Issue sleeping.");
+                Log.d("Thread.sleep", "Issue sleeping.");
             }
 
             //send calendar events if true
@@ -1136,9 +1141,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
 
             try {
-                Thread.sleep(100);
+                Thread.sleep(150);
             } catch (InterruptedException ex) {
-                Log.d("Sleep", "Issue sleeping.");
+                Log.d("Thread.sleep", "Issue sleeping.");
             }
 
             //write break keyword to end to socket connection on both sides
@@ -1209,7 +1214,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
     }
 
-
+    /**
+     * Responds to click of the sleep insecure button.
+     * @param view
+     */
     public void sleepInsecure(View view) {
         sleepButton = (Button) findViewById(R.id.sleepInsecure);
 
@@ -1223,9 +1231,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     raspberryPiName = raspberryNameEditText.getText().toString().trim();
 
                     secureConnectTrueOrFalse = false; //false for insecure
-                    //call tryToConnect and specify that the SLEEP keyword should be passed
-                    //insecureConnectAndSleep();
-                    insecureDataToSend = 3;
+                    insecureDataToSend = 3; //3 for sleep data
                     //if false, bluetooth off, otherwise start discovery, when results arrive the callback is BroadcastReceiver
                     bluetoothAvailable = bluetoothAdapter.startDiscovery();
                 } else {
@@ -1235,30 +1241,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
     }
 
-    public void insecureConnectAndSleep() {
-        BluetoothDevice btDevice = device;
-        System.out.println("Trying to establish insecure connection to " + raspberryPiName);
-
-        try {
-            //clientSocket = btDevice.createRfcommSocketToServiceRecord(uuid);
-            clientSocket = btDevice.createInsecureRfcommSocketToServiceRecord(uuid);
-            clientSocket.connect();
-            System.out.println("Connected to raspberry pi.");
-        } catch (IOException e) {
-            e.printStackTrace();
-            return;
-        }
-
-        writeSleepToSocketInsecure(clientSocket);
-
-        //close socket before end of method so every time the sync button is pressed, a new connection is made
-        try {
-            clientSocket.close();
-            SaveHostName(); //sae host name after successful connect
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * Write the SLEEP_KEYWORD to raspberry pi to cause it to stop displaying all JTextAreas.
@@ -1311,7 +1293,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                 msg.setData(bundle);
                                 toastMessageHandler.sendMessage(msg);
                             }
-                            //insecureConnectAndSendNetworkData();
+
                             insecureDataToSend = 1;
                             //if false, bluetooth off, otherwise start discovery, when results arrive the callback is BroadcastReceiver
                             bluetoothAvailable = bluetoothAdapter.startDiscovery();
@@ -1321,49 +1303,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     raspberryNameEditText.setText("Please enter raspberry pi bluetooth name");
                 }
             }
-        }
-    }
-
-    public void insecureConnectAndSendNetworkData() {
-        BluetoothDevice btDevice = device;
-        System.out.println("Trying to establish insecure connection to " + raspberryPiName);
-
-        try {
-            //clientSocket = btDevice.createRfcommSocketToServiceRecord(uuid);
-            clientSocket = btDevice.createInsecureRfcommSocketToServiceRecord(uuid);
-            clientSocket.connect();
-            System.out.println("Connected to raspberry pi.");
-        } catch (IOException e) {
-            e.printStackTrace();
-            return;
-        }
-
-        writeConnectDataToSocket(clientSocket);
-
-        //close socket before end of method so every time the sync button is pressed, a new connection is made
-        try {
-            clientSocket.close();
-            SaveHostName(); //sae host name after successful connect
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void writeConnectDataToSocketInsecure(BluetoothSocket clientSocket) {
-        try {
-            byte[] buffer;  // buffer store for the stream
-            clientSocketOutputStream = clientSocket.getOutputStream();
-
-            buffer = SLEEP_KEYWORD.getBytes();
-            clientSocketOutputStream.write(buffer);
-            System.out.println("Wrote " + new String(buffer) + " to raspberry.");
-            clientSocketOutputStream.flush();
-
-            //write break keyword to end to socket connection on both sides
-            clientSocketOutputStream.write(EXIT_KEYWORD.getBytes());
-            System.out.println("Wrote " + EXIT_KEYWORD + " to raspberry.");
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 

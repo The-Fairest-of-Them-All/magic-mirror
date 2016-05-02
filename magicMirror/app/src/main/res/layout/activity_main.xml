@@ -17,7 +17,8 @@
             android:onClick="syncContent"
             android:layout_below="@+id/insecureWifi"
             android:layout_alignRight="@+id/sleepButton"
-            android:layout_alignEnd="@+id/sleepButton" />
+            android:layout_alignEnd="@+id/sleepButton"
+            android:visibility="invisible" />
 
         <Button
             android:id="@+id/sleepButton"
@@ -26,7 +27,8 @@
             android:text="@string/sleep_button"
             android:layout_alignTop="@+id/sleepInsecure"
             android:layout_alignRight="@+id/raspberryName"
-            android:layout_alignEnd="@+id/raspberryName" />
+            android:layout_alignEnd="@+id/raspberryName"
+            android:visibility="invisible" />
 
 
         <TextView
@@ -111,7 +113,8 @@
             android:onClick="startLooking"
             android:layout_above="@+id/textView"
             android:layout_alignLeft="@+id/WiFibutton"
-            android:layout_alignStart="@+id/WiFibutton" />
+            android:layout_alignStart="@+id/WiFibutton"
+            android:visibility="invisible" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -129,7 +132,8 @@
             android:id="@+id/WiFibutton"
             android:layout_above="@+id/connect_button"
             android:layout_alignRight="@+id/raspberryName"
-            android:layout_alignEnd="@+id/raspberryName" />
+            android:layout_alignEnd="@+id/raspberryName"
+            android:visibility="invisible" />
 
         <Button
             android:layout_width="wrap_content"
@@ -171,7 +175,7 @@
             android:layout_above="@+id/raspberryName"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:checked="true" />
+            android:checked="false" />
     </RelativeLayout>
 
     <ListView
