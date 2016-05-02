@@ -237,7 +237,7 @@ public class RpiUI extends JFrame {
             frame.setLocationRelativeTo(null);
             frame.setVisible(display);
         }
-    }
+    
 
     /**
      * Appends the String newText to the existing text in the JTextArea area.
