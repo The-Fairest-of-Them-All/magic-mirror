@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private final int DATA = 0;
     private final int SLEEP = 1;
     private final int CONNECT = 2;
-    private boolean secureConnectTrueOrFalse; //used to determine whether secure or insecure is desired
+    private boolean secureConnectTrueOrFalse; //used to determine whether secure or insecure is desired, true for secure
 
     String consumerKey = "bUh6sDhIGpN4UdE55litSTD8W";
     String consumerSecret = "OlByFoaS9lJ8ewZEw9DOPGgVrby9EM6SepllWXrCnraw49r9DC";
@@ -175,6 +175,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             "Life is what happens to you while you're busy making other plans.\n-John Lennon",
             "I'm ready!\n-Spongebob Squarepants"};
     int quotePosition;
+
+    int insecureDataToSend; //1 for wifi, 2 for regular data, 3 for sleep
 
     Handler toastMessageHandler = new Handler() {
         @Override
@@ -220,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             public void onClick(View v) {
                 sleeping = !sleeping;
                 //setSleepMode();
-                secureConnectTrueOrFalse = true; //true for insecure
+                secureConnectTrueOrFalse = true; //true for secure
                 makeRaspberrySleep();
             }
         });
@@ -249,7 +251,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         settingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                secureConnectTrueOrFalse = true; //true for insecure
+                secureConnectTrueOrFalse = true; //true for secure
                 mDrawerLayout.openDrawer(Gravity.LEFT);
             }
         });
@@ -257,7 +259,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         twitterAccountButton = (Button)findViewById(R.id.TwitterAccountButton_main);
         View.OnClickListener oclA = new View.OnClickListener(){
             public void onClick(View v){
-                secureConnectTrueOrFalse = true; //true for insecure
+                secureConnectTrueOrFalse = true; //true for secure
                 Intent activityAIntent = new Intent (MainActivity.this,TwitterLogActivity.class);
                 startActivityForResult(activityAIntent, TwitterAccount_REQUEST_CODE);
             }
@@ -273,7 +275,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         wifiButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                secureConnectTrueOrFalse = true; //true for insecure
+                secureConnectTrueOrFalse = true; //true for secure
 
                 final WifiAccess wi = new WifiAccess(ssidView.getText().toString(), passwordView.getText().toString(), context);
 
@@ -831,6 +833,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     raspberryPiName = raspberryNameEditText.getText().toString().trim();
 
                     secureConnectTrueOrFalse = false; //false for insecure
+                    insecureDataToSend = 2;
                     //if false, bluetooth off, otherwise start discovery, when results arrive the callback is BroadcastReceiver
                     bluetoothAvailable = bluetoothAdapter.startDiscovery();
                 } else {
@@ -855,7 +858,21 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             return;
         }
 
-        writeContentToSocket(clientSocket);
+        switch(insecureDataToSend) {
+            case 1:
+                //insecureConnectAndSendNetworkData();
+                writeConnectDataToSocket(clientSocket);
+                break;
+            case 2:
+                writeContentToSocket(clientSocket);
+                break;
+            case 3:
+                //insecureConnectAndSleep();
+                writeSleepToSocketInsecure(clientSocket);
+                break;
+            default:
+                System.out.println("Error. What type of data should I send");
+        }
 
         //close socket before end of method so every time the sync button is pressed, a new connection is made
         try {
@@ -878,6 +895,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     public void syncContent(View view) {
         syncButton = (Button) findViewById(R.id.connect_button);
 
+
         //check if bluetooth is enabled before trying to use it
         if (!bluetoothAdapter.isEnabled()) {
             new BluetoothAsync().execute();
@@ -886,6 +904,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             if (!raspberryNameEditText.getText().toString().trim().equals("Enter raspberry computer name here")) {
                 if (!raspberryNameEditText.getText().toString().trim().isEmpty()) {
                     raspberryPiName = raspberryNameEditText.getText().toString().trim();
+                    secureConnectTrueOrFalse = true;
 
                     //call tryToConnect and specify that the app content should be passed
                     tryToConnect(DATA);
@@ -1205,7 +1224,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
                     secureConnectTrueOrFalse = false; //false for insecure
                     //call tryToConnect and specify that the SLEEP keyword should be passed
-                    insecureConnectAndSleep();;
+                    //insecureConnectAndSleep();
+                    insecureDataToSend = 3;
+                    //if false, bluetooth off, otherwise start discovery, when results arrive the callback is BroadcastReceiver
+                    bluetoothAvailable = bluetoothAdapter.startDiscovery();
                 } else {
                     raspberryNameEditText.setText("Please enter raspberry pi bluetooth name");
                 }
@@ -1260,6 +1282,91 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             e.printStackTrace();
         }
     }
+
+    public void sendNetworkDataInsecure(View view) {
+        //check if bluetooth is enabled before trying to use it
+        if (!bluetoothAdapter.isEnabled()) {
+            new BluetoothAsync().execute();
+        } else {
+            //only start trying to send sleep message if text passes validation
+            if (!raspberryNameEditText.getText().toString().trim().equals("Enter raspberry computer name here")) {
+                if (!raspberryNameEditText.getText().toString().trim().isEmpty()) {
+                    raspberryPiName = raspberryNameEditText.getText().toString().trim();
+
+                    secureConnectTrueOrFalse = false; //false for insecure
+
+                    final WifiAccess wi = new WifiAccess(ssidView.getText().toString(), passwordView.getText().toString(), context);
+
+                    Timer timer = new Timer();
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+
+                            Bundle bundle = new Bundle();
+                            String stringMess = "Wrong Account Info,please enter again!";
+                            if (wi.isConnect()) {
+                                stringMess = "Correct wifi Info!";
+                                bundle.putString("myKey", stringMess);
+                                Message msg = toastMessageHandler.obtainMessage();
+                                msg.setData(bundle);
+                                toastMessageHandler.sendMessage(msg);
+                            }
+                            //insecureConnectAndSendNetworkData();
+                            insecureDataToSend = 1;
+                            //if false, bluetooth off, otherwise start discovery, when results arrive the callback is BroadcastReceiver
+                            bluetoothAvailable = bluetoothAdapter.startDiscovery();
+                        }
+                    }, 3000);
+                } else {
+                    raspberryNameEditText.setText("Please enter raspberry pi bluetooth name");
+                }
+            }
+        }
+    }
+
+    public void insecureConnectAndSendNetworkData() {
+        BluetoothDevice btDevice = device;
+        System.out.println("Trying to establish insecure connection to " + raspberryPiName);
+
+        try {
+            //clientSocket = btDevice.createRfcommSocketToServiceRecord(uuid);
+            clientSocket = btDevice.createInsecureRfcommSocketToServiceRecord(uuid);
+            clientSocket.connect();
+            System.out.println("Connected to raspberry pi.");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        writeConnectDataToSocket(clientSocket);
+
+        //close socket before end of method so every time the sync button is pressed, a new connection is made
+        try {
+            clientSocket.close();
+            SaveHostName(); //sae host name after successful connect
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void writeConnectDataToSocketInsecure(BluetoothSocket clientSocket) {
+        try {
+            byte[] buffer;  // buffer store for the stream
+            clientSocketOutputStream = clientSocket.getOutputStream();
+
+            buffer = SLEEP_KEYWORD.getBytes();
+            clientSocketOutputStream.write(buffer);
+            System.out.println("Wrote " + new String(buffer) + " to raspberry.");
+            clientSocketOutputStream.flush();
+
+            //write break keyword to end to socket connection on both sides
+            clientSocketOutputStream.write(EXIT_KEYWORD.getBytes());
+            System.out.println("Wrote " + EXIT_KEYWORD + " to raspberry.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     //-----------------END BLUETOOTH SECTION-----------------------------------------------------------------
 
 	/**initialize the switches*/
