@@ -85,13 +85,14 @@ public class RpiUI extends JFrame {
         //private void framer() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         //72 pixels per inch, 72 * 2.75 = 198
-        int width = (int) (screenSize.getWidth() - 198);
-        int height = (int) screenSize.getHeight();
+ 
+        int width = (int) screenSize.getWidth() - 205;
+        int height = (int) screenSize.getHeight() - 198;
         screenSize.setSize(width, height);
         
         frame = new JFrame("Raspberry Pi App");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setExtendedState(JFrame.MAXIMIZED_VERT);
+        //frame.setExtendedState(JFrame.MAXIMIZED_VERT);
         frame.setUndecorated(true);
         frame.setPreferredSize(screenSize);
 //        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -207,6 +208,7 @@ public class RpiUI extends JFrame {
         timeArea.setOpaque(false);
         timeArea.setEditable(false);
         timeArea.setForeground(Color.white);
+        topmiddlec.anchor = GridBagConstraints.PAGE_END;
         GridBagConstraints quotet = new GridBagConstraints();
         quotet.gridx = 1;
         quotet.gridy = 1;
