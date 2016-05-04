@@ -86,8 +86,8 @@ public class RpiUI extends JFrame {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         //72 pixels per inch, 72 * 2.75 = 198
  
-        int width = (int) screenSize.getWidth() - 205;
-        int height = (int) screenSize.getHeight() - 198;
+        int width = (int) screenSize.getWidth();
+        int height = (int) screenSize.getHeight();
         screenSize.setSize(width, height);
         
         frame = new JFrame("Raspberry Pi App");

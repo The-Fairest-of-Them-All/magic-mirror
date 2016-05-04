@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private ActionBarDrawerToggle mDrawerToggle;
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
-    private ArrayList<Switch> theSwitches;
+    public ArrayList<Switch> theSwitches;
     private MenuAdapter<Switch> adapter;
     private ListView navList;
     private Button sleepButton;
