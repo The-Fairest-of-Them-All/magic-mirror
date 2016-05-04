@@ -367,8 +367,8 @@ public class RpiUI extends JFrame {
         
         InvokeCommandLine test = new InvokeCommandLine();
         //String[] commandAndArgs = {"ls", "-la"};
-        String[] commandAndArgs = {"echo", "HEY"};
-        test.invoke(commandAndArgs);
+        //String[] commandAndArgs = {"echo", "HEY"};
+        //test.invoke(commandAndArgs);
 
         bluetoothListenerThread = null;
         try {
@@ -390,6 +390,8 @@ public class RpiUI extends JFrame {
                 //long timeLong = System.currentTimeMillis();
                 time = LocalTime.now();
                 currentTime = time.format(DateTimeFormatter.ofPattern("hh:mm:ss a"));
+                //DateTimeFormatter df = DateTimeFormatter.ISO_LOCAL_TIME;
+                //currentTime = df.format(time);
                 uiThread.replaceJTextArea(timeArea, currentTime);
             }
         };
