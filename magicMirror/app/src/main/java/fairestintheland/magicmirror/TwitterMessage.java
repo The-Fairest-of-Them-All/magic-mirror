@@ -15,16 +15,26 @@ import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 
 
+/** used for get the Tweets from a Twitter Account*/
 public class TwitterMessage {
 
+
+/**
+	String UserName: 	account name which we want to get tweets from 
+	List<String> list: 	store all Tweets of specify Twitter account
+	Handler handler :	 handle the message when it finish receiving the Tweets
+*/
     final static String UserName = "cnn";
     private List<String> list;
 
+    private String tweet;
+    
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             Bundle bundle = msg.getData();
             String string = bundle.getString("myKey");
+            tweet = bundle.getString("myKey");
             for(int i =0;i<10;i++){
                 System.out.println("!!!!!!!twitter message!!!!!!"+string);
             }
@@ -32,8 +42,13 @@ public class TwitterMessage {
         }
     };
 
+    public String returnTweet() {
+        getTweet();
+        return tweet;
+    }
 
 
+/**get tweets from the network and send it to the handler*/
     public void getTweet(){
         list = new ArrayList<String>();
 
